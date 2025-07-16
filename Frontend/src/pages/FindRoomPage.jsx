@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 import { Search, MapPin, DollarSign, Bed, Bath, Building, Loader2, Frown, AlertCircle } from 'lucide-react';
 import PropertyListingCard from '../components/PropertyListingCard';
 

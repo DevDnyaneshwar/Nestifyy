@@ -1,7 +1,6 @@
-// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import { AppContext, AppContextProvider } from './context/AppContext';
 
 // Import Components
 import Navbar from './components/Navbar.jsx';
@@ -23,10 +22,6 @@ import DashboardPage from './pages/DashboardPage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import SuperAdminPanelPage from './pages/SuperAdminPanelPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { AppContextProvider } from './context/Appcontext';
-
-
-
 
 const App = () => {
   return (
@@ -49,7 +44,7 @@ const App = () => {
               <Route path="/feedback" element={<FeedbackPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/admin-panel" element={<AdminPanelPage />} />
-              <Route path="/super-admin-panel" element={<SuperAdminPanelPage />} /> {/* New route for Super Admin */}
+              <Route path="/super-admin-panel" element={<SuperAdminPanelPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </div>

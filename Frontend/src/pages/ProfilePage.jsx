@@ -19,7 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { AppContext } from "../context/Appcontext";
+import { AppContext } from "../context/AppContext";
 import axios from "axios";
 
 const ProfilePage = () => {

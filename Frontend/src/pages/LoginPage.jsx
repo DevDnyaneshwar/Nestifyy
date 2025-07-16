@@ -2,7 +2,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 
 const LoginPage = () => {

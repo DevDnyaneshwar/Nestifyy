@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Mail, Phone, MapPin, Globe, Briefcase, Calendar, User, Users, Bed, Building, AlertCircle, Loader2, GraduationCap, Crown, Award, Heart, Anchor, Bookmark } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 
 const ProfileDetailPage = () => {
   const { trackInteraction } = useContext(AppContext);

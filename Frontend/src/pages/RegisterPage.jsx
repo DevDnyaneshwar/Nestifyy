@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { Eye, EyeOff, Mail, Lock, User, MapPin, GraduationCap, Briefcase, Calendar, Camera, ArrowRight, Phone } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { AppContext } from "../context/Appcontext";
+import { AppContext } from "../context/AppContext";
 
 const RegisterPage = () => {
   const { trackInteraction } = useContext(AppContext);
