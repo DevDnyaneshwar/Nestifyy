@@ -1,7 +1,7 @@
 // src/components/Footer.jsx
 import React, { useContext } from 'react';
-import { AppContext } from '../context/Appcontext';
-import { Home, FacebookIcon, MapPin, PhoneCall, Mail, Twitter, Linkedin } from 'lucide-react'; // Import icons for social media
+import { AppContext } from '../context/AppContext';
+import { Home, MapPin, PhoneCall, Mail, Twitter, Linkedin } from 'lucide-react'; // Import icons for social media
 
 const Footer = () => {
   const { trackInteraction } = useContext(AppContext);
