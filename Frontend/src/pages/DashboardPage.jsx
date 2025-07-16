@@ -1,22 +1,23 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { AppContext } from '../context/AppContext';
-import { User, Home, MessageSquare, Briefcase, DollarSign, CheckCircle, AlertCircle, Eye, Trash2, Edit, Loader2, PlusCircle, Heart, Users, MapPin } from 'lucide-react'; // Added Users, MapPin for roommate section
-import { useNavigate } from 'react-router-dom';
+import { User, Home, MessageSquare, Briefcase, DollarSign, CheckCircle, AlertCircle, Eye, Trash2, Edit, Loader2, PlusCircle, Heart, Users, MapPin, Bell, Calendar, TrendingUp, Activity } from 'lucide-react';
 
 const DashboardPage = () => {
-  const { trackInteraction, isAuthenticated } = useContext(AppContext);
-  const navigate = useNavigate();
-  const [userRole, setUserRole] = useState(null); // 'user', 'owner', 'broker'
+  // Mock context and navigation
+  const trackInteraction = (action, category, details) => console.log('Track:', action, category, details);
+  const navigate = (path) => console.log('Navigate to:', path);
+  const isAuthenticated = true;
+  
+  const [userRole, setUserRole] = useState('user'); // Default to 'user' for demo
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [properties, setProperties] = useState([]); // For owners/brokers
-  const [roommateProfile, setRoommateProfile] = useState(null); // For users looking for roommates
-  const [messages, setMessages] = useState([]); // For all users
-  const [savedListings, setSavedListings] = useState([]); // For all users
+  const [properties, setProperties] = useState([]);
+  const [roommateProfile, setRoommateProfile] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [savedListings, setSavedListings] = useState([]);
 
   useEffect(() => {
     trackInteraction('page_view', 'dashboard_page');
-    const storedRole = localStorage.getItem('userRole');
+    const storedRole = 'user'; // Mock role
     if (!isAuthenticated || !storedRole) {
       setError("You need to be logged in to access the dashboard.");
       setLoading(false);
@@ -26,20 +27,19 @@ const DashboardPage = () => {
     }
     setUserRole(storedRole);
     fetchDashboardData(storedRole);
-  }, [trackInteraction, isAuthenticated, navigate]);
+  }, [trackInteraction, isAuthenticated]);
 
   const fetchDashboardData = async (role) => {
     setLoading(true);
     setError('');
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
-      // Dummy data based on role
       if (role === 'owner' || role === 'broker') {
         setProperties([
-          { id: 201, name: 'Spacious 2BHK for Rent', location: 'Kothrud, Pune', status: 'Active', imageUrl: 'https://placehold.co/100x70/E0E7FF/4338CA?text=PropA' },
-          { id: 202, name: '1RK near IT Park', location: 'Hinjewadi, Pune', status: 'Pending', imageUrl: 'https://placehold.co/100x70/BFDBFE/1D4ED8?text=PropB' },
-          { id: 203, name: 'Luxury Villa', location: 'Lonavala, Pune', status: 'Active', imageUrl: 'https://placehold.co/100x70/D1FAE5/065F46?text=PropC' },
+          { id: 201, name: 'Spacious 2BHK for Rent', location: 'Kothrud, Pune', status: 'Active', imageUrl: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop' },
+          { id: 202, name: '1RK near IT Park', location: 'Hinjewadi, Pune', status: 'Pending', imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=300&h=200&fit=crop' },
+          { id: 203, name: 'Luxury Villa', location: 'Lonavala, Pune', status: 'Active', imageUrl: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300&h=200&fit=crop' },
         ]);
         trackInteraction('data_fetch', 'dashboard_properties_success');
       } else if (role === 'user') {
@@ -50,22 +50,21 @@ const DashboardPage = () => {
           lookingFor: 'Shared room in Baner',
           budget: '₹ 10,000',
           status: 'Active',
-          imageUrl: 'https://placehold.co/100x70/F0F9FF/0284C7?text=MyProfile',
+          imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop',
         });
         trackInteraction('data_fetch', 'dashboard_roommate_profile_success');
       }
 
-      // Dummy data for messages (common for all roles)
       setMessages([
         { id: 1, sender: 'Property Owner', subject: 'Inquiry about 2BHK', date: '2023-10-26' },
         { id: 2, sender: 'Nestify Support', subject: 'Your recent feedback', date: '2023-10-25' },
+        { id: 3, sender: 'Roommate Sarah', subject: 'Room sharing discussion', date: '2023-10-24' },
       ]);
       trackInteraction('data_fetch', 'dashboard_messages_success');
 
-      // Dummy data for saved listings (common for all roles)
       setSavedListings([
-        { id: 401, name: 'Cozy 1BHK', location: 'Koregaon Park', price: '₹ 20,000/month', imageUrl: 'https://placehold.co/100x70/FFEDD5/9A3412?text=Saved1' },
-        { id: 402, name: 'Roommate: Sarah J.', location: 'Bengaluru', lookingFor: 'Indiranagar', budget: '₹ 12,000', imageUrl: 'https://placehold.co/100x70/E8F5E9/2E7D32?text=Saved2' },
+        { id: 401, name: 'Cozy 1BHK', location: 'Koregaon Park', price: '₹ 20,000/month', imageUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop' },
+        { id: 402, name: 'Roommate: Sarah J.', location: 'Bengaluru', lookingFor: 'Indiranagar', budget: '₹ 12,000', imageUrl: 'https://images.unsplash.com/photo-1494790108755-2616c31c75bd?w=300&h=200&fit=crop' },
       ]);
       trackInteraction('data_fetch', 'dashboard_saved_listings_success');
 
@@ -80,7 +79,6 @@ const DashboardPage = () => {
   const handleEditProperty = (propertyId) => {
     trackInteraction('click', `dashboard_edit_property_${propertyId}`);
     console.log('Edit property:', propertyId);
-    // Example: navigate(`/list-property?edit=${propertyId}`);
   };
 
   const handleDeleteProperty = async (propertyId) => {
@@ -88,7 +86,6 @@ const DashboardPage = () => {
       setLoading(true);
       trackInteraction('click', `dashboard_delete_property_confirm_${propertyId}`);
       try {
-        // Simulate API call to delete property
         await new Promise(resolve => setTimeout(resolve, 1000));
         setProperties(prev => prev.filter(p => p.id !== propertyId));
         setLoading(false);
@@ -106,13 +103,11 @@ const DashboardPage = () => {
   const handleEditRoommateProfile = () => {
     trackInteraction('click', 'dashboard_edit_roommate_profile');
     console.log('Edit roommate profile');
-    // Example: navigate('/profile'); // Assuming profile page is where roommate profile is managed
   };
 
   const handleViewMessage = (messageId) => {
     trackInteraction('click', `dashboard_view_message_${messageId}`);
     console.log('Viewing message:', messageId);
-    // Example: navigate(`/messages/${messageId}`);
   };
 
   const handleRemoveSavedListing = (listingId) => {
@@ -123,10 +118,16 @@ const DashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-16 h-16 text-blue-600 animate-spin" />
-          <p className="text-gray-700 font-medium text-lg">Loading your dashboard...</p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-6 bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-2xl">
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-blue-200 rounded-full animate-spin border-t-blue-600"></div>
+            <div className="absolute inset-0 w-20 h-20 border-4 border-purple-200 rounded-full animate-spin border-t-purple-600 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+          </div>
+          <div className="text-center">
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Loading Dashboard</h3>
+            <p className="text-gray-600">Setting up your personalized experience...</p>
+          </div>
         </div>
       </div>
     );
@@ -134,18 +135,18 @@ const DashboardPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gray-50 p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4 border border-red-200 text-center animate-fade-in-up">
-          <div className="flex items-center justify-center gap-3 text-red-600 mb-6">
-            <AlertCircle className="w-10 h-10" />
-            <h2 className="text-2xl font-bold">Error</h2>
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 flex items-center justify-center p-4">
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10 max-w-md mx-4 text-center border border-red-100">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-10 h-10 text-red-600" />
           </div>
-          <p className="text-gray-700 mb-8 text-lg">{error}</p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Oops! Something went wrong</h2>
+          <p className="text-gray-600 mb-8 leading-relaxed">{error}</p>
           <button
             onClick={() => { fetchDashboardData(userRole); trackInteraction('click', 'dashboard_retry_load'); }}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-bold text-lg shadow-md hover:shadow-lg transform hover:scale-[1.01] active:scale-98"
+            className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-4 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
           >
-            Retry
+            Try Again
           </button>
         </div>
       </div>
@@ -153,201 +154,330 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-12">
-      <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 text-center mb-10 relative">
-        <span className="relative inline-block pb-2">
-          Your Dashboard
-          <span className="absolute bottom-0 left-1/2 w-24 h-1 bg-blue-600 transform -translate-x-1/2 rounded-full"></span>
-        </span>
-      </h1>
-      <p className="text-center text-gray-600 text-lg mb-8 max-w-3xl mx-auto">
-        Welcome! Here you can manage your Nestify activities.
-      </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Welcome back!
+              </h1>
+              <p className="text-gray-600 mt-1">Here's what's happening with your account</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="relative p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-blue-300">
+                <Bell className="w-5 h-5 text-gray-600" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+              </button>
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {(userRole === 'owner' || userRole === 'broker') && (
-        <section className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 border border-gray-200 animate-fade-in-up animation-delay-100"> {/* Using a custom animation delay utility if defined in tailwind.config.js or via inline style directly */}
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center space-x-3">
-            <Home size={28} className="text-blue-600" />
-            <span>My Properties</span>
-          </h2>
-          <button
-            onClick={() => { navigate('/list-property'); trackInteraction('click', 'dashboard_add_property_button'); }}
-            className="mb-6 bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-700 transition-colors duration-300 text-base font-semibold shadow-md hover:shadow-lg flex items-center space-x-2 transform hover:scale-105 active:scale-95"
-          >
-            <PlusCircle size={20} />
-            <span>Add New Property</span>
-          </button>
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Active Listings</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">12</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <Home className="w-6 h-6 text-white" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-green-500" />
+              <span className="text-sm text-green-600 font-medium">+2.5% from last month</span>
+            </div>
+          </div>
 
-          {properties.length === 0 ? (
-            <p className="text-gray-600 text-lg py-4">You haven't listed any properties yet.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white rounded-lg overflow-hidden border border-gray-200">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Image</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Location</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {properties.map(property => (
-                    <tr key={property.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors duration-150">
-                      <td className="py-3 px-4">
-                        <img src={property.imageUrl} alt={property.name} className="w-20 h-14 object-cover rounded-md shadow-sm" />
-                      </td>
-                      <td className="py-3 px-4 text-gray-800 text-base">{property.name}</td>
-                      <td className="py-3 px-4 text-gray-800 text-base">{property.location}</td>
-                      <td className="py-3 px-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Messages</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">{messages.length}</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-white" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <Activity className="w-4 h-4 text-blue-500" />
+              <span className="text-sm text-blue-600 font-medium">2 unread</span>
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Saved Items</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">{savedListings.length}</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl flex items-center justify-center">
+                <Heart className="w-6 h-6 text-white" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-purple-500" />
+              <span className="text-sm text-purple-600 font-medium">Updated today</span>
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Profile Views</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">89</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                <Eye className="w-6 h-6 text-white" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-green-500" />
+              <span className="text-sm text-green-600 font-medium">+12% this week</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Owner/Broker Properties Section */}
+        {(userRole === 'owner' || userRole === 'broker') && (
+          <section className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 mb-8 border border-gray-200/50">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                  <Home className="w-5 h-5 text-white" />
+                </div>
+                My Properties
+              </h2>
+              <button
+                onClick={() => { navigate('/list-property'); trackInteraction('click', 'dashboard_add_property_button'); }}
+                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-2xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl flex items-center gap-2 transform hover:scale-105 active:scale-95"
+              >
+                <PlusCircle className="w-5 h-5" />
+                Add Property
+              </button>
+            </div>
+
+            {properties.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Home className="w-12 h-12 text-gray-400" />
+                </div>
+                <p className="text-gray-600 text-lg">No properties listed yet</p>
+                <p className="text-gray-500 mt-2">Start by adding your first property!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {properties.map((property, index) => (
+                  <div key={property.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200/50 group hover:scale-105" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div className="relative overflow-hidden">
+                      <img src={property.imageUrl} alt={property.name} className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute top-4 right-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          property.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                          property.status === 'Active' 
+                            ? 'bg-green-100 text-green-800 border border-green-200' 
+                            : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
                         }`}>
                           {property.status}
                         </span>
-                      </td>
-                      <td className="py-3 px-4 space-x-3">
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">{property.name}</h3>
+                      <p className="text-gray-600 flex items-center gap-2 mb-4">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        {property.location}
+                      </p>
+                      <div className="flex items-center gap-3">
                         <button
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1"
                           onClick={() => handleEditProperty(property.id)}
+                          className="flex-1 bg-blue-50 text-blue-600 py-2 px-4 rounded-xl hover:bg-blue-100 transition-colors duration-200 text-sm font-medium flex items-center justify-center gap-2"
                         >
-                          <Edit size={16} /><span>Edit</span>
+                          <Edit className="w-4 h-4" />
+                          Edit
                         </button>
                         <button
-                          className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center space-x-1"
                           onClick={() => handleDeleteProperty(property.id)}
+                          className="flex-1 bg-red-50 text-red-600 py-2 px-4 rounded-xl hover:bg-red-100 transition-colors duration-200 text-sm font-medium flex items-center justify-center gap-2"
                         >
-                          <Trash2 size={16} /><span>Delete</span>
+                          <Trash2 className="w-4 h-4" />
+                          Delete
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
-
-      {userRole === 'user' && (
-        <section className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 border border-gray-200 animate-fade-in-up animation-delay-100">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center space-x-3">
-            <Users size={28} className="text-purple-600" />
-            <span>My Roommate Profile</span>
-          </h2>
-          {roommateProfile ? (
-            <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 p-4 bg-purple-50 rounded-lg border border-purple-100">
-              <img
-                src={roommateProfile.imageUrl}
-                alt={roommateProfile.name}
-                className="w-32 h-32 object-cover rounded-full border-4 border-purple-200 shadow-md"
-              />
-              <div className="text-center md:text-left">
-                <h3 className="text-xl font-semibold text-gray-900">{roommateProfile.name}</h3>
-                <p className="text-gray-600 flex items-center justify-center md:justify-start mt-1">
-                  <MapPin size={16} className="mr-1 text-purple-500" /> {roommateProfile.location}
-                </p>
-                <p className="text-gray-700 mt-2 text-base">Looking for: <span className="font-medium">{roommateProfile.lookingFor}</span></p>
-                <p className="text-gray-700 text-base">Budget: <span className="font-medium">{roommateProfile.budget}</span></p>
-                <p className="text-gray-700 text-base">Status: <span className="font-medium text-green-600">{roommateProfile.status}</span></p>
-                <button
-                  onClick={handleEditRoommateProfile}
-                  className="mt-4 bg-blue-600 text-white px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors duration-300 text-sm font-semibold flex items-center space-x-2 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95"
-                >
-                  <Edit size={16} />
-                  <span>Edit Profile</span>
-                </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ) : (
-            <p className="text-gray-600 text-lg py-4">You don't have a roommate profile yet. Create one to find matches!</p>
-          )}
-        </section>
-      )}
+            )}
+          </section>
+        )}
 
-      {/* Common Dashboard Sections */}
-      <section className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8 border border-gray-200 animate-fade-in-up animation-delay-200">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center space-x-3">
-          <MessageSquare size={28} className="text-orange-600" />
-          <span>Messages</span>
-        </h2>
-        {messages.length === 0 ? (
-          <p className="text-gray-600 text-lg py-4">You have no new messages.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-lg overflow-hidden border border-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Sender</th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Subject</th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Date</th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {messages.map(message => (
-                  <tr key={message.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors duration-150">
-                    <td className="py-3 px-4 text-gray-800 text-base">{message.sender}</td>
-                    <td className="py-3 px-4 text-gray-800 text-base">{message.subject}</td>
-                    <td className="py-3 px-4 text-gray-800 text-base">{message.date}</td>
-                    <td className="py-3 px-4">
+        {/* User Roommate Profile Section */}
+        {userRole === 'user' && (
+          <section className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 mb-8 border border-gray-200/50">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                <Users className="w-5 h-5 text-white" />
+              </div>
+              My Roommate Profile
+            </h2>
+            
+            {roommateProfile ? (
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200/50">
+                <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
+                  <div className="relative">
+                    <img
+                      src={roommateProfile.imageUrl}
+                      alt={roommateProfile.name}
+                      className="w-32 h-32 object-cover rounded-2xl shadow-lg"
+                    />
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white">
+                      <CheckCircle className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-center lg:text-left flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{roommateProfile.name}</h3>
+                    <div className="space-y-2 mb-4">
+                      <p className="text-gray-600 flex items-center justify-center lg:justify-start gap-2">
+                        <MapPin className="w-4 h-4 text-purple-500" />
+                        {roommateProfile.location}
+                      </p>
+                      <p className="text-gray-700">
+                        <span className="font-medium">Looking for:</span> {roommateProfile.lookingFor}
+                      </p>
+                      <p className="text-gray-700">
+                        <span className="font-medium">Budget:</span> {roommateProfile.budget}
+                      </p>
+                      <p className="text-gray-700">
+                        <span className="font-medium">Status:</span> 
+                        <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                          {roommateProfile.status}
+                        </span>
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleEditRoommateProfile}
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-2xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl flex items-center gap-2 transform hover:scale-105 active:scale-95"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Edit Profile
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-12 h-12 text-purple-400" />
+                </div>
+                <p className="text-gray-600 text-lg">No roommate profile yet</p>
+                <p className="text-gray-500 mt-2">Create one to find perfect matches!</p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Messages and Saved Listings Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Messages Section */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-200/50">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-white" />
+              </div>
+              Recent Messages
+            </h2>
+            
+            {messages.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-600">No messages yet</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((message, index) => (
+                  <div key={message.id} className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-md transition-all duration-200 group" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-800 mb-1">{message.sender}</h4>
+                        <p className="text-gray-600 text-sm mb-2">{message.subject}</p>
+                        <p className="text-gray-500 text-xs flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {message.date}
+                        </p>
+                      </div>
                       <button
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1"
                         onClick={() => handleViewMessage(message.id)}
+                        className="opacity-0 group-hover:opacity-100 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105"
                       >
-                        <Eye size={16} /><span>View</span>
+                        <Eye className="w-4 h-4" />
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+              </div>
+            )}
+          </section>
 
-      <section className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-200 animate-fade-in-up animation-delay-300">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center space-x-3">
-          <Heart size={28} className="text-red-600" />
-          <span>Saved Listings</span>
-        </h2>
-        {savedListings.length === 0 ? (
-          <p className="text-gray-600 text-lg py-4">You haven't saved any listings yet. Start exploring!</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-lg overflow-hidden border border-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Image</th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Location</th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {savedListings.map(listing => (
-                  <tr key={listing.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors duration-150">
-                    <td className="py-3 px-4">
-                      <img src={listing.imageUrl} alt={listing.name} className="w-20 h-14 object-cover rounded-md shadow-sm" />
-                    </td>
-                    <td className="py-3 px-4 text-gray-800 text-base">{listing.name}</td>
-                    <td className="py-3 px-4 text-gray-800 text-base">{listing.location}</td>
-                    <td className="py-3 px-4">
+          {/* Saved Listings Section */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-200/50">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl flex items-center justify-center">
+                <Heart className="w-5 h-5 text-white" />
+              </div>
+              Saved Listings
+            </h2>
+            
+            {savedListings.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-600">No saved listings</p>
+                <p className="text-gray-500 text-sm mt-1">Start exploring to save your favorites!</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {savedListings.map((listing, index) => (
+                  <div key={listing.id} className="bg-gradient-to-r from-gray-50 to-pink-50 rounded-xl p-4 border border-gray-200/50 hover:shadow-md transition-all duration-200 group" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div className="flex items-start gap-4">
+                      <img src={listing.imageUrl} alt={listing.name} className="w-16 h-16 object-cover rounded-lg shadow-md" />
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-800 mb-1">{listing.name}</h4>
+                        <p className="text-gray-600 text-sm flex items-center gap-1 mb-1">
+                          <MapPin className="w-3 h-3" />
+                          {listing.location}
+                        </p>
+                        {listing.price && (
+                          <p className="text-green-600 font-medium text-sm">{listing.price}</p>
+                        )}
+                        {listing.budget && (
+                          <p className="text-blue-600 font-medium text-sm">Budget: {listing.budget}</p>
+                        )}
+                      </div>
                       <button
-                        className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center space-x-1"
                         onClick={() => handleRemoveSavedListing(listing.id)}
+                        className="opacity-0 group-hover:opacity-100 bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-all duration-200 transform hover:scale-105"
                       >
-                        <Trash2 size={16} /><span>Remove</span>
+                        <Trash2 className="w-4 h-4" />
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
     </div>
   );
 };

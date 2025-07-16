@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { Search, MapPin, DollarSign, Bed, Bath, Building, Loader2, Frown, AlertCircle } from 'lucide-react';
-import PropertyListingCard from '../components/PropertyListingCard';
+import PropertyListingCard from './ListPropertyPage'; 
 
 const DEFAULT_IMAGE = "https://placehold.co/400x250/E0F7FA/00838F?text=Property";
 
@@ -30,7 +30,7 @@ const FindRoomPage = () => {
     setLoading(true);
     setError('');
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "https://nestifyy-s3yv.onrender.com";
+      const apiUrl = import.meta.env.VITE_API_URL || "https://nestifyy-my3u.onrender.com";
       console.log("Fetching properties from:", `${apiUrl}/api/property/all`);
       const response = await fetch(`${apiUrl}/api/property/all`, {
         method: 'GET',

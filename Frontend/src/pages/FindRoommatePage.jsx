@@ -11,7 +11,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { AppContext } from "../context/AppContext";
-import RoommateListingCard from "../components/RoommateListingCard";
+// import RoommateListingCard from "./FindRo"; // Assuming this is now pure CSS
 
 const FindRoommatePage = () => {
   const { trackInteraction } = useContext(AppContext);
@@ -243,11 +243,11 @@ const FindRoommatePage = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full max-w-6xl mx-auto animate-fade-in-up">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full max-w-6xl mx-auto animate-fade-in-up">
         {roommates.map((roommate) => (
           <RoommateListingCard key={roommate.id} roommate={roommate} />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

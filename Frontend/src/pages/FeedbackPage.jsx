@@ -38,12 +38,12 @@ const FeedbackPage = () => {
 
       console.log('Feedback Submitted:', formData);
       // In a real application, you'd send this to your backend
-      // const response = await fetch('https://matrimonial-9xhm.onrender.com/api/feedback', { // Placeholder URL
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData),
-      // });
-      // if (!response.ok) throw new Error('Failed to submit feedback');
+      const response = await fetch('https://nestifyy-my3u.onrender.com/api/feedback', { // Placeholder URL
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) throw new Error('Failed to submit feedback');
 
       setSuccessMessage('Thank you for your feedback! It has been submitted.');
       setFormData({ name: '', email: '', type: 'Feedback', message: '' }); // Clear form

@@ -31,7 +31,7 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await axios.post(`https://nestifyy-s3yv.onrender.com/api/user/login`, {
+      const response = await axios.post(`https://nestifyy-my3u.onrender.com/api/user/login`, {
         email,
         password,
       });

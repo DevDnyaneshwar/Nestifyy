@@ -26,7 +26,7 @@ const ProfileDetailPage = () => {
 
         // Placeholder API URL. Replace with your actual backend API.
         // This endpoint should return public profile data for a given ID.
-        const response = await fetch(`https://nestifyy-s3yv.onrender.com/api/user/${id}`, {
+        const response = await fetch(`https://nestifyy-my3u.onrender.com/api/user/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

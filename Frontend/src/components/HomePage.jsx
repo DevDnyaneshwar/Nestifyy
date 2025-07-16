@@ -3,8 +3,8 @@ import React, { useEffect, useContext } from 'react';
 import { Search, MessageSquare, Home } from 'lucide-react';
 import { AppContext } from '../context/AppContext'; // Import AppContext
 import HeroSection from './HeroSection'; // Assuming HeroSection is a separate component
-import PropertyListingCard from './PropertyListingCard'; // Assuming this is now pure CSS
-import RoommateListingCard from './RoommateListingCard'; // Assuming this is now pure CSS
+import PropertyListingCard from '../pages/ListPropertyPage' // Assuming this is now pure CSS
+import RoommateListingCard from '../pages/FindRoommatePage'; // Assuming this is now pure CSS
 
 const HomePage = () => {
   const { trackInteraction } = useContext(AppContext);
