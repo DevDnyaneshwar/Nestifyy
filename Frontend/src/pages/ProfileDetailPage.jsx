@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Mail, Phone, MapPin, Globe, Briefcase, Calendar, User, Users, Bed, Building, AlertCircle, Loader2, GraduationCap, Crown, Award, Heart, Anchor, Bookmark } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 
 const ProfileDetailPage = () => {
   const { trackInteraction } = useContext(AppContext);
@@ -26,7 +26,7 @@ const ProfileDetailPage = () => {
 
         // Placeholder API URL. Replace with your actual backend API.
         // This endpoint should return public profile data for a given ID.
-        const response = await fetch(`http://localhost:8000/api/user/${id}`, {
+        const response = await fetch(`https://nestifyy-my3u.onrender.com/api/user/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

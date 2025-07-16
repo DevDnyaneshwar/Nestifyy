@@ -1,7 +1,7 @@
 // src/components/HeroSection.jsx
 import React, { useState, useContext } from 'react';
 import { Search } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 
 const HeroSection = () => {
   const [activeTab, setActiveTab] = useState('find_room'); // 'find_room', 'find_roommate'

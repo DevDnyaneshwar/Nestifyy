@@ -19,7 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { AppContext } from "../context/Appcontext";
+import { AppContext } from "../context/AppContext";
 import axios from "axios";
 
 const ProfilePage = () => {
@@ -52,7 +52,7 @@ const ProfilePage = () => {
           throw new Error("No authentication token found");
         }
 
-        const apiUrl = id ? `http://localhost:8000/api/user/${id}` : `http://localhost:8000/api/user/profile`;
+        const apiUrl = id ? `https://nestifyy-my3u.onrender.com/api/user/${id}` : `https://nestifyy-my3u.onrender.com/api/user/profile`;
         const response = await axios.get(apiUrl, {
           headers: {
             Authorization: token ? `Bearer ${token}` : undefined,

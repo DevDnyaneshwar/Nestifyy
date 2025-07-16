@@ -1,6 +1,6 @@
 // src/components/Footer.jsx
 import React, { useContext } from 'react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext} from '../context/AppContext'; 
 import { Home, FacebookIcon, MapPin, PhoneCall, Mail, Twitter, Linkedin } from 'lucide-react'; // Import icons for social media
 
 const Footer = () => {

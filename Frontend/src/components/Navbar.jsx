@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Home, Map, ChevronDown, Menu, X, User, LogOut, ShieldCheck } from 'lucide-react';
-import { AppContext } from '../context/Appcontext'; // Import AppContext
+import { AppContext } from '../context/AppContext';// Import AppContext
 
 const Navbar = () => {
   const { isAuthenticated, isAdmin, trackInteraction, handleLogout } = useContext(AppContext);

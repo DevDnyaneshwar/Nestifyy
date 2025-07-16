@@ -1,7 +1,7 @@
 // src/pages/FeedbackPage.jsx
 import React, { useState, useContext, useEffect } from 'react';
 import { Mail, User, MessageSquare, CheckCircle, AlertCircle, Loader2, Send } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 
 const FeedbackPage = () => {
   const { trackInteraction } = useContext(AppContext);
@@ -38,7 +38,7 @@ const FeedbackPage = () => {
 
       console.log('Feedback Submitted:', formData);
       // In a real application, you'd send this to your backend
-      // const response = await fetch('https://matrimonial-9xhm.onrender.com/api/feedback', { // Placeholder URL
+      // const response = await fetch('https://nestifyy-my3u.onrender.com/api/feedback', { // Placeholder URL
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify(formData),

@@ -1,8 +1,8 @@
 // src/components/HomePage.jsx
 import React, { useEffect, useContext } from 'react';
 import { Search, MessageSquare, Home } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
-import HeroSection from './Herosection'; // Assuming this is now pure CSS
+import { AppContext } from '../context/AppContext';
+import HeroSection from './HeroSection'; // Assuming this is now pure CSS
 import PropertyListingCard from './PropertyListingCard'; // Assuming this is now pure CSS
 import RoommateListingCard from './RoommateListingCard'; // Assuming this is now pure CSS
 

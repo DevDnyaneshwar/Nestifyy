@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 import { User, Home, MessageSquare, Briefcase, DollarSign, CheckCircle, AlertCircle, Eye, Trash2, Edit, Loader2, PlusCircle, Heart, Users, MapPin } from 'lucide-react'; // Added Users, MapPin for roommate section
 import { useNavigate } from 'react-router-dom';
 

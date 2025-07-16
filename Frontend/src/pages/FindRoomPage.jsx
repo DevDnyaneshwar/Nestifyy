@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 import { Search, MapPin, DollarSign, Bed, Bath, Building, Loader2, Frown, AlertCircle } from 'lucide-react';
 import PropertyListingCard from '../components/PropertyListingCard';
 
@@ -30,7 +30,7 @@ const FindRoomPage = () => {
     setLoading(true);
     setError('');
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const apiUrl = import.meta.env.VITE_API_URL || "https://nestifyy-my3u.onrender.com";
       console.log("Fetching properties from:", `${apiUrl}/api/property/all`);
       const response = await fetch(`${apiUrl}/api/property/all`, {
         method: 'GET',

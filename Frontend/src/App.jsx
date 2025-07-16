@@ -1,7 +1,7 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AppContext } from './context/Appcontext';
+import { AppContextProvider } from './context/AppContext'; 
 
 // Import Components
 import Navbar from './components/Navbar.jsx';
@@ -23,7 +23,7 @@ import DashboardPage from './pages/DashboardPage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import SuperAdminPanelPage from './pages/SuperAdminPanelPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { AppContextProvider } from './context/Appcontext';
+import { AppContextProvider } from './context/AppContext';
 
 
 

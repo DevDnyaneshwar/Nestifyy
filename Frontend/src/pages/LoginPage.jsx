@@ -2,7 +2,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 
 const LoginPage = () => {
@@ -31,7 +31,7 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await axios.post(`http://localhost:8000/api/user/login`, {
+      const response = await axios.post(`https://nestifyy-my3u.onrender.com/api/user/login`, {
         email,
         password,
       });

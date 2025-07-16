@@ -1,6 +1,6 @@
 // src/pages/SuperAdminPanelPage.jsx
 import React, { useEffect, useContext, useState } from 'react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 import { ShieldCheck, Settings, DollarSign, TrendingUp, PlusCircle, Trash2, Edit, CheckCircle, AlertCircle, Loader2, Users, Home, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

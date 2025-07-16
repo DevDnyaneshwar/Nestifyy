@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Home, MapPin, DollarSign, Bed, Bath, Camera, Upload, CheckCircle, AlertCircle, Loader2, X } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
@@ -127,7 +127,7 @@ const ListPropertyPage = () => {
         data.append('image', image);
       });
 
-      const response = await axios.post('http://localhost:8000/api/property/register', data, {
+      const response = await axios.post('https://nestifyy-my3u.onrender.com/api/property/register', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
