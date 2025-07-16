@@ -1,7 +1,7 @@
 // src/pages/SupportPage.jsx
 import React, { useEffect, useContext, useState } from 'react';
 import { Mail, Phone, MessageSquare, HelpCircle, Send, CheckCircle, AlertCircle, Loader2, MapPin } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 
 const SupportPage = () => {

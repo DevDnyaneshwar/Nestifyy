@@ -1,7 +1,7 @@
 // src/pages/FeedbackPage.jsx
 import React, { useState, useContext, useEffect } from 'react';
 import { Mail, User, MessageSquare, CheckCircle, AlertCircle, Loader2, Send } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 
 const FeedbackPage = () => {
   const { trackInteraction } = useContext(AppContext);

@@ -10,7 +10,7 @@ import {
   MessageSquare,
   AlertCircle,
 } from "lucide-react";
-import { AppContext } from "../context/Appcontext";
+import { AppContext } from "../context/AppContext";
 import RoommateListingCard from "../components/RoommateListingCard";
 
 const FindRoommatePage = () => {
