@@ -23,7 +23,7 @@ import DashboardPage from './pages/DashboardPage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import SuperAdminPanelPage from './pages/SuperAdminPanelPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { AppContextProvider } from './context/AppContext';
+
 
 
 
