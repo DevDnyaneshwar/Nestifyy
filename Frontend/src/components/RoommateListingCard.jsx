@@ -1,7 +1,7 @@
 // src/components/RoommateListingCard.jsx
 import React, { useContext } from 'react';
 import { MapPin, DollarSign, User, MessageCircle } from 'lucide-react';
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 
 const RoommateListingCard = ({ roommate }) => {
   const { trackInteraction } = useContext(AppContext);

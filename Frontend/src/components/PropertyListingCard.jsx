@@ -2,7 +2,7 @@
 
 import React, { useContext } from 'react';
 import { Building, Users, MapPin, Home, Bed, Bath, DollarSign } from 'lucide-react'; // Ensure Bed and Bath are imported from lucide-react
-import { AppContext } from '../context/Appcontext';
+import { AppContext } from '../context/AppContext';
 
 const PropertyListingCard = ({ property }) => {
   const { trackInteraction } = useContext(AppContext);
