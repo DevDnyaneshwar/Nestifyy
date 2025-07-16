@@ -1,7 +1,7 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AppContext } from './context/Appcontext';
+
 
 // Import Components
 import Navbar from './components/Navbar.jsx';
