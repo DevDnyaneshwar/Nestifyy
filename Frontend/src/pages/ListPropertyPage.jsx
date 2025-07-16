@@ -127,7 +127,7 @@ const ListPropertyPage = () => {
         data.append('image', image);
       });
 
-      const response = await axios.post('http://localhost:8000/api/property/register', data, {
+      const response = await axios.post('https://nestifyy-s3yv.onrender.com/api/property/register', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

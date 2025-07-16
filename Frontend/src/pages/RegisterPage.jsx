@@ -88,7 +88,7 @@ const RegisterPage = () => {
       console.log('Registration data:', data);
 
       // Replace with actual API call
-      const response = await axios.post('http://localhost:8000/api/user/register', data, {
+      const response = await axios.post('https://nestifyy-s3yv.onrender.com/api/user/register', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

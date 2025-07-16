@@ -30,7 +30,7 @@ const FindRoomPage = () => {
     setLoading(true);
     setError('');
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const apiUrl = import.meta.env.VITE_API_URL || "https://nestifyy-s3yv.onrender.com";
       console.log("Fetching properties from:", `${apiUrl}/api/property/all`);
       const response = await fetch(`${apiUrl}/api/property/all`, {
         method: 'GET',

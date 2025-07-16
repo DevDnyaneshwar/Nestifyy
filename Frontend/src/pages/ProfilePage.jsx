@@ -52,7 +52,7 @@ const ProfilePage = () => {
           throw new Error("No authentication token found");
         }
 
-        const apiUrl = id ? `http://localhost:8000/api/user/${id}` : `http://localhost:8000/api/user/profile`;
+        const apiUrl = id ? `https://nestifyy-s3yv.onrender.com/api/user/${id}` : `https://nestifyy-s3yv.onrender.com/api/user/profile`;
         const response = await axios.get(apiUrl, {
           headers: {
             Authorization: token ? `Bearer ${token}` : undefined,
