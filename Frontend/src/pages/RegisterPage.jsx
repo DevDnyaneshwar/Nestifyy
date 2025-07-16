@@ -94,7 +94,7 @@ const RegisterPage = () => {
       });
 
       console.log('Registration successful:', response.data);
-      alert("Registration successful! Please log in."); // Use a more sophisticated notification in real app
+      alert("Registration successful! Please log in."); 
       trackInteraction('registration', 'registration_success');
       // Redirect to login page
       window.location.assign('/login');
@@ -393,3 +393,4 @@ const RegisterPage = () => {
     </div>
   );
 };
+export default RegisterPage;

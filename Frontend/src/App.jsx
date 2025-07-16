@@ -4,7 +4,7 @@ import { AppContext, AppContextProvider } from './context/AppContext';
 
 // Import Components
 import Navbar from './components/Navbar.jsx';
-import Footer from './components/footer.jsx';
+import Footer from './pages/Footer.jsx';
 
 // Import Pages
 import HomePage from './components/HomePage';
