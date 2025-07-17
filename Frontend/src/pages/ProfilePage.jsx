@@ -314,9 +314,7 @@ const ProfilePage = () => {
 
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-warm-gray">
-          <div className="bg-gradient-to-r from-maroon via-deep-maroon to-black h-48 relative">
-            <div className="absolute top-10 right-10 w-32 h-32 border-2 border-cream rounded-full opacity-20"></div>
-            <div className="absolute bottom-10 left-10 w-24 h-24 border-2 border-cream rounded-full opacity-30"></div>
+          <div className="h-48 relative bg-blue-500">
             <div className="absolute -bottom-16 left-8">
               <div className="relative">
                 <img
@@ -878,11 +876,11 @@ const ProfilePage = () => {
         {/* Inline CSS */}
         <style>{`
           .bg-maroon { background-color: #004dc3; }
-          .bg-cream { background-color: #FFF5E1; }
+          .bg-cream { background-color: #f8fafc; }
           .bg-light-maroon { background-color: #A83232; }
           .bg-deep-maroon { background-color: #660000; }
           .bg-warm-gray { background-color: #CCCCCC; }
-          .text-maroon { color: #ffffff; }
+          .text-maroon { color: #004dc3; }
           .text-cream { color: #FFF5E1; }
           .text-light-maroon { color: #A83232; }
           .text-deep-maroon { color: #660000; }
