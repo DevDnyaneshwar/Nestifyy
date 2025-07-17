@@ -52,7 +52,9 @@ const ProfilePage = () => {
           throw new Error("No authentication token found");
         }
 
-        const apiUrl = id ? `https://nestifyy-my3u.onrender.com/api/user/${id}` : `https://nestifyy-my3u.onrender.com/api/user/profile`;
+        const apiUrl = id
+          ? `https://nestifyy-my3u.onrender.com/api/user/${id}`
+          : `https://nestifyy-my3u.onrender.com/api/user/profile`;
         const response = await axios.get(apiUrl, {
           headers: {
             Authorization: token ? `Bearer ${token}` : undefined,
@@ -63,16 +65,23 @@ const ProfilePage = () => {
         const userData = response.data.user || response.data;
         setUser(userData);
         setEditForm(userData);
+        // Ensure profile photo from login is displayed
         if (userData.photo) {
           setPreviewUrl(`https://nestifyy-my3u.onrender.com/${userData.photo}`);
         }
         setSuccess("Profile loaded successfully!");
-        trackInteraction("data_fetch", "profile_success", { userId: id || "current_user" });
+        trackInteraction("data_fetch", "profile_success", {
+          userId: id || "current_user",
+        });
       } catch (err) {
         console.error("Profile fetch error:", err);
-        const errorMessage = err.response?.data?.message || err.message || "Failed to fetch profile";
+        const errorMessage =
+          err.response?.data?.message || err.message || "Failed to fetch profile";
         setError(errorMessage);
-        trackInteraction("data_fetch", "profile_failure", { userId: id || "current_user", error: errorMessage });
+        trackInteraction("data_fetch", "profile_failure", {
+          userId: id || "current_user",
+          error: errorMessage,
+        });
         if (err.response?.status === 401 || errorMessage.includes("token")) {
           localStorage.removeItem("token");
           navigate("/login");
@@ -158,12 +167,16 @@ const ProfilePage = () => {
         formData.append("photo", selectedFile);
       }
 
-      const response = await axios.put(`https://nestifyy-my3u.onrender.com/api/user/profile`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.put(
+        `https://nestifyy-my3u.onrender.com/api/user/profile`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       setUser(response.data.user);
       setEditForm(response.data.user);
@@ -173,13 +186,20 @@ const ProfilePage = () => {
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
-      setPreviewUrl("");
+      setPreviewUrl(
+        response.data.user.photo
+          ? `https://nestifyy-my3u.onrender.com/${response.data.user.photo}`
+          : ""
+      );
       setSelectedFile(null);
     } catch (err) {
       console.error("Profile update error:", err);
-      const errorMessage = err.response?.data?.message || err.message || "Failed to update profile";
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to update profile";
       setError(errorMessage);
-      trackInteraction("profile_management", "profile_update_failure", { error: errorMessage });
+      trackInteraction("profile_management", "profile_update_failure", {
+        error: errorMessage,
+      });
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
         navigate("/login");
@@ -198,7 +218,7 @@ const ProfilePage = () => {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
     }
-    setPreviewUrl("");
+    setPreviewUrl(user?.photo ? `https://nestifyy-my3u.onrender.com/${user.photo}` : "");
     setSelectedFile(null);
     trackInteraction("click", "profile_cancel_edit");
   };
@@ -245,7 +265,9 @@ const ProfilePage = () => {
             <Frown className="w-10 h-10" />
             <h2 className="text-2xl font-bold">No Profile Found</h2>
           </div>
-          <p className="text-gray-700 mb-8 text-lg">Please log in to view your profile or ensure the URL is correct for other profiles.</p>
+          <p className="text-gray-700 mb-8 text-lg">
+            Please log in to view your profile or ensure the URL is correct for other profiles.
+          </p>
           <Link
             to="/login"
             className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg transition-all duration-300 font-bold text-lg shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-98 flex items-center justify-center gap-2"
@@ -280,20 +302,30 @@ const ProfilePage = () => {
 
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-200">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-800 h-48 relative">
-            <div className="absolute top-10 right-10 w-32 h-32 border-2 border-gray-100 rounded-full opacity-20"></div>
-            <div className="absolute bottom-10 left-10 w-24 h-24 border-2 border-gray-100 rounded-full opacity-30"></div>
-            {/* Centered Profile Picture */}
-            <div className="absolute bottom-[-64px] left-1/2 transform -translate-x-1/2">
-              <div className="relative">
-                <img
-                  src={previewUrl || user.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=128&background=2563EB&color=FFFFFF`}
-                  alt="Profile"
-                  className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
-                />
+          <div className="bg-gradient-to-r from-blue-600 to-blue-800 h-60 relative">
+            {/* Decorative Elements */}
+            <div className="absolute top-10 right-10 w-32 h-32 border-2 border-gray-100 rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute bottom-10 left-10 w-24 h-24 border-2 border-gray-100 rounded-full opacity-30 animate-pulse"></div>
+            {/* Centered Profile Picture with Enhanced UI */}
+            <div className="absolute bottom-[-80px] left-1/2 transform -translate-x-1/2">
+              <div className="relative group">
+                <div className="w-40 h-40 rounded-full border-4 border-white shadow-2xl overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                  <img
+                    src={
+                      previewUrl ||
+                      (user.photo
+                        ? `https://nestifyy-my3u.onrender.com/${user.photo}`
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            user.name
+                          )}&size=160&background=2563EB&color=FFFFFF`)
+                    }
+                    alt="Profile"
+                    className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-90"
+                  />
+                </div>
                 {isEditing && !id && (
-                  <label className="absolute bottom-0 right-0 bg-blue-600 rounded-full p-2 cursor-pointer shadow-lg hover:bg-blue-700 transition-colors">
-                    <Camera className="w-4 h-4 text-white" />
+                  <label className="absolute bottom-2 right-2 bg-blue-600 rounded-full p-3 cursor-pointer shadow-lg hover:bg-blue-700 transition-all duration-300 group-hover:scale-110">
+                    <Camera className="w-5 h-5 text-white" />
                     <input
                       type="file"
                       accept="image/*"
@@ -305,27 +337,26 @@ const ProfilePage = () => {
               </div>
             </div>
           </div>
-          {/* Adjusted padding top to accommodate centered profile picture */}
-          <div className="pt-20 pb-8 px-8">
+          <div className="pt-24 pb-8 px-8">
             <div className="flex justify-between items-start flex-wrap gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-2">
                   {isEditing ? (
                     <input
                       type="text"
                       value={editForm.name || ""}
                       onChange={(e) => handleInputChange("name", e.target.value)}
-                      className="text-3xl font-bold text-gray-800 bg-transparent border-b-2 border-blue-200 focus:border-blue-600 outline-none w-full"
+                      className="text-3xl font-bold text-gray-800 bg-transparent border-b-2 border-blue-200 focus:border-blue-600 outline-none w-full max-w-md"
                       placeholder="Enter your name"
                     />
                   ) : (
                     <h1 className="text-3xl font-bold text-gray-800">{user.name}</h1>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-4 mt-2">
-                  <div className="flex items-center text-gray-700 flex-shrink-0"> {/* Added flex-shrink-0 */}
+                <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
+                  <div className="flex items-center text-gray-700 flex-shrink-0">
                     <Mail className="w-4 h-4 mr-2 text-blue-600" />
-                    <span className="break-all">{user.email}</span> {/* Added break-all */}
+                    <span className="break-all">{user.email}</span>
                   </div>
                   {user.number && (
                     <div className="flex items-center text-gray-700">
@@ -341,7 +372,7 @@ const ProfilePage = () => {
                   )}
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 justify-center md:justify-end">
                 {!isEditing ? (
                   <>
                     <Link
@@ -580,12 +611,16 @@ const ProfilePage = () => {
                           <input
                             type="number"
                             value={editForm.brokerInfo?.clientsHandled || ""}
-                            onChange={(e) => handleNestedInputChange("brokerInfo", "clientsHandled", e.target.value)}
+                            onChange={(e) =>
+                              handleNestedInputChange("brokerInfo", "clientsHandled", e.target.value)
+                            }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter clients handled"
                           />
                         ) : (
-                          <span className="text-gray-700 ml-2">{user.brokerInfo.clientsHandled || "Not specified"}</span>
+                          <span className="text-gray-700 ml-2">
+                            {user.brokerInfo.clientsHandled || "Not specified"}
+                          </span>
                         )}
                       </div>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
@@ -595,12 +630,16 @@ const ProfilePage = () => {
                           <input
                             type="number"
                             value={editForm.brokerInfo?.propertiesSold || ""}
-                            onChange={(e) => handleNestedInputChange("brokerInfo", "propertiesSold", e.target.value)}
+                            onChange={(e) =>
+                              handleNestedInputChange("brokerInfo", "propertiesSold", e.target.value)
+                            }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter properties sold"
                           />
                         ) : (
-                          <span className="text-gray-700 ml-2">{user.brokerInfo.propertiesSold || "Not specified"}</span>
+                          <span className="text-gray-700 ml-2">
+                            {user.brokerInfo.propertiesSold || "Not specified"}
+                          </span>
                         )}
                       </div>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
@@ -610,12 +649,16 @@ const ProfilePage = () => {
                           <input
                             type="number"
                             value={editForm.brokerInfo?.experience || ""}
-                            onChange={(e) => handleNestedInputChange("brokerInfo", "experience", e.target.value)}
+                            onChange={(e) =>
+                              handleNestedInputChange("brokerInfo", "experience", e.target.value)
+                            }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter years of experience"
                           />
                         ) : (
-                          <span className="text-gray-700 ml-2">{user.brokerInfo.experience || "Not specified"} years</span>
+                          <span className="text-gray-700 ml-2">
+                            {user.brokerInfo.experience || "Not specified"} years
+                          </span>
                         )}
                       </div>
                     </div>
@@ -634,12 +677,16 @@ const ProfilePage = () => {
                           <input
                             type="text"
                             value={editForm.preferences?.propertyType || ""}
-                            onChange={(e) => handleNestedInputChange("preferences", "propertyType", e.target.value)}
+                            onChange={(e) =>
+                              handleNestedInputChange("preferences", "propertyType", e.target.value)
+                            }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter preferred property type"
                           />
                         ) : (
-                          <span className="text-gray-700 ml-2">{user.preferences.propertyType || "Not specified"}</span>
+                          <span className="text-gray-700 ml-2">
+                            {user.preferences.propertyType || "Not specified"}
+                          </span>
                         )}
                       </div>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
@@ -649,12 +696,16 @@ const ProfilePage = () => {
                           <input
                             type="text"
                             value={editForm.preferences?.location || ""}
-                            onChange={(e) => handleNestedInputChange("preferences", "location", e.target.value)}
+                            onChange={(e) =>
+                              handleNestedInputChange("preferences", "location", e.target.value)
+                            }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter preferred location"
                           />
                         ) : (
-                          <span className="text-gray-700 ml-2">{user.preferences.location || "Not specified"}</span>
+                          <span className="text-gray-700 ml-2">
+                            {user.preferences.location || "Not specified"}
+                          </span>
                         )}
                       </div>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
@@ -664,12 +715,16 @@ const ProfilePage = () => {
                           <input
                             type="text"
                             value={editForm.preferences?.budget || ""}
-                            onChange={(e) => handleNestedInputChange("preferences", "budget", e.target.value)}
+                            onChange={(e) =>
+                              handleNestedInputChange("preferences", "budget", e.target.value)
+                            }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter budget"
                           />
                         ) : (
-                          <span className="text-gray-700 ml-2">{user.preferences.budget || "Not specified"}</span>
+                          <span className="text-gray-700 ml-2">
+                            {user.preferences.budget || "Not specified"}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -679,7 +734,9 @@ const ProfilePage = () => {
                     <div className="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Frown className="w-12 h-12 text-blue-600" />
                     </div>
-                    <p className="text-gray-700 font-medium">No {user.role === "broker" ? "broker" : "user"} information available.</p>
+                    <p className="text-gray-700 font-medium">
+                      No {user.role === "broker" ? "broker" : "user"} information available.
+                    </p>
                   </div>
                 )}
               </div>
@@ -734,6 +791,17 @@ const ProfilePage = () => {
             to {
               opacity: 1;
               transform: translateY(0);
+            }
+          }
+          .animate-pulse {
+            animation: pulse 3s infinite;
+          }
+          @keyframes pulse {
+            0%, 100% {
+              opacity: 0.2;
+            }
+            50% {
+              opacity: 0.4;
             }
           }
         `}</style>
