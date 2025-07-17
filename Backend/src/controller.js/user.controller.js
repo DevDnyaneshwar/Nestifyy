@@ -49,7 +49,7 @@ const registerUser = async (req, res) => {
       password:hashedPassword,
       role,
       age:Number(age),
-      number:Number(number),
+      number,
       profession,
       location,
       gender,
