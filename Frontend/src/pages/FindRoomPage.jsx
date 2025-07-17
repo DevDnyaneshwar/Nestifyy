@@ -31,7 +31,6 @@ const FindRoomPage = () => {
     setError('');
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "https://nestifyy-my3u.onrender.com";
-      console.log("Fetching properties from:", `${apiUrl}/api/property/all`);
       const response = await fetch(`${apiUrl}/api/property/all`, {
         method: 'GET',
         headers: {
@@ -42,7 +41,6 @@ const FindRoomPage = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      console.log("Fetched properties:", data);
       if (!data.properties) {
         throw new Error("No properties data in response");
       }
@@ -59,7 +57,7 @@ const FindRoomPage = () => {
         location: property.city,
       }));
       setProperties(fetchedProperties);
-      setDisplayedProperties(fetchedProperties.slice(0, 6)); // Show only 6 properties initially
+      setDisplayedProperties(fetchedProperties.slice(0, 6));
       trackInteraction('data_fetch', 'properties_fetch_success', { count: fetchedProperties.length });
     } catch (err) {
       console.error("Fetch properties error:", err);
@@ -81,8 +79,7 @@ const FindRoomPage = () => {
     setFiltersApplied(true);
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-      console.log("Fetching properties for filtering from:", `${apiUrl}/api/property/all`);
+      const apiUrl = import.meta.env.VITE_API_URL || "https://nestifyy-my3u.onrender.com";
       const response = await fetch(`${apiUrl}/api/property/all`, {
         method: 'GET',
         headers: {
@@ -93,7 +90,6 @@ const FindRoomPage = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      console.log("Filtered properties:", data);
       let filtered = data.properties.map((property) => ({
         ...property,
         id: property._id,
@@ -119,7 +115,7 @@ const FindRoomPage = () => {
           ? property.noOfBedroom === parseInt(filters.beds)
           : true;
         const matchesBaths = filters.baths
-          ? property.baths === parseInt(filters.baths)
+          ? property.bathrooms === parseInt(filters.baths)
           : true;
         const matchesPropertyType = filters.propertyType
           ? property.propertyType === filters.propertyType
@@ -128,7 +124,7 @@ const FindRoomPage = () => {
       });
 
       setProperties(filtered);
-      setDisplayedProperties(filtered); // Show all filtered properties
+      setDisplayedProperties(filtered);
       setLoading(false);
       if (filtered.length === 0) {
         setError('No properties found matching your criteria.');
@@ -144,14 +140,9 @@ const FindRoomPage = () => {
     }
   };
 
-  const handleFindRoom = () => {
-    trackInteraction('click', 'find_room_button');
-    applyFilters(); // Apply filters when "Find Room" is clicked
-  };
-
   const handleShowLess = () => {
     trackInteraction('click', 'show_less_button');
-    setDisplayedProperties(properties.slice(0, 6)); // Revert to showing only 6 properties
+    setDisplayedProperties(properties.slice(0, 6));
     setFiltersApplied(false);
   };
 
@@ -164,7 +155,6 @@ const FindRoomPage = () => {
         Browse through thousands of verified listings to find your next home.
       </p>
 
-      {/* Filters Section - Moved to Top */}
       <section className="bg-card-bg rounded-2xl shadow-card-shadow p-6 md:p-8 w-full max-w-4xl mb-10 border border-border-gray-300 animate-fade-in-up delay-100">
         <h2 className="text-2xl font-bold text-text-gray-800 mb-6 flex items-center gap-3">
           <Search size={28} className="text-primary-blue" /> Refine Your Search
@@ -275,35 +265,25 @@ const FindRoomPage = () => {
                 onFocus={() => trackInteraction('focus', 'filter_property_type_select')}
               >
                 <option value="">Any</option>
-                <option value="Apartment">Apartment</option>
-                <option value="Villa">Villa</option>
-                <option value="Shared Room">Shared Room</option>
-                <option value="Studio">Studio</option>
-                <option value="Penthouse">Penthouse</option>
+                <option value="apartment">Apartment</option>
+                <option value="villa">Villa</option>
+                <option value="shared_room">Shared Room</option>
+                <option value="studio">Studio</option>
+                <option value="penthouse">Penthouse</option>
               </select>
             </div>
           </div>
         </div>
-        <div className="mt-8 flex justify-center gap-4">
+        <div className="mt-8 flex justify-center">
           <button 
             onClick={applyFilters} 
             className="bg-primary-blue text-white py-3 px-8 rounded-xl border-none cursor-pointer transition-all duration-300 font-semibold shadow-card-shadow inline-flex items-center gap-2 text-lg hover:bg-primary-blue-dark hover:scale-105 active:scale-95"
           >
             <Search size={20} className="w-5 h-5" /> Apply Filters
           </button>
-          <button 
-            onClick={handleFindRoom} 
-            className="relative bg-gradient-to-r from-primary-blue to-blue-600 text-white py-3 px-10 rounded-xl border-none cursor-pointer transition-all duration-300 font-semibold shadow-lg text-lg hover:from-blue-600 hover:to-blue-700 hover:scale-105 active:scale-95 overflow-hidden group"
-          >
-            <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-            <span className="relative inline-flex items-center gap-2">
-              <Search size={20} className="w-5 h-5" /> Find Room
-            </span>
-          </button>
         </div>
       </section>
 
-      {/* Properties Listing Section */}
       <section className="w-full max-w-6xl py-6 mx-auto">
         {loading && (
           <div className="text-center text-text-gray-600 text-lg py-10 flex flex-col items-center justify-center">
