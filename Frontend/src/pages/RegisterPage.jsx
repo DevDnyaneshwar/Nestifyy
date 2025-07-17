@@ -12,7 +12,7 @@ const RegisterPage = () => {
     email: "",
     password: "",
     age: "",
-    Role: "",
+    role: "",
     profession: "",
     location: "",
     gender: "",
@@ -55,7 +55,7 @@ const RegisterPage = () => {
     trackInteraction('submit', 'register_form_submit_attempt');
 
     // Basic validation
-    if (!formData.name || !formData.email || !formData.password || !formData.Role) {
+    if (!formData.name || !formData.email || !formData.password || !formData.role) {
       setError("Please fill in all required fields.");
       setIsSubmitting(false);
       trackInteraction('validation_error', 'register_missing_fields');
@@ -249,15 +249,15 @@ const RegisterPage = () => {
           </div>
 
           <div className="col-span-1">
-            <label htmlFor="Role" className="block text-gray-700 text-sm font-semibold mb-2">Register As</label>
+            <label htmlFor="role" className="block text-gray-700 text-sm font-semibold mb-2">Register As</label>
             <select
-              id="Role"
-              name="Role"
+              id="role"
+              name="role"
               className={`w-full px-4 py-3 border border-gray-300 rounded-lg outline-none transition-all duration-200
-                ${focusedField === 'Role' ? 'border-blue-500 ring-1 ring-blue-500' : ''}`}
-              value={formData.Role}
+                ${focusedField === 'role' ? 'border-blue-500 ring-1 ring-blue-500' : ''}`}
+              value={formData.role}
               onChange={handleChange}
-              onFocus={() => setFocusedField('Role')}
+              onFocus={() => setFocusedField('role')}
               onBlur={() => setFocusedField('')}
               required
             >

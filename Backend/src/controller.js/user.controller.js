@@ -16,6 +16,7 @@ const registerUser = async (req, res) => {
       location
     } = req.body;
 
+
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Name, email, and password are required" });
     }
@@ -39,7 +40,7 @@ const registerUser = async (req, res) => {
       email,
       password:hashedPassword,
       role,
-      number,
+      number:Number(number),
       Profession,
       location,
       photo:photoUrl,
