@@ -1,6 +1,6 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Home, Map, ChevronDown, Menu, X, User, LogOut, ShieldCheck } from 'lucide-react';
 import { AppContext } from '../context/AppContext';// Import AppContext
 
@@ -10,7 +10,8 @@ const Navbar = () => {
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState('Pune');
   const cityDropdownRef = useRef(null);
-  const mobileMenuRef = useRef(null); // Ref for mobile menu container to handle outside clicks
+  const mobileMenuRef = useRef(null); 
+  const navigate = useNavigate();
 
   // Cities for the dropdown
   const cities = ['Pune', 'Mumbai', 'Bengaluru', 'Delhi', 'Chennai', 'Hyderabad', 'Kolkata', 'Ahmedabad'];
@@ -188,6 +189,7 @@ const Navbar = () => {
                     setIsMobileMenuOpen(false);
                     handleLogout();
                     trackInteraction('click', 'mobile_logout_button');
+                    navigate("/profile");
                   }}
                   className="block w-full text-left py-3 px-4 rounded-lg text-red-600 transition-colors duration-200 text-base font-medium hover:bg-red-100 hover:text-red-700"
                 >
