@@ -65,7 +65,6 @@ const ProfilePage = () => {
         const userData = response.data.user || response.data;
         setUser(userData);
         setEditForm(userData);
-        // Ensure profile photo from login is displayed
         if (userData.photo) {
           setPreviewUrl(`https://nestifyy-my3u.onrender.com/${userData.photo}`);
         }
@@ -232,10 +231,10 @@ const ProfilePage = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-16 h-16 text-blue-600 animate-spin" />
-          <p className="text-gray-700 font-medium text-lg">
+          <div className="w-16 h-16 border-4 border-maroon border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-black font-medium text-lg">
             Loading your profile...
           </p>
         </div>
@@ -246,16 +245,16 @@ const ProfilePage = () => {
   // Error state
   if (!user && error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4 border border-red-200 text-center animate-fade-in-up">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4 border border-warm-gray text-center">
           <div className="flex items-center justify-center gap-3 text-red-600 mb-6">
             <AlertCircle className="w-10 h-10" />
             <h2 className="text-2xl font-bold">Error Loading Profile</h2>
           </div>
-          <p className="text-gray-700 mb-8 text-lg">{error}</p>
+          <p className="text-black mb-8 text-lg">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg transition-all duration-300 font-bold text-lg shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-98"
+            className="w-full bg-maroon text-white py-3 px-4 rounded-lg hover:bg-deep-maroon transition-colors font-bold shadow-md"
           >
             Try Again
           </button>
@@ -267,19 +266,19 @@ const ProfilePage = () => {
   // No user state
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4 border border-yellow-200 text-center animate-fade-in-up">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4 border border-warm-gray text-center">
           <div className="flex items-center justify-center gap-3 text-yellow-600 mb-6">
             <Frown className="w-10 h-10" />
             <h2 className="text-2xl font-bold">No Profile Found</h2>
           </div>
-          <p className="text-gray-700 mb-8 text-lg">
+          <p className="text-black mb-8 text-lg">
             Please log in to view your profile or ensure the URL is correct for
             other profiles.
           </p>
           <Link
             to="/login"
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg transition-all duration-300 font-bold text-lg shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-98 flex items-center justify-center gap-2"
+            className="w-full bg-maroon text-white py-3 px-4 rounded-lg hover:bg-deep-maroon transition-colors font-bold shadow-md flex items-center justify-center gap-2"
             onClick={() =>
               trackInteraction("click", "profile_no_profile_go_login")
             }
@@ -293,51 +292,48 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream">
       <div className="max-w-7xl mx-auto px-4 py-10">
         {/* Success Message */}
         {success && (
-          <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-6 shadow-md flex items-center gap-2 animate-fade-in">
-            <CheckCircle className="w-5 h-5" />
+          <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-6 shadow-md flex items-center gap-2">
+            <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+              <div className="w-3 h-3 bg-white rounded-full"></div>
+            </div>
             <span className="font-medium">{success}</span>
           </div>
         )}
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6 shadow-md flex items-center gap-2 animate-fade-in">
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6 shadow-md flex items-center gap-2">
             <AlertCircle className="w-5 h-5" />
             <span className="font-medium">{error}</span>
           </div>
         )}
 
         {/* Profile Header */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-200">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-800 h-60 relative">
-            {/* Decorative Background Elements */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-800/20 backdrop-blur-sm"></div>
-            <div className="absolute top-10 right-10 w-32 h-32 border-4 border-white/10 rounded-full animate-pulse-slow"></div>
-            <div className="absolute bottom-10 left-10 w-24 h-24 border-4 border-white/10 rounded-full animate-pulse-slow"></div>
-            {/* Centered Profile Photo */}
-            <div className="absolute bottom-[-80px] left-1/2 transform -translate-x-1/2">
-              <div className="relative group">
-                <div className="w-40 h-40 rounded-full border-4 border-gradient-to-r from-blue-400 to-blue-600 shadow-2xl overflow-hidden transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-                  <img
-                    src={
-                      previewUrl ||
-                      (user.photo
-                        ? `https://nestifyy-my3u.onrender.com/${user.photo}`
-                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            user.name
-                          )}&size=160&background=2563EB&color=FFFFFF`)
-                    }
-                    alt="Profile"
-                    className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
-                  />
-                </div>
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-warm-gray">
+          <div className="bg-gradient-to-r from-maroon via-deep-maroon to-black h-48 relative">
+            <div className="absolute top-10 right-10 w-32 h-32 border-2 border-cream rounded-full opacity-20"></div>
+            <div className="absolute bottom-10 left-10 w-24 h-24 border-2 border-cream rounded-full opacity-30"></div>
+            <div className="absolute -bottom-16 left-8">
+              <div className="relative">
+                <img
+                  src={
+                    previewUrl ||
+                    (user.photo
+                      ? `https://nestifyy-my3u.onrender.com/${user.photo}`
+                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          user.name
+                        )}&size=128&background=004dc3&color=FFFFFF`)
+                  }
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
+                />
                 {isEditing && !id && (
-                  <label className="absolute bottom-3 right-3 bg-blue-600 rounded-full p-3 cursor-pointer shadow-lg hover:bg-blue-700 transition-all duration-300 group-hover:scale-110 z-10">
-                    <Camera className="w-5 h-5 text-white" />
+                  <label className="absolute bottom-0 right-0 bg-maroon rounded-full p-2 cursor-pointer shadow-lg hover:bg-deep-maroon transition-colors">
+                    <Camera className="w-4 h-4 text-white" />
                     <input
                       type="file"
                       accept="image/*"
@@ -349,10 +345,10 @@ const ProfilePage = () => {
               </div>
             </div>
           </div>
-          <div className="pt-24 pb-8 px-8">
+          <div className="pt-20 pb-8 px-8">
             <div className="flex justify-between items-start flex-wrap gap-4">
-              <div className="flex-1 text-center md:text-left">
-                <div className="flex items-center justify-center md:justify-start gap-2">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
                   {isEditing ? (
                     <input
                       type="text"
@@ -360,40 +356,40 @@ const ProfilePage = () => {
                       onChange={(e) =>
                         handleInputChange("name", e.target.value)
                       }
-                      className="text-3xl font-bold text-gray-800 bg-transparent border-b-2 border-blue-200 focus:border-blue-600 outline-none w-full max-w-md"
+                      className="text-3xl font-bold text-black bg-transparent border-b-2 border-maroon/20 focus:border-maroon outline-none w-full"
                       placeholder="Enter your name"
                     />
                   ) : (
-                    <h1 className="text-3xl font-bold text-gray-800">
+                    <h1 className="text-3xl font-bold text-black">
                       {user.name}
                     </h1>
                   )}
                 </div>
-                <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
-                  <div className="flex items-center text-gray-700 flex-shrink-0">
-                    <Mail className="w-4 h-4 mr-2 text-blue-600" />
+                <div className="flex flex-wrap gap-4 mt-2">
+                  <div className="flex items-center text-black">
+                    <Mail className="w-4 h-4 mr-2 text-maroon" />
                     <span className="break-all">{user.email}</span>
                   </div>
                   {user.number && (
-                    <div className="flex items-center text-gray-700">
-                      <Phone className="w-4 h-4 mr-2 text-blue-600" />
+                    <div className="flex items-center text-black">
+                      <Phone className="w-4 h-4 mr-2 text-maroon" />
                       <span>{user.number}</span>
                     </div>
                   )}
                   {user.location && (
-                    <div className="flex items-center text-gray-700">
-                      <MapPin className="w-4 h-4 mr-2 text-blue-600" />
+                    <div className="flex items-center text-black">
+                      <MapPin className="w-4 h-4 mr-2 text-maroon" />
                       <span>{user.location}</span>
                     </div>
                   )}
                 </div>
               </div>
-              <div className="flex gap-2 justify-center md:justify-end">
+              <div className="flex gap-2">
                 {!isEditing ? (
                   <>
                     <Link
                       to="/"
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold cursor-pointer transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      className="flex items-center gap-2 bg-warm-gray text-black px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors font-bold shadow-md"
                       onClick={() =>
                         trackInteraction("click", "profile_back_to_home")
                       }
@@ -407,7 +403,7 @@ const ProfilePage = () => {
                           setIsEditing(true);
                           trackInteraction("click", "profile_toggle_edit");
                         }}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-bold shadow-md"
+                        className="flex items-center gap-2 bg-maroon text-white px-4 py-2 rounded-lg hover:bg-deep-maroon transition-colors font-bold shadow-md"
                       >
                         <Edit3 className="w-4 h-4" />
                         Edit Profile
@@ -419,7 +415,7 @@ const ProfilePage = () => {
                     <button
                       onClick={handleCancel}
                       disabled={saveLoading}
-                      className="flex items-center gap-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 font-bold"
+                      className="flex items-center gap-2 bg-warm-gray text-black px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors disabled:opacity-50 font-bold"
                     >
                       <X className="w-4 h-4" />
                       Cancel
@@ -427,7 +423,7 @@ const ProfilePage = () => {
                     <button
                       onClick={handleSave}
                       disabled={saveLoading}
-                      className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-bold"
+                      className="flex items-center gap-2 bg-maroon text-white px-4 py-2 rounded-lg hover:bg-deep-maroon transition-colors disabled:opacity-50 font-bold"
                     >
                       {saveLoading ? (
                         <>
@@ -449,36 +445,36 @@ const ProfilePage = () => {
         </div>
 
         {/* Profile Information */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid md:grid-cols-3 gap-8 mb-8">
           {/* Personal Information */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="md:col-span-2 bg-white rounded-2xl shadow-xl overflow-hidden border border-warm-gray">
             <div
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 flex items-center justify-between cursor-pointer"
+              className="bg-gradient-to-r from-maroon to-light-maroon px-6 py-4 flex items-center justify-between cursor-pointer"
               onClick={() => toggleSection("personal")}
             >
-              <h2 className="text-lg font-semibold text-white flex items-center">
-                <User className="w-4 h-4 mr-2" />
+              <h2 className="text-xl font-bold text-maroon flex items-center">
+                <User className="w-5 h-5 mr-2" />
                 Personal Information
               </h2>
               {expandedSections.personal ? (
-                <ChevronUp className="w-4 h-4 text-white" />
+                <ChevronUp className="w-5 h-5 text-maroon" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-white" />
+                <ChevronDown className="w-5 h-5 text-maroon" />
               )}
             </div>
             {expandedSections.personal && (
-              <div className="p-4 sm:p-6">
-                <div className="grid gap-4 sm:grid-cols-2">
+              <div className="p-6">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-xl p-4">
-                      <h3 className="font-semibold text-blue-600 mb-2 flex items-center">
+                    <div className="bg-cream rounded-xl p-4 border border-warm-gray">
+                      <h3 className="font-semibold text-maroon mb-3 flex items-center">
                         <User className="w-4 h-4 mr-2" />
                         Basic Details
                       </h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                          <User className="w-4 h-4 text-blue-600" />
-                          <span className="w-20 font-medium text-gray-700">
+                      <div className="space-y-4">
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <User className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-24 flex-shrink-0 font-medium">
                             Gender:
                           </span>
                           {isEditing ? (
@@ -487,7 +483,7 @@ const ProfilePage = () => {
                               onChange={(e) =>
                                 handleInputChange("gender", e.target.value)
                               }
-                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
                             >
                               <option value="">Select Gender</option>
                               <option value="Male">Male</option>
@@ -495,14 +491,14 @@ const ProfilePage = () => {
                               <option value="Other">Other</option>
                             </select>
                           ) : (
-                            <span className="text-gray-600">
+                            <span className="text-black ml-2">
                               {user.gender || "Not specified"}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3">
-                          <GraduationCap className="w-4 h-4 text-blue-600" />
-                          <span className="w-20 font-medium text-gray-700">
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <GraduationCap className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-24 flex-shrink-0 font-medium">
                             Age:
                           </span>
                           {isEditing ? (
@@ -512,20 +508,20 @@ const ProfilePage = () => {
                               onChange={(e) =>
                                 handleInputChange("age", e.target.value)
                               }
-                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
                               placeholder="Enter age"
                               min="1"
                               max="120"
                             />
                           ) : (
-                            <span className="text-gray-600">
+                            <span className="text-black ml-2">
                               {user.age || "Not specified"}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Briefcase className="w-4 h-4 text-blue-600" />
-                          <span className="w-20 font-medium text-gray-700">
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <Briefcase className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-24 flex-shrink-0 font-medium">
                             Profession:
                           </span>
                           {isEditing ? (
@@ -535,11 +531,11 @@ const ProfilePage = () => {
                               onChange={(e) =>
                                 handleInputChange("profession", e.target.value)
                               }
-                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
                               placeholder="Enter profession"
                             />
                           ) : (
-                            <span className="text-gray-600">
+                            <span className="text-black ml-2">
                               {user.profession || "Not specified"}
                             </span>
                           )}
@@ -548,15 +544,15 @@ const ProfilePage = () => {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-xl p-4">
-                      <h3 className="font-semibold text-blue-600 mb-2 flex items-center">
+                    <div className="bg-cream rounded-xl p-4 border border-warm-gray">
+                      <h3 className="font-semibold text-maroon mb-3 flex items-center">
                         <MapPin className="w-4 h-4 mr-2" />
                         Contact Information
                       </h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                          <Mail className="w-4 h-4 text-blue-600" />
-                          <span className="w-20 font-medium text-gray-700">
+                      <div className="space-y-4">
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <Mail className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-24 flex-shrink-0 font-medium">
                             Email:
                           </span>
                           {isEditing ? (
@@ -566,16 +562,16 @@ const ProfilePage = () => {
                               onChange={(e) =>
                                 handleInputChange("email", e.target.value)
                               }
-                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
                               placeholder="Enter email"
                             />
                           ) : (
-                            <span className="text-gray-600">{user.email}</span>
+                            <span className="text-black ml-2">{user.email}</span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Phone className="w-4 h-4 text-blue-600" />
-                          <span className="w-20 font-medium text-gray-700">
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <Phone className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-24 flex-shrink-0 font-medium">
                             Phone:
                           </span>
                           {isEditing ? (
@@ -585,18 +581,18 @@ const ProfilePage = () => {
                               onChange={(e) =>
                                 handleInputChange("number", e.target.value)
                               }
-                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
                               placeholder="Enter phone number"
                             />
                           ) : (
-                            <span className="text-gray-600">
+                            <span className="text-black ml-2">
                               {user.number || "Not specified"}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3">
-                          <MapPin className="w-4 h-4 text-blue-600" />
-                          <span className="w-20 font-medium text-gray-700">
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <MapPin className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-24 flex-shrink-0 font-medium">
                             Location:
                           </span>
                           {isEditing ? (
@@ -606,11 +602,11 @@ const ProfilePage = () => {
                               onChange={(e) =>
                                 handleInputChange("location", e.target.value)
                               }
-                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
                               placeholder="Enter location"
                             />
                           ) : (
-                            <span className="text-gray-600">
+                            <span className="text-black ml-2">
                               {user.location || "Not specified"}
                             </span>
                           )}
@@ -624,12 +620,12 @@ const ProfilePage = () => {
           </div>
 
           {/* Role-Specific Information */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-warm-gray">
             <div
-              className="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4 flex items-center justify-between cursor-pointer"
+              className="bg-gradient-to-r from-maroon to-light-maroon px-6 py-4 flex items-center justify-between cursor-pointer"
               onClick={() => toggleSection("roleSpecific")}
             >
-              <h2 className="text-xl font-bold text-white flex items-center">
+              <h2 className="text-xl font-bold text-maroon flex items-center">
                 {user.role === "broker" ? (
                   <Briefcase className="w-5 h-5 mr-2" />
                 ) : (
@@ -640,190 +636,193 @@ const ProfilePage = () => {
                   : "User Preferences"}
               </h2>
               {expandedSections.roleSpecific ? (
-                <ChevronUp className="w-5 h-5 text-white" />
+                <ChevronUp className="w-5 h-5 text-maroon" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-white" />
+                <ChevronDown className="w-5 h-5 text-maroon" />
               )}
             </div>
             {expandedSections.roleSpecific && (
               <div className="p-6">
                 {user.role === "broker" && user.brokerInfo ? (
                   <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                      <h3 className="font-semibold text-blue-600 mb-3 flex items-center">
+                    <div className="bg-cream rounded-xl p-4 border border-warm-gray">
+                      <h3 className="font-semibold text-maroon mb-3 flex items-center">
                         <Briefcase className="w-4 h-4 mr-2" />
                         Broker Details
                       </h3>
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <Briefcase className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
-                          Clients Handled:
-                        </span>
-                        {isEditing ? (
-                          <input
-                            type="number"
-                            value={editForm.brokerInfo?.clientsHandled || ""}
-                            onChange={(e) =>
-                              handleNestedInputChange(
-                                "brokerInfo",
-                                "clientsHandled",
-                                e.target.value
-                              )
-                            }
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter clients handled"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">
-                            {user.brokerInfo.clientsHandled || "Not specified"}
+                      <div className="space-y-4">
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <Briefcase className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-28 flex-shrink-0 font-medium">
+                            Clients Handled:
                           </span>
-                        )}
-                      </div>
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <Briefcase className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
-                          Properties Sold:
-                        </span>
-                        {isEditing ? (
-                          <input
-                            type="number"
-                            value={editForm.brokerInfo?.propertiesSold || ""}
-                            onChange={(e) =>
-                              handleNestedInputChange(
-                                "brokerInfo",
-                                "propertiesSold",
-                                e.target.value
-                              )
-                            }
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter properties sold"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">
-                            {user.brokerInfo.propertiesSold || "Not specified"}
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editForm.brokerInfo?.clientsHandled || ""}
+                              onChange={(e) =>
+                                handleNestedInputChange(
+                                  "brokerInfo",
+                                  "clientsHandled",
+                                  e.target.value
+                                )
+                              }
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              placeholder="Enter clients handled"
+                            />
+                          ) : (
+                            <span className="text-black ml-2">
+                              {user.brokerInfo.clientsHandled || "Not specified"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <Briefcase className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-28 flex-shrink-0 font-medium">
+                            Properties Sold:
                           </span>
-                        )}
-                      </div>
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <Briefcase className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
-                          Experience:
-                        </span>
-                        {isEditing ? (
-                          <input
-                            type="number"
-                            value={editForm.brokerInfo?.experience || ""}
-                            onChange={(e) =>
-                              handleNestedInputChange(
-                                "brokerInfo",
-                                "experience",
-                                e.target.value
-                              )
-                            }
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter years of experience"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">
-                            {user.brokerInfo.experience || "Not specified"}{" "}
-                            years
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editForm.brokerInfo?.propertiesSold || ""}
+                              onChange={(e) =>
+                                handleNestedInputChange(
+                                  "brokerInfo",
+                                  "propertiesSold",
+                                  e.target.value
+                                )
+                              }
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              placeholder="Enter properties sold"
+                            />
+                          ) : (
+                            <span className="text-black ml-2">
+                              {user.brokerInfo.propertiesSold || "Not specified"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <Briefcase className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-28 flex-shrink-0 font-medium">
+                            Experience:
                           </span>
-                        )}
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editForm.brokerInfo?.experience || ""}
+                              onChange={(e) =>
+                                handleNestedInputChange(
+                                  "brokerInfo",
+                                  "experience",
+                                  e.target.value
+                                )
+                              }
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              placeholder="Enter years of experience"
+                            />
+                          ) : (
+                            <span className="text-black ml-2">
+                              {user.brokerInfo.experience || "Not specified"} years
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
                 ) : user.role === "user" && user.preferences ? (
                   <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                      <h3 className="font-semibold text-blue-600 mb-3 flex items-center">
+                    <div className="bg-cream rounded-xl p-4 border border-warm-gray">
+                      <h3 className="font-semibold text-maroon mb-3 flex items-center">
                         <GraduationCap className="w-4 h-4 mr-2" />
                         User Preferences
                       </h3>
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <MapPin className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
-                          Property Type:
-                        </span>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editForm.preferences?.propertyType || ""}
-                            onChange={(e) =>
-                              handleNestedInputChange(
-                                "preferences",
-                                "propertyType",
-                                e.target.value
-                              )
-                            }
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter preferred property type"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">
-                            {user.preferences.propertyType || "Not specified"}
+                      <div className="space-y-4">
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <MapPin className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-28 flex-shrink-0 font-medium">
+                            Property Type:
                           </span>
-                        )}
-                      </div>
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <MapPin className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
-                          Location:
-                        </span>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editForm.preferences?.location || ""}
-                            onChange={(e) =>
-                              handleNestedInputChange(
-                                "preferences",
-                                "location",
-                                e.target.value
-                              )
-                            }
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter preferred location"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">
-                            {user.preferences.location || "Not specified"}
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editForm.preferences?.propertyType || ""}
+                              onChange={(e) =>
+                                handleNestedInputChange(
+                                  "preferences",
+                                  "propertyType",
+                                  e.target.value
+                                )
+                              }
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              placeholder="Enter preferred property type"
+                            />
+                          ) : (
+                            <span className="text-black ml-2">
+                              {user.preferences.propertyType || "Not specified"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <MapPin className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-28 flex-shrink-0 font-medium">
+                            Location:
                           </span>
-                        )}
-                      </div>
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <MapPin className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
-                          Budget:
-                        </span>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editForm.preferences?.budget || ""}
-                            onChange={(e) =>
-                              handleNestedInputChange(
-                                "preferences",
-                                "budget",
-                                e.target.value
-                              )
-                            }
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter budget"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">
-                            {user.preferences.budget || "Not specified"}
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editForm.preferences?.location || ""}
+                              onChange={(e) =>
+                                handleNestedInputChange(
+                                  "preferences",
+                                  "location",
+                                  e.target.value
+                                )
+                              }
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              placeholder="Enter preferred location"
+                            />
+                          ) : (
+                            <span className="text-black ml-2">
+                              {user.preferences.location || "Not specified"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
+                          <MapPin className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
+                          <span className="text-black w-28 flex-shrink-0 font-medium">
+                            Budget:
                           </span>
-                        )}
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editForm.preferences?.budget || ""}
+                              onChange={(e) =>
+                                handleNestedInputChange(
+                                  "preferences",
+                                  "budget",
+                                  e.target.value
+                                )
+                              }
+                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              placeholder="Enter budget"
+                            />
+                          ) : (
+                            <span className="text-black ml-2">
+                              {user.preferences.budget || "Not specified"}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <div className="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Frown className="w-12 h-12 text-blue-600" />
+                    <div className="bg-cream w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Frown className="w-12 h-12 text-maroon" />
                     </div>
-                    <p className="text-gray-700 font-medium">
-                      No {user.role === "broker" ? "broker" : "user"}{" "}
-                      information available.
+                    <p className="text-black font-medium">
+                      No {user.role === "broker" ? "broker" : "user"} information
+                      available.
                     </p>
                   </div>
                 )}
@@ -837,7 +836,7 @@ const ProfilePage = () => {
           {user.email && (
             <a
               href={`mailto:${user.email}`}
-              className="bg-gray-100 text-blue-600 border border-blue-600 py-2 px-6 rounded-lg hover:bg-blue-600 hover:text-white transition-colors font-medium inline-flex items-center gap-2"
+              className="bg-cream text-maroon border border-maroon py-2 px-6 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium inline-flex items-center gap-2"
               onClick={() =>
                 trackInteraction("click", "contact_user_email", {
                   userId: user._id,
@@ -851,7 +850,7 @@ const ProfilePage = () => {
           {user.number && (
             <a
               href={`tel:${user.number}`}
-              className="bg-gray-100 text-blue-600 border border-blue-600 py-2 px-6 rounded-lg hover:bg-blue-600 hover:text-white transition-colors font-medium inline-flex items-center gap-2"
+              className="bg-cream text-maroon border border-maroon py-2 px-6 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium inline-flex items-center gap-2"
               onClick={() =>
                 trackInteraction("click", "contact_user_phone", {
                   userId: user._id,
@@ -868,7 +867,7 @@ const ProfilePage = () => {
                 trackInteraction("click", "view_dashboard");
                 navigate("/dashboard");
               }}
-              className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium inline-flex items-center gap-2"
+              className="bg-maroon text-white py-2 px-6 rounded-lg hover:bg-deep-maroon transition-colors font-medium inline-flex items-center gap-2"
             >
               <User className="w-4 h-4" />
               View Dashboard
@@ -878,30 +877,23 @@ const ProfilePage = () => {
 
         {/* Inline CSS */}
         <style>{`
-          .animate-fade-in-up { animation: fade-in-up 0.6s ease-out forwards; }
-          @keyframes fade-in-up {
-            from {
-              opacity: 0;
-              transform: translateY(10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          .animate-pulse-slow {
-            animation: pulse-slow 4s infinite;
-          }
-          @keyframes pulse-slow {
-            0%, 100% {
-              opacity: 0.15;
-              transform: scale(1);
-            }
-            50% {
-              opacity: 0.3;
-              transform: scale(1.05);
-            }
-          }
+          .bg-maroon { background-color: #004dc3; }
+          .bg-cream { background-color: #FFF5E1; }
+          .bg-light-maroon { background-color: #A83232; }
+          .bg-deep-maroon { background-color: #660000; }
+          .bg-warm-gray { background-color: #CCCCCC; }
+          .text-maroon { color: #ffffff; }
+          .text-cream { color: #FFF5E1; }
+          .text-light-maroon { color: #A83232; }
+          .text-deep-maroon { color: #660000; }
+          .text-warm-gray { color: #999999; }
+          .border-maroon { border-color: #004dc3; }
+          .border-warm-gray { border-color: #CCCCCC; }
+          .hover\\:bg-maroon:hover { background-color: #004dc3; }
+          .hover\\:bg-deep-maroon:hover { background-color: #660000; }
+          .hover\\:bg-gray-400:hover { background-color: #A0AEC0; }
+          .focus\\:border-maroon:focus { border-color: #004dc3; }
+          .focus\\:ring-light-maroon\\/20:focus { --tw-ring-color: rgba(168, 50, 50, 0.2); }
         `}</style>
       </div>
     </div>
