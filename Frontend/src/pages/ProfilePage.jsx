@@ -303,13 +303,14 @@ const ProfilePage = () => {
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-200">
           <div className="bg-gradient-to-r from-blue-600 to-blue-800 h-60 relative">
-            {/* Decorative Elements */}
-            <div className="absolute top-10 right-10 w-32 h-32 border-2 border-gray-100 rounded-full opacity-20 animate-pulse"></div>
-            <div className="absolute bottom-10 left-10 w-24 h-24 border-2 border-gray-100 rounded-full opacity-30 animate-pulse"></div>
-            {/* Centered Profile Picture with Enhanced UI */}
+            {/* Decorative Background Elements */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-800/20 backdrop-blur-sm"></div>
+            <div className="absolute top-10 right-10 w-32 h-32 border-4 border-white/10 rounded-full animate-pulse-slow"></div>
+            <div className="absolute bottom-10 left-10 w-24 h-24 border-4 border-white/10 rounded-full animate-pulse-slow"></div>
+            {/* Centered Profile Photo */}
             <div className="absolute bottom-[-80px] left-1/2 transform -translate-x-1/2">
               <div className="relative group">
-                <div className="w-40 h-40 rounded-full border-4 border-white shadow-2xl overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                <div className="w-40 h-40 rounded-full border-4 border-gradient-to-r from-blue-400 to-blue-600 shadow-2xl overflow-hidden transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
                   <img
                     src={
                       previewUrl ||
@@ -320,11 +321,11 @@ const ProfilePage = () => {
                           )}&size=160&background=2563EB&color=FFFFFF`)
                     }
                     alt="Profile"
-                    className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-90"
+                    className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-95"
                   />
                 </div>
                 {isEditing && !id && (
-                  <label className="absolute bottom-2 right-2 bg-blue-600 rounded-full p-3 cursor-pointer shadow-lg hover:bg-blue-700 transition-all duration-300 group-hover:scale-110">
+                  <label className="absolute bottom-3 right-3 bg-blue-600 rounded-full p-3 cursor-pointer shadow-lg hover:bg-blue-700 transition-all duration-300 group-hover:scale-110 z-10">
                     <Camera className="w-5 h-5 text-white" />
                     <input
                       type="file"
@@ -793,15 +794,17 @@ const ProfilePage = () => {
               transform: translateY(0);
             }
           }
-          .animate-pulse {
-            animation: pulse 3s infinite;
+          .animate-pulse-slow {
+            animation: pulse-slow 4s infinite;
           }
-          @keyframes pulse {
+          @keyframes pulse-slow {
             0%, 100% {
-              opacity: 0.2;
+              opacity: 0.15;
+              transform: scale(1);
             }
             50% {
-              opacity: 0.4;
+              opacity: 0.3;
+              transform: scale(1.05);
             }
           }
         `}</style>
