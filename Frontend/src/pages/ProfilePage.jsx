@@ -76,7 +76,9 @@ const ProfilePage = () => {
       } catch (err) {
         console.error("Profile fetch error:", err);
         const errorMessage =
-          err.response?.data?.message || err.message || "Failed to fetch profile";
+          err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch profile";
         setError(errorMessage);
         trackInteraction("data_fetch", "profile_failure", {
           userId: id || "current_user",
@@ -195,7 +197,9 @@ const ProfilePage = () => {
     } catch (err) {
       console.error("Profile update error:", err);
       const errorMessage =
-        err.response?.data?.message || err.message || "Failed to update profile";
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to update profile";
       setError(errorMessage);
       trackInteraction("profile_management", "profile_update_failure", {
         error: errorMessage,
@@ -218,7 +222,9 @@ const ProfilePage = () => {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
     }
-    setPreviewUrl(user?.photo ? `https://nestifyy-my3u.onrender.com/${user.photo}` : "");
+    setPreviewUrl(
+      user?.photo ? `https://nestifyy-my3u.onrender.com/${user.photo}` : ""
+    );
     setSelectedFile(null);
     trackInteraction("click", "profile_cancel_edit");
   };
@@ -229,7 +235,9 @@ const ProfilePage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-16 h-16 text-blue-600 animate-spin" />
-          <p className="text-gray-700 font-medium text-lg">Loading your profile...</p>
+          <p className="text-gray-700 font-medium text-lg">
+            Loading your profile...
+          </p>
         </div>
       </div>
     );
@@ -266,12 +274,15 @@ const ProfilePage = () => {
             <h2 className="text-2xl font-bold">No Profile Found</h2>
           </div>
           <p className="text-gray-700 mb-8 text-lg">
-            Please log in to view your profile or ensure the URL is correct for other profiles.
+            Please log in to view your profile or ensure the URL is correct for
+            other profiles.
           </p>
           <Link
             to="/login"
             className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg transition-all duration-300 font-bold text-lg shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-98 flex items-center justify-center gap-2"
-            onClick={() => trackInteraction("click", "profile_no_profile_go_login")}
+            onClick={() =>
+              trackInteraction("click", "profile_no_profile_go_login")
+            }
           >
             <ArrowLeft className="w-5 h-5" />
             Go to Login
@@ -346,12 +357,16 @@ const ProfilePage = () => {
                     <input
                       type="text"
                       value={editForm.name || ""}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
                       className="text-3xl font-bold text-gray-800 bg-transparent border-b-2 border-blue-200 focus:border-blue-600 outline-none w-full max-w-md"
                       placeholder="Enter your name"
                     />
                   ) : (
-                    <h1 className="text-3xl font-bold text-gray-800">{user.name}</h1>
+                    <h1 className="text-3xl font-bold text-gray-800">
+                      {user.name}
+                    </h1>
                   )}
                 </div>
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
@@ -379,7 +394,9 @@ const ProfilePage = () => {
                     <Link
                       to="/"
                       className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold cursor-pointer transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      onClick={() => trackInteraction("click", "profile_back_to_home")}
+                      onClick={() =>
+                        trackInteraction("click", "profile_back_to_home")
+                      }
                     >
                       <ArrowLeft className="w-4 h-4" />
                       Back to Home
@@ -432,142 +449,172 @@ const ProfilePage = () => {
         </div>
 
         {/* Profile Information */}
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
+        <div className="grid gap-6 lg:grid-cols-3">
           {/* Personal Information */}
-          <div className="md:col-span-2 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg overflow-hidden">
             <div
-              className="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4 flex items-center justify-between cursor-pointer"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 flex items-center justify-between cursor-pointer"
               onClick={() => toggleSection("personal")}
             >
-              <h2 className="text-xl font-bold text-white flex items-center">
-                <User className="w-5 h-5 mr-2" />
+              <h2 className="text-lg font-semibold text-white flex items-center">
+                <User className="w-4 h-4 mr-2" />
                 Personal Information
               </h2>
               {expandedSections.personal ? (
-                <ChevronUp className="w-5 h-5 text-white" />
+                <ChevronUp className="w-4 h-4 text-white" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-white" />
+                <ChevronDown className="w-4 h-4 text-white" />
               )}
             </div>
             {expandedSections.personal && (
-              <div className="p-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Left Column */}
+              <div className="p-4 sm:p-6">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                      <h3 className="font-semibold text-blue-600 mb-3 flex items-center">
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <h3 className="font-semibold text-blue-600 mb-2 flex items-center">
                         <User className="w-4 h-4 mr-2" />
                         Basic Details
                       </h3>
-                      {/* Gender */}
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <User className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-24 flex-shrink-0 font-medium">Gender:</span>
-                        {isEditing ? (
-                          <select
-                            value={editForm.gender || ""}
-                            onChange={(e) => handleInputChange("gender", e.target.value)}
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                          >
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                          </select>
-                        ) : (
-                          <span className="text-gray-700 ml-2">{user.gender || "Not specified"}</span>
-                        )}
-                      </div>
-                      {/* Age */}
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <GraduationCap className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-24 flex-shrink-0 font-medium">Age:</span>
-                        {isEditing ? (
-                          <input
-                            type="number"
-                            value={editForm.age || ""}
-                            onChange={(e) => handleInputChange("age", e.target.value)}
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter age"
-                            min="1"
-                            max="120"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">{user.age || "Not specified"}</span>
-                        )}
-                      </div>
-                      {/* Profession */}
-                      <div className="flex items-start p-3 hover:bg-white rounded-lg transition-colors">
-                        <Briefcase className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0 mt-1" />
-                        <span className="text-gray-700 w-24 flex-shrink-0 font-medium">Profession:</span>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editForm.profession || ""}
-                            onChange={(e) => handleInputChange("profession", e.target.value)}
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter profession"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">{user.profession || "Not specified"}</span>
-                        )}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <User className="w-4 h-4 text-blue-600" />
+                          <span className="w-20 font-medium text-gray-700">
+                            Gender:
+                          </span>
+                          {isEditing ? (
+                            <select
+                              value={editForm.gender || ""}
+                              onChange={(e) =>
+                                handleInputChange("gender", e.target.value)
+                              }
+                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                            >
+                              <option value="">Select Gender</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Other">Other</option>
+                            </select>
+                          ) : (
+                            <span className="text-gray-600">
+                              {user.gender || "Not specified"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <GraduationCap className="w-4 h-4 text-blue-600" />
+                          <span className="w-20 font-medium text-gray-700">
+                            Age:
+                          </span>
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editForm.age || ""}
+                              onChange={(e) =>
+                                handleInputChange("age", e.target.value)
+                              }
+                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              placeholder="Enter age"
+                              min="1"
+                              max="120"
+                            />
+                          ) : (
+                            <span className="text-gray-600">
+                              {user.age || "Not specified"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Briefcase className="w-4 h-4 text-blue-600" />
+                          <span className="w-20 font-medium text-gray-700">
+                            Profession:
+                          </span>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editForm.profession || ""}
+                              onChange={(e) =>
+                                handleInputChange("profession", e.target.value)
+                              }
+                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              placeholder="Enter profession"
+                            />
+                          ) : (
+                            <span className="text-gray-600">
+                              {user.profession || "Not specified"}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                  {/* Right Column */}
                   <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                      <h3 className="font-semibold text-blue-600 mb-3 flex items-center">
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <h3 className="font-semibold text-blue-600 mb-2 flex items-center">
                         <MapPin className="w-4 h-4 mr-2" />
                         Contact Information
                       </h3>
-                      {/* Email */}
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <Mail className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-24 flex-shrink-0 font-medium">Email:</span>
-                        {isEditing ? (
-                          <input
-                            type="email"
-                            value={editForm.email || ""}
-                            onChange={(e) => handleInputChange("email", e.target.value)}
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter email"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">{user.email}</span>
-                        )}
-                      </div>
-                      {/* Phone Number */}
-                      <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                        <Phone className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-24 flex-shrink-0 font-medium">Phone:</span>
-                        {isEditing ? (
-                          <input
-                            type="tel"
-                            value={editForm.number || ""}
-                            onChange={(e) => handleInputChange("number", e.target.value)}
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter phone number"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">{user.number || "Not specified"}</span>
-                        )}
-                      </div>
-                      {/* Location */}
-                      <div className="flex items-start p-3 hover:bg-white rounded-lg transition-colors">
-                        <MapPin className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0 mt-1" />
-                        <span className="text-gray-700 w-24 flex-shrink-0 font-medium">Location:</span>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editForm.location || ""}
-                            onChange={(e) => handleInputChange("location", e.target.value)}
-                            className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                            placeholder="Enter location"
-                          />
-                        ) : (
-                          <span className="text-gray-700 ml-2">{user.location || "Not specified"}</span>
-                        )}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Mail className="w-4 h-4 text-blue-600" />
+                          <span className="w-20 font-medium text-gray-700">
+                            Email:
+                          </span>
+                          {isEditing ? (
+                            <input
+                              type="email"
+                              value={editForm.email || ""}
+                              onChange={(e) =>
+                                handleInputChange("email", e.target.value)
+                              }
+                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              placeholder="Enter email"
+                            />
+                          ) : (
+                            <span className="text-gray-600">{user.email}</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Phone className="w-4 h-4 text-blue-600" />
+                          <span className="w-20 font-medium text-gray-700">
+                            Phone:
+                          </span>
+                          {isEditing ? (
+                            <input
+                              type="tel"
+                              value={editForm.number || ""}
+                              onChange={(e) =>
+                                handleInputChange("number", e.target.value)
+                              }
+                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              placeholder="Enter phone number"
+                            />
+                          ) : (
+                            <span className="text-gray-600">
+                              {user.number || "Not specified"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <MapPin className="w-4 h-4 text-blue-600" />
+                          <span className="w-20 font-medium text-gray-700">
+                            Location:
+                          </span>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={editForm.location || ""}
+                              onChange={(e) =>
+                                handleInputChange("location", e.target.value)
+                              }
+                              className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none"
+                              placeholder="Enter location"
+                            />
+                          ) : (
+                            <span className="text-gray-600">
+                              {user.location || "Not specified"}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -588,7 +635,9 @@ const ProfilePage = () => {
                 ) : (
                   <User className="w-5 h-5 mr-2" />
                 )}
-                {user.role === "broker" ? "Broker Information" : "User Preferences"}
+                {user.role === "broker"
+                  ? "Broker Information"
+                  : "User Preferences"}
               </h2>
               {expandedSections.roleSpecific ? (
                 <ChevronUp className="w-5 h-5 text-white" />
@@ -607,13 +656,19 @@ const ProfilePage = () => {
                       </h3>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
                         <Briefcase className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">Clients Handled:</span>
+                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
+                          Clients Handled:
+                        </span>
                         {isEditing ? (
                           <input
                             type="number"
                             value={editForm.brokerInfo?.clientsHandled || ""}
                             onChange={(e) =>
-                              handleNestedInputChange("brokerInfo", "clientsHandled", e.target.value)
+                              handleNestedInputChange(
+                                "brokerInfo",
+                                "clientsHandled",
+                                e.target.value
+                              )
                             }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter clients handled"
@@ -626,13 +681,19 @@ const ProfilePage = () => {
                       </div>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
                         <Briefcase className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">Properties Sold:</span>
+                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
+                          Properties Sold:
+                        </span>
                         {isEditing ? (
                           <input
                             type="number"
                             value={editForm.brokerInfo?.propertiesSold || ""}
                             onChange={(e) =>
-                              handleNestedInputChange("brokerInfo", "propertiesSold", e.target.value)
+                              handleNestedInputChange(
+                                "brokerInfo",
+                                "propertiesSold",
+                                e.target.value
+                              )
                             }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter properties sold"
@@ -645,20 +706,27 @@ const ProfilePage = () => {
                       </div>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
                         <Briefcase className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">Experience:</span>
+                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
+                          Experience:
+                        </span>
                         {isEditing ? (
                           <input
                             type="number"
                             value={editForm.brokerInfo?.experience || ""}
                             onChange={(e) =>
-                              handleNestedInputChange("brokerInfo", "experience", e.target.value)
+                              handleNestedInputChange(
+                                "brokerInfo",
+                                "experience",
+                                e.target.value
+                              )
                             }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter years of experience"
                           />
                         ) : (
                           <span className="text-gray-700 ml-2">
-                            {user.brokerInfo.experience || "Not specified"} years
+                            {user.brokerInfo.experience || "Not specified"}{" "}
+                            years
                           </span>
                         )}
                       </div>
@@ -673,13 +741,19 @@ const ProfilePage = () => {
                       </h3>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
                         <MapPin className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">Property Type:</span>
+                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
+                          Property Type:
+                        </span>
                         {isEditing ? (
                           <input
                             type="text"
                             value={editForm.preferences?.propertyType || ""}
                             onChange={(e) =>
-                              handleNestedInputChange("preferences", "propertyType", e.target.value)
+                              handleNestedInputChange(
+                                "preferences",
+                                "propertyType",
+                                e.target.value
+                              )
                             }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter preferred property type"
@@ -692,13 +766,19 @@ const ProfilePage = () => {
                       </div>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
                         <MapPin className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">Location:</span>
+                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
+                          Location:
+                        </span>
                         {isEditing ? (
                           <input
                             type="text"
                             value={editForm.preferences?.location || ""}
                             onChange={(e) =>
-                              handleNestedInputChange("preferences", "location", e.target.value)
+                              handleNestedInputChange(
+                                "preferences",
+                                "location",
+                                e.target.value
+                              )
                             }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter preferred location"
@@ -711,13 +791,19 @@ const ProfilePage = () => {
                       </div>
                       <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
                         <MapPin className="w-5 h-5 mr-3 text-blue-600 flex-shrink-0" />
-                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">Budget:</span>
+                        <span className="text-gray-700 w-28 flex-shrink-0 font-medium">
+                          Budget:
+                        </span>
                         {isEditing ? (
                           <input
                             type="text"
                             value={editForm.preferences?.budget || ""}
                             onChange={(e) =>
-                              handleNestedInputChange("preferences", "budget", e.target.value)
+                              handleNestedInputChange(
+                                "preferences",
+                                "budget",
+                                e.target.value
+                              )
                             }
                             className="flex-1 ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
                             placeholder="Enter budget"
@@ -736,7 +822,8 @@ const ProfilePage = () => {
                       <Frown className="w-12 h-12 text-blue-600" />
                     </div>
                     <p className="text-gray-700 font-medium">
-                      No {user.role === "broker" ? "broker" : "user"} information available.
+                      No {user.role === "broker" ? "broker" : "user"}{" "}
+                      information available.
                     </p>
                   </div>
                 )}
@@ -751,7 +838,11 @@ const ProfilePage = () => {
             <a
               href={`mailto:${user.email}`}
               className="bg-gray-100 text-blue-600 border border-blue-600 py-2 px-6 rounded-lg hover:bg-blue-600 hover:text-white transition-colors font-medium inline-flex items-center gap-2"
-              onClick={() => trackInteraction("click", "contact_user_email", { userId: user._id })}
+              onClick={() =>
+                trackInteraction("click", "contact_user_email", {
+                  userId: user._id,
+                })
+              }
             >
               <Mail className="w-4 h-4" />
               Contact by Email
@@ -761,7 +852,11 @@ const ProfilePage = () => {
             <a
               href={`tel:${user.number}`}
               className="bg-gray-100 text-blue-600 border border-blue-600 py-2 px-6 rounded-lg hover:bg-blue-600 hover:text-white transition-colors font-medium inline-flex items-center gap-2"
-              onClick={() => trackInteraction("click", "contact_user_phone", { userId: user._id })}
+              onClick={() =>
+                trackInteraction("click", "contact_user_phone", {
+                  userId: user._id,
+                })
+              }
             >
               <Phone className="w-4 h-4" />
               Call Now
