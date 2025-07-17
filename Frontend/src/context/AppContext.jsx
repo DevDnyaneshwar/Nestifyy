@@ -1,11 +1,14 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -35,7 +38,7 @@ export const AppContextProvider = ({ children }) => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
     setUserId(null);
-    window.location.href = '/login'; // or use navigate if you have access
+    navigate("/login"); 
   };
 
   const handleLogin = (token, user) => {

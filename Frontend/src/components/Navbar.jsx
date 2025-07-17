@@ -115,7 +115,8 @@ const Navbar = () => {
             <button
               onClick={() => {
                 handleLogout();
-                trackInteraction('click', 'logout_button');
+                // trackInteraction('click', 'logout_button');
+                navigate("/login");
               }}
               className="flex items-center gap-1 px-4 py-2 rounded-full bg-red-600 text-white transition-all duration-300 text-sm font-medium shadow-md hover:bg-red-700 hover:shadow-lg"
             >

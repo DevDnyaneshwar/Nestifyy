@@ -441,7 +441,7 @@ const ListPropertyPage = () => {
               name="location"
               value={formData.location}
               onChange={handleChange}
-              placeholder="e.g., https://maps.google.com/..."
+              placeholder="e.g., pune"
               className="w-full pl-12 pr-4 py-3.5 border border-border-gray-300 rounded-lg outline-none transition-all duration-200 bg-card-bg text-base shadow-sm text-text-gray-800 focus:border-primary-blue focus:ring-2 focus:ring-blue-focus-ring"
               required
               onFocus={() => trackInteraction('focus', 'list_property_location_input')}

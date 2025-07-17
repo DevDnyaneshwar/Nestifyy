@@ -102,8 +102,8 @@ const FindRoomPage = () => {
 
       filtered = filtered.filter(property => {
         const matchesLocation = filters.location
-          ? (property.location && property.location.toLowerCase().includes(filters.location.toLowerCase())) ||
-            (property.city && property.city.toLowerCase().includes(filters.location.toLowerCase()))
+          ? (property.location && property.location.includes(filters.location)) ||
+            (property.city && property.city.includes(filters.location))
           : true;
         const matchesMinPrice = filters.minPrice
           ? property.rent >= parseFloat(filters.minPrice)
@@ -277,7 +277,7 @@ const FindRoomPage = () => {
         <div className="mt-8 flex justify-center">
           <button 
             onClick={applyFilters} 
-            className="bg-primary-blue text-white py-3 px-8 rounded-xl border-none cursor-pointer transition-all duration-300 font-semibold shadow-card-shadow inline-flex items-center gap-2 text-lg hover:bg-primary-blue-dark hover:scale-105 active:scale-95"
+            className="bg-primary-blue text-white py-3 px-8 rounded-xl border-none cursor-pointer transition-all duration-300 font-semibold shadow-card-shadow inline-flex items-center gap-2 text-lg hover:bg-primary-blue-dark hover:scale-105 active:scale-95 ai-style-change-1"
           >
             <Search size={20} className="w-5 h-5" /> Apply Filters
           </button>
