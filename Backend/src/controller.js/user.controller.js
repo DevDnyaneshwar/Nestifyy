@@ -14,6 +14,7 @@ const registerUser = async (req, res) => {
       number,
       profession,
       gender,
+      age,
       photo,
       location
     } = req.body;
@@ -42,6 +43,7 @@ const registerUser = async (req, res) => {
       email,
       password:hashedPassword,
       role,
+      age:Number(age),
       number:Number(number),
       profession,
       location,

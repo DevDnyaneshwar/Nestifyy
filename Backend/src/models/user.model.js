@@ -21,7 +21,11 @@ const userSchema = new mongoose.Schema(
         default: 'user' 
 
     },
-    Profession:{
+    age:{
+        type: Number,
+        required: true
+    },
+    profession:{
         type:String
     },
     number: { 

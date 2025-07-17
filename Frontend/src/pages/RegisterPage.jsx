@@ -17,6 +17,7 @@ const RegisterPage = () => {
     location: "",
     gender: "",
     number: "",
+    photo: "",
   });
 
   const [photo, setPhoto] = useState(null);
