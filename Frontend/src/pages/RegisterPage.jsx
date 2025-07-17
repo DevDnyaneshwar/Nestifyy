@@ -84,9 +84,9 @@ const RegisterPage = () => {
         data.append('photo', photo);
       }
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('Registration data:', data);
+      for (const [key, value] of data.entries()) {
+      console.log(`${key}: ${value instanceof File ? value.name : value}`);
+    }
 
       // Replace with actual API call
       const response = await axios.post('https://nestifyy-my3u.onrender.com/api/user/register', data, {

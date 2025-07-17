@@ -6,6 +6,10 @@ import fs from "fs"
 
 const registerUser = async (req, res) => {
   try {
+
+    console.log('Request body:', req.body); // Debug
+    console.log('Request file:', req.file);
+
     const {
       name,
       email,
@@ -31,6 +35,7 @@ const registerUser = async (req, res) => {
 
     let photoUrl = '';
     if (req.file) {
+      console.log('Uploading file:', req.file);
       try {
         photoUrl = await uploadImage(req.file);
       } catch (error) {
@@ -52,7 +57,7 @@ const registerUser = async (req, res) => {
     });
     await user.save();
 
-    res.status(201).json({ user: { id: user._id, name, email, photo: photoUrl } });
+    res.status(201).json({ user: { id: user._id, name, email, photo: photoUrl, number, age, profession, location, gender } });
 
   } catch (error) {
     console.error('Register error:', error.message);
