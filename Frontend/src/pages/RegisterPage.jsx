@@ -2,7 +2,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Eye, EyeOff, Mail, Lock, User, MapPin, GraduationCap, Briefcase, Calendar, Camera, ArrowRight, Phone } from "lucide-react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
 const RegisterPage = () => {
@@ -25,6 +25,7 @@ const RegisterPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState("");
+  const navigate = useNavigate()
 
   useEffect(() => {
     trackInteraction('page_view', 'register_page');
@@ -96,10 +97,9 @@ const RegisterPage = () => {
       });
 
       console.log('Registration successful:', response.data);
-      alert("Registration successful! Please log in."); // Use a more sophisticated notification in real app
       trackInteraction('registration', 'registration_success');
       // Redirect to login page
-      window.location.assign('/login');
+      navigate('/login', { state: { successMessage: 'Registration successful! Please log in.' } });
 
     } catch (err) {
       console.error('Registration error:', err);
