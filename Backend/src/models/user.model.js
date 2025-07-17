@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema(
     photo: { 
         type: String 
     },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other'],
+        default: 'Other'
+    }
   },
 
   { timestamps: true }
