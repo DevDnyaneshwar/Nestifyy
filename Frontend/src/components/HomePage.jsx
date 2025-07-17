@@ -2,9 +2,9 @@
 import React, { useEffect, useContext } from 'react';
 import { Search, MessageSquare, Home } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
-import HeroSection from './HeroSection'; // Assuming this is now pure CSS
-import PropertyListingCard from './PropertyListingCard'; // Assuming this is now pure CSS
-import RoommateListingCard from './RoommateListingCard'; // Assuming this is now pure CSS
+import HeroSection from './HeroSection'; // Assuming this is now pure CSS (or Tailwind)
+import PropertyListingCard from './PropertyListingCard'; // Assuming this is now pure CSS (or Tailwind)
+import RoommateListingCard from './RoommateListingCard'; // Assuming this is now pure CSS (or Tailwind)
 
 const HomePage = () => {
   const { trackInteraction } = useContext(AppContext);
@@ -25,21 +25,21 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="homepage-container">
+    <div className="min-h-screen bg-gray-50 font-inter antialiased flex flex-col">
       <HeroSection />
 
-      <section className="section-properties">
-        <h2 className="section-title">Featured Rooms & Properties</h2>
-        <div className="properties-grid">
+      <section className="py-12 px-6 bg-white md:px-12">
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Featured Rooms & Properties</h2>
+        <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
           {featuredProperties.map((property) => (
             <PropertyListingCard key={property.id} property={property} />
           ))}
         </div>
       </section>
 
-      <section className="section-roommates">
-        <h2 className="section-title">Featured Roommates</h2>
-        <div className="roommates-grid">
+      <section className="py-12 px-6 bg-gray-100 md:px-12">
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Featured Roommates</h2>
+        <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
           {featuredRoommates.map((roommate) => (
             <RoommateListingCard key={roommate.id} roommate={roommate} />
           ))}
@@ -47,189 +47,30 @@ const HomePage = () => {
       </section>
 
       {/* How it works section */}
-      <section className="section-how-it-works">
-        <h2 className="section-title">How Nestify Works</h2>
-        <p className="how-it-works-subtitle">
+      <section className="py-12 px-6 bg-white md:px-12">
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">How Nestify Works</h2>
+        <p className="text-gray-700 max-w-2xl mx-auto mb-8 text-base leading-relaxed text-center">
           Seamlessly find your next home or ideal roommate with our easy-to-use platform.
         </p>
-        <div className="steps-grid">
-          <div className="step-card step-card-blue">
-            <Search size={48} className="step-icon" />
-            <h3 className="step-title">Search & Discover</h3>
-            <p className="step-description">Browse thousands of listings for rooms, houses, and compatible roommates.</p>
+        <div className="grid grid-cols-1 gap-8 max-w-[1000px] mx-auto md:grid-cols-3">
+          <div className="p-6 rounded-lg shadow-md text-center flex flex-col items-center justify-center bg-blue-50">
+            <Search size={48} className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Search & Discover</h3>
+            <p className="text-gray-700 text-base leading-relaxed">Browse thousands of listings for rooms, houses, and compatible roommates.</p>
           </div>
-          <div className="step-card step-card-green">
-            <MessageSquare size={48} className="step-icon" />
-            <h3 className="step-title">Connect & Meet</h3>
-            <p className="step-description">Connect directly with owners, brokers, or potential roommates. Share OTP for secure meetings.</p>
+          <div className="p-6 rounded-lg shadow-md text-center flex flex-col items-center justify-center bg-green-50">
+            <MessageSquare size={48} className="w-12 h-12 mx-auto mb-4 text-green-600" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Connect & Meet</h3>
+            <p className="text-gray-700 text-base leading-relaxed">Connect directly with owners, brokers, or potential roommates. Share OTP for secure meetings.</p>
           </div>
-          <div className="step-card step-card-purple">
-            <Home size={48} className="step-icon" />
-            <h3 className="step-title">Settle In</h3>
-            <p className="step-description">Find your perfect match and settle into your new living situation with ease.</p>
+          <div className="p-6 rounded-lg shadow-md text-center flex flex-col items-center justify-center bg-purple-50">
+            <Home size={48} className="w-12 h-12 mx-auto mb-4 text-purple-600" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Settle In</h3>
+            <p className="text-gray-700 text-base leading-relaxed">Find your perfect match and settle into your new living situation with ease.</p>
           </div>
         </div>
       </section>
-      <style>{`
-        /* Variables for consistency */
-        :root {
-          --primary-blue: #2563eb; /* blue-600 */
-          --primary-blue-light: #eff6ff; /* blue-50 */
-          --text-gray-800: #1f2937;
-          --text-gray-600: #4a5568;
-          --bg-gray-50: #f9fafb;
-          --bg-gray-100: #f3f4f6;
-          --green-50: #ecfdf5; /* green-50 */
-          --green-600: #059669; /* green-600 */
-          --purple-50: #f5f3ff; /* purple-50 */
-          --purple-600: #9333ea; /* purple-600 */
-          --card-bg: #fff;
-          --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-        }
-
-        .homepage-container {
-          min-height: 100vh;
-          background-color: var(--bg-gray-50);
-          font-family: 'Inter', sans-serif; /* Assuming Inter font is loaded globally */
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          display: flex;
-          flex-direction: column;
-        }
-
-        /* Section Styling */
-        .section-properties,
-        .section-how-it-works {
-          padding: 3rem 1.5rem; /* py-12 px-6 */
-          background-color: var(--card-bg);
-        }
-        @media (min-width: 768px) { /* md:px-12 */
-          .section-properties,
-          .section-how-it-works {
-            padding-left: 3rem;
-            padding-right: 3rem;
-          }
-        }
-
-        .section-roommates {
-          padding: 3rem 1.5rem; /* py-12 px-6 */
-          background-color: var(--bg-gray-100);
-        }
-        @media (min-width: 768px) { /* md:px-12 */
-          .section-roommates {
-            padding-left: 3rem;
-            padding-right: 3rem;
-          }
-        }
-
-        .section-title {
-          font-size: 1.875rem; /* text-3xl */
-          font-weight: 700; /* font-bold */
-          color: var(--text-gray-800);
-          text-align: center;
-          margin-bottom: 2.5rem; /* mb-10 */
-        }
-
-        /* Grids for listings */
-        .properties-grid,
-        .roommates-grid {
-          display: grid;
-          grid-template-columns: 1fr; /* grid-cols-1 */
-          gap: 2rem; /* gap-8 */
-          max-width: 1200px; /* Max width for content */
-          margin-left: auto;
-          margin-right: auto;
-        }
-        @media (min-width: 640px) { /* sm:grid-cols-2 */
-          .properties-grid,
-          .roommates-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        @media (min-width: 1024px) { /* lg:grid-cols-4 */
-          .properties-grid,
-          .roommates-grid {
-            grid-template-columns: repeat(4, 1fr);
-          }
-        }
-
-        /* How it works section specific styles */
-        .how-it-works-subtitle {
-          color: var(--text-gray-600);
-          max-width: 42rem; /* max-w-2xl */
-          margin-left: auto;
-          margin-right: auto;
-          margin-bottom: 2rem; /* mb-8 */
-          font-size: 1rem;
-          line-height: 1.5;
-        }
-
-        .steps-grid {
-          display: grid;
-          grid-template-columns: 1fr; /* grid-cols-1 */
-          gap: 2rem; /* gap-8 */
-          max-width: 1000px; /* Adjusted max-width for this section */
-          margin-left: auto;
-          margin-right: auto;
-        }
-        @media (min-width: 768px) { /* md:grid-cols-3 */
-          .steps-grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
-        }
-
-        .step-card {
-          padding: 1.5rem; /* p-6 */
-          border-radius: 0.5rem; /* rounded-lg */
-          box-shadow: var(--card-shadow);
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-        }
-        .step-card-blue {
-          background-color: var(--primary-blue-light); /* bg-blue-50 */
-        }
-        .step-card-green {
-          background-color: var(--green-50); /* bg-green-50 */
-        }
-        .step-card-purple {
-          background-color: var(--purple-50); /* bg-purple-50 */
-        }
-
-
-        .step-icon {
-          width: 3rem; /* size={48} */
-          height: 3rem;
-          margin-left: auto;
-          margin-right: auto;
-          margin-bottom: 1rem; /* mb-4 */
-        }
-        .step-card-blue .step-icon {
-          color: var(--primary-blue); /* text-blue-600 */
-        }
-        .step-card-green .step-icon {
-          color: var(--green-600); /* text-green-600 */
-        }
-        .step-card-purple .step-icon {
-          color: var(--purple-600); /* text-purple-600 */
-        }
-
-
-        .step-title {
-          font-size: 1.25rem; /* text-xl */
-          font-weight: 600; /* font-semibold */
-          color: var(--text-gray-800);
-          margin-bottom: 0.5rem; /* mb-2 */
-        }
-
-        .step-description {
-          color: var(--text-gray-600);
-          font-size: 1rem;
-          line-height: 1.5;
-        }
-      `}</style>
+      {/* Remove the style tag */}
     </div>
   );
 };
