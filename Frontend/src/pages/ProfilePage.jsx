@@ -64,7 +64,7 @@ const ProfilePage = () => {
         setUser(userData);
         setEditForm(userData);
         if (userData.photo) {
-          setPreviewUrl(`http://localhost:8000/${userData.photo}`);
+          setPreviewUrl(`https://nestifyy-my3u.onrender.com/${userData.photo}`);
         }
         setSuccess("Profile loaded successfully!");
         trackInteraction("data_fetch", "profile_success", { userId: id || "current_user" });
@@ -158,7 +158,7 @@ const ProfilePage = () => {
         formData.append("photo", selectedFile);
       }
 
-      const response = await axios.put(`http://localhost:8000/api/user/profile`, formData, {
+      const response = await axios.put(`https://nestifyy-my3u.onrender.com/api/user/profile`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -283,7 +283,8 @@ const ProfilePage = () => {
           <div className="bg-gradient-to-r from-blue-600 to-blue-800 h-48 relative">
             <div className="absolute top-10 right-10 w-32 h-32 border-2 border-gray-100 rounded-full opacity-20"></div>
             <div className="absolute bottom-10 left-10 w-24 h-24 border-2 border-gray-100 rounded-full opacity-30"></div>
-            <div className="absolute -bottom-16 left-8">
+            {/* Centered Profile Picture */}
+            <div className="absolute bottom-[-64px] left-1/2 transform -translate-x-1/2">
               <div className="relative">
                 <img
                   src={previewUrl || user.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=128&background=2563EB&color=FFFFFF`}
@@ -304,6 +305,7 @@ const ProfilePage = () => {
               </div>
             </div>
           </div>
+          {/* Adjusted padding top to accommodate centered profile picture */}
           <div className="pt-20 pb-8 px-8">
             <div className="flex justify-between items-start flex-wrap gap-4">
               <div className="flex-1">
@@ -321,9 +323,9 @@ const ProfilePage = () => {
                   )}
                 </div>
                 <div className="flex flex-wrap gap-4 mt-2">
-                  <div className="flex items-center text-gray-700">
+                  <div className="flex items-center text-gray-700 flex-shrink-0"> {/* Added flex-shrink-0 */}
                     <Mail className="w-4 h-4 mr-2 text-blue-600" />
-                    <span>{user.email}</span>
+                    <span className="break-all">{user.email}</span> {/* Added break-all */}
                   </div>
                   {user.number && (
                     <div className="flex items-center text-gray-700">
