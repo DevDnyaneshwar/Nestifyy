@@ -66,8 +66,7 @@ const ProfilePage = () => {
         setUser(userData);
         setEditForm(userData);
         if (userData.photo) {
-          console.log('Setting previewUrl to:', userData.photo);
-        setPreviewUrl(userData.photo);
+          setPreviewUrl(userData.photo);
         }
         setSuccess("Profile loaded successfully!");
         trackInteraction("data_fetch", "profile_success", {
@@ -128,7 +127,7 @@ const ProfilePage = () => {
     }));
   };
 
-  // Handle nested field changes (e.g., brokerInfo, preferences)
+  // Handle nested field changes
   const handleNestedInputChange = (parentField, field, value) => {
     setEditForm((prev) => ({
       ...prev,
@@ -234,7 +233,7 @@ const ProfilePage = () => {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center p-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 border-4 border-maroon border-t-transparent rounded-full animate-spin"></div>
+          <Loader2 className="w-12 h-12 text-maroon animate-spin" />
           <p className="text-black font-medium text-lg">
             Loading your profile...
           </p>
@@ -247,15 +246,15 @@ const ProfilePage = () => {
   if (!user && error) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4 border border-warm-gray text-center">
-          <div className="flex items-center justify-center gap-3 text-red-600 mb-6">
-            <AlertCircle className="w-10 h-10" />
-            <h2 className="text-2xl font-bold">Error Loading Profile</h2>
+        <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md w-full border border-warm-gray text-center">
+          <div className="flex items-center justify-center gap-3 text-red-600 mb-4">
+            <AlertCircle className="w-8 h-8" />
+            <h2 className="text-xl font-bold">Error Loading Profile</h2>
           </div>
-          <p className="text-black mb-8 text-lg">{error}</p>
+          <p className="text-black mb-6 text-base">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full bg-maroon text-white py-3 px-4 rounded-lg hover:bg-deep-maroon transition-colors font-bold shadow-md"
+            className="w-full bg-maroon text-white py-2 px-4 rounded-lg hover:bg-deep-maroon transition-colors font-medium shadow-sm"
           >
             Try Again
           </button>
@@ -268,18 +267,17 @@ const ProfilePage = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4 border border-warm-gray text-center">
-          <div className="flex items-center justify-center gap-3 text-yellow-600 mb-6">
-            <Frown className="w-10 h-10" />
-            <h2 className="text-2xl font-bold">No Profile Found</h2>
+        <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md w-full border border-warm-gray text-center">
+          <div className="flex items-center justify-center gap-3 text-yellow-600 mb-4">
+            <Frown className="w-8 h-8" />
+            <h2 className="text-xl font-bold">No Profile Found</h2>
           </div>
-          <p className="text-black mb-8 text-lg">
-            Please log in to view your profile or ensure the URL is correct for
-            other profiles.
+          <p className="text-black mb-6 text-base">
+            Please log in to view your profile or ensure the URL is correct.
           </p>
           <Link
             to="/login"
-            className="w-full bg-maroon text-white py-3 px-4 rounded-lg hover:bg-deep-maroon transition-colors font-bold shadow-md flex items-center justify-center gap-2"
+            className="w-full bg-maroon text-white py-2 px-4 rounded-lg hover:bg-deep-maroon transition-colors font-medium shadow-sm flex items-center justify-center gap-2"
             onClick={() =>
               trackInteraction("click", "profile_no_profile_go_login")
             }
@@ -294,43 +292,41 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-cream">
-      <div className="max-w-7xl mx-auto px-4 py-10">
+      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
         {/* Success Message */}
         {success && (
-          <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-6 shadow-md flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-white rounded-full"></div>
-            </div>
-            <span className="font-medium">{success}</span>
+          <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-3 rounded-lg mb-4 shadow-sm flex items-center gap-2">
+            <CheckCircle className="w-5 h-5" />
+            <span className="text-sm sm:text-base">{success}</span>
           </div>
         )}
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6 shadow-md flex items-center gap-2">
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded-lg mb-4 shadow-sm flex items-center gap-2">
             <AlertCircle className="w-5 h-5" />
-            <span className="font-medium">{error}</span>
+            <span className="text-sm sm:text-base">{error}</span>
           </div>
         )}
 
         {/* Profile Header */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-warm-gray">
-          <div className="h-48 relative bg-blue-500">
-            <div className="absolute -bottom-16 left-8">
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6 border border-warm-gray">
+          <div className="h-32 sm:h-40 bg-gradient-to-r from-maroon to-light-maroon relative">
+            <div className="absolute -bottom-12 sm:-bottom-16 left-4 sm:left-6">
               <div className="relative">
                 <img
                   src={
-                  previewUrl ||
-                  (user.photo && user.photo.startsWith('http')
-                    ? user.photo
-                    : `https://nestifyy-my3u.onrender.com/${user.photo}`) ||
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=128&background=004dc3&color=FFFFFF`
-                } 
+                    previewUrl ||
+                    (user.photo && user.photo.startsWith('http')
+                      ? user.photo
+                      : `https://nestifyy-my3u.onrender.com/${user.photo}`) ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=96&background=004dc3&color=FFFFFF`
+                  }
                   alt="Profile"
-                  className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
+                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-md object-cover"
                 />
                 {isEditing && !id && (
-                  <label className="absolute bottom-0 right-0 bg-maroon rounded-full p-2 cursor-pointer shadow-lg hover:bg-deep-maroon transition-colors">
+                  <label className="absolute bottom-0 right-0 bg-maroon rounded-full p-1.5 sm:p-2 cursor-pointer shadow-md hover:bg-deep-maroon transition-colors">
                     <Camera className="w-4 h-4 text-white" />
                     <input
                       type="file"
@@ -343,8 +339,8 @@ const ProfilePage = () => {
               </div>
             </div>
           </div>
-          <div className="pt-20 pb-8 px-8">
-            <div className="flex justify-between items-start flex-wrap gap-4">
+          <div className="pt-16 sm:pt-20 pb-6 px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   {isEditing ? (
@@ -354,16 +350,16 @@ const ProfilePage = () => {
                       onChange={(e) =>
                         handleInputChange("name", e.target.value)
                       }
-                      className="text-3xl font-bold text-black bg-transparent border-b-2 border-maroon/20 focus:border-maroon outline-none w-full"
+                      className="text-2xl sm:text-3xl font-bold text-black bg-transparent border-b-2 border-maroon/20 focus:border-maroon outline-none w-full"
                       placeholder="Enter your name"
                     />
                   ) : (
-                    <h1 className="text-3xl font-bold text-black">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-black">
                       {user.name}
                     </h1>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-4 mt-2">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 mt-2 text-sm sm:text-base">
                   <div className="flex items-center text-black">
                     <Mail className="w-4 h-4 mr-2 text-maroon" />
                     <span className="break-all">{user.email}</span>
@@ -382,18 +378,18 @@ const ProfilePage = () => {
                   )}
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                 {!isEditing ? (
                   <>
                     <Link
                       to="/"
-                      className="flex items-center gap-2 bg-warm-gray text-black px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors font-bold shadow-md"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-warm-gray text-black px-3 py-2 rounded-lg hover:bg-gray-400 transition-colors font-medium shadow-sm text-sm sm:text-base"
                       onClick={() =>
                         trackInteraction("click", "profile_back_to_home")
                       }
                     >
                       <ArrowLeft className="w-4 h-4" />
-                      Back to Home
+                      Back
                     </Link>
                     {!id && (
                       <button
@@ -401,10 +397,10 @@ const ProfilePage = () => {
                           setIsEditing(true);
                           trackInteraction("click", "profile_toggle_edit");
                         }}
-                        className="flex items-center gap-2 bg-maroon text-white px-4 py-2 rounded-lg hover:bg-deep-maroon transition-colors font-bold shadow-md"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-maroon text-white px-3 py-2 rounded-lg hover:bg-deep-maroon transition-colors font-medium shadow-sm text-sm sm:text-base"
                       >
                         <Edit3 className="w-4 h-4" />
-                        Edit Profile
+                        Edit
                       </button>
                     )}
                   </>
@@ -413,7 +409,7 @@ const ProfilePage = () => {
                     <button
                       onClick={handleCancel}
                       disabled={saveLoading}
-                      className="flex items-center gap-2 bg-warm-gray text-black px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors disabled:opacity-50 font-bold"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-warm-gray text-black px-3 py-2 rounded-lg hover:bg-gray-400 transition-colors disabled:opacity-50 font-medium text-sm sm:text-base"
                     >
                       <X className="w-4 h-4" />
                       Cancel
@@ -421,7 +417,7 @@ const ProfilePage = () => {
                     <button
                       onClick={handleSave}
                       disabled={saveLoading}
-                      className="flex items-center gap-2 bg-maroon text-white px-4 py-2 rounded-lg hover:bg-deep-maroon transition-colors disabled:opacity-50 font-bold"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-maroon text-white px-3 py-2 rounded-lg hover:bg-deep-maroon transition-colors disabled:opacity-50 font-medium text-sm sm:text-base"
                     >
                       {saveLoading ? (
                         <>
@@ -443,172 +439,180 @@ const ProfilePage = () => {
         </div>
 
         {/* Profile Information */}
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
+        <div className="grid gap-6">
           {/* Personal Information */}
-          <div className="md:col-span-2 bg-white rounded-2xl shadow-xl overflow-hidden border border-warm-gray">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-warm-gray">
             <div
-              className="bg-gradient-to-r from-maroon to-light-maroon px-6 py-4 flex items-center justify-between cursor-pointer"
+              className="bg-gradient-to-r from-maroon to-light-maroon px-4 py-3 flex items-center justify-between cursor-pointer"
               onClick={() => toggleSection("personal")}
             >
-              <h2 className="text-xl font-bold text-maroon flex items-center">
+              <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
                 <User className="w-5 h-5 mr-2" />
                 Personal Information
               </h2>
               {expandedSections.personal ? (
-                <ChevronUp className="w-5 h-5 text-maroon" />
+                <ChevronUp className="w-5 h-5 text-white" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-maroon" />
+                <ChevronDown className="w-5 h-5 text-white" />
               )}
             </div>
             {expandedSections.personal && (
-              <div className="p-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="bg-cream rounded-xl p-4 border border-warm-gray">
-                      <h3 className="font-semibold text-maroon mb-3 flex items-center">
-                        <User className="w-4 h-4 mr-2" />
-                        Basic Details
-                      </h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <User className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-24 flex-shrink-0 font-medium">
+              <div className="p-4 sm:p-6">
+                <div className="space-y-4">
+                  <div className="bg-cream rounded-xl p-4 border border-warm-gray">
+                    <h3 className="font-semibold text-maroon mb-3 flex items-center text-sm sm:text-base">
+                      <User className="w-4 h-4 mr-2" />
+                      Basic Details
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                        <div className="flex items-center mb-2 sm:mb-0">
+                          <User className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                          <span className="text-black font-medium w-24">
                             Gender:
                           </span>
-                          {isEditing ? (
-                            <select
-                              value={editForm.gender || ""}
-                              onChange={(e) =>
-                                handleInputChange("gender", e.target.value)
-                              }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
-                            >
-                              <option value="">Select Gender</option>
-                              <option value="Male">Male</option>
-                              <option value="Female">Female</option>
-                              <option value="Other">Other</option>
-                            </select>
-                          ) : (
-                            <span className="text-black ml-2">
-                              {user.gender || "Not specified"}
-                            </span>
-                          )}
                         </div>
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <GraduationCap className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-24 flex-shrink-0 font-medium">
+                        {isEditing ? (
+                          <select
+                            value={editForm.gender || ""}
+                            onChange={(e) =>
+                              handleInputChange("gender", e.target.value)
+                            }
+                            className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                          >
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        ) : (
+                          <span className="text-black">
+                            {user.gender || "Not specified"}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                        <div className="flex items-center mb-2 sm:mb-0">
+                          <GraduationCap className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                          <span className="text-black font-medium w-24">
                             Age:
                           </span>
-                          {isEditing ? (
-                            <input
-                              type="number"
-                              value={editForm.age || ""}
-                              onChange={(e) =>
-                                handleInputChange("age", e.target.value)
-                              }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
-                              placeholder="Enter age"
-                              min="1"
-                              max="120"
-                            />
-                          ) : (
-                            <span className="text-black ml-2">
-                              {user.age || "Not specified"}
-                            </span>
-                          )}
                         </div>
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <Briefcase className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-24 flex-shrink-0 font-medium">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={editForm.age || ""}
+                            onChange={(e) =>
+                              handleInputChange("age", e.target.value)
+                            }
+                            className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                            placeholder="Enter age"
+                            min="1"
+                            max="120"
+                          />
+                        ) : (
+                          <span className="text-black">
+                            {user.age || "Not specified"}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                        <div className="flex items-center mb-2 sm:mb-0">
+                          <Briefcase className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                          <span className="text-black font-medium w-24">
                             Profession:
                           </span>
-                          {isEditing ? (
-                            <input
-                              type="text"
-                              value={editForm.profession || ""}
-                              onChange={(e) =>
-                                handleInputChange("profession", e.target.value)
-                              }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
-                              placeholder="Enter profession"
-                            />
-                          ) : (
-                            <span className="text-black ml-2">
-                              {user.profession || "Not specified"}
-                            </span>
-                          )}
                         </div>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={editForm.profession || ""}
+                            onChange={(e) =>
+                              handleInputChange("profession", e.target.value)
+                            }
+                            className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                            placeholder="Enter profession"
+                          />
+                        ) : (
+                          <span className="text-black">
+                            {user.profession || "Not specified"}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-4">
-                    <div className="bg-cream rounded-xl p-4 border border-warm-gray">
-                      <h3 className="font-semibold text-maroon mb-3 flex items-center">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        Contact Information
-                      </h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <Mail className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-24 flex-shrink-0 font-medium">
+                  <div className="bg-cream rounded-xl p-4 border border-warm-gray">
+                    <h3 className="font-semibold text-maroon mb-3 flex items-center text-sm sm:text-base">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Contact Information
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                        <div className="flex items-center mb-2 sm:mb-0">
+                          <Mail className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                          <span className="text-black font-medium w-24">
                             Email:
                           </span>
-                          {isEditing ? (
-                            <input
-                              type="email"
-                              value={editForm.email || ""}
-                              onChange={(e) =>
-                                handleInputChange("email", e.target.value)
-                              }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
-                              placeholder="Enter email"
-                            />
-                          ) : (
-                            <span className="text-black ml-2">{user.email}</span>
-                          )}
                         </div>
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <Phone className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-24 flex-shrink-0 font-medium">
+                        {isEditing ? (
+                          <input
+                            type="email"
+                            value={editForm.email || ""}
+                            onChange={(e) =>
+                              handleInputChange("email", e.target.value)
+                            }
+                            className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                            placeholder="Enter email"
+                          />
+                        ) : (
+                          <span className="text-black">{user.email}</span>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                        <div className="flex items-center mb-2 sm:mb-0">
+                          <Phone className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                          <span className="text-black font-medium w-24">
                             Phone:
                           </span>
-                          {isEditing ? (
-                            <input
-                              type="tel"
-                              value={editForm.number || ""}
-                              onChange={(e) =>
-                                handleInputChange("number", e.target.value)
-                              }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
-                              placeholder="Enter phone number"
-                            />
-                          ) : (
-                            <span className="text-black ml-2">
-                              {user.number || "Not specified"}
-                            </span>
-                          )}
                         </div>
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <MapPin className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-24 flex-shrink-0 font-medium">
+                        {isEditing ? (
+                          <input
+                            type="tel"
+                            value={editForm.number || ""}
+                            onChange={(e) =>
+                              handleInputChange("number", e.target.value)
+                            }
+                            className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                            placeholder="Enter phone number"
+                          />
+                        ) : (
+                          <span className="text-black">
+                            {user.number || "Not specified"}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                        <div className="flex items-center mb-2 sm:mb-0">
+                          <MapPin className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                          <span className="text-black font-medium w-24">
                             Location:
                           </span>
-                          {isEditing ? (
-                            <input
-                              type="text"
-                              value={editForm.location || ""}
-                              onChange={(e) =>
-                                handleInputChange("location", e.target.value)
-                              }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
-                              placeholder="Enter location"
-                            />
-                          ) : (
-                            <span className="text-black ml-2">
-                              {user.location || "Not specified"}
-                            </span>
-                          )}
                         </div>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={editForm.location || ""}
+                            onChange={(e) =>
+                              handleInputChange("location", e.target.value)
+                            }
+                            className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                            placeholder="Enter location"
+                          />
+                        ) : (
+                          <span className="text-black">
+                            {user.location || "Not specified"}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -618,12 +622,12 @@ const ProfilePage = () => {
           </div>
 
           {/* Role-Specific Information */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-warm-gray">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-warm-gray">
             <div
-              className="bg-gradient-to-r from-maroon to-light-maroon px-6 py-4 flex items-center justify-between cursor-pointer"
+              className="bg-gradient-to-r from-maroon to-light-maroon px-4 py-3 flex items-center justify-between cursor-pointer"
               onClick={() => toggleSection("roleSpecific")}
             >
-              <h2 className="text-xl font-bold text-maroon flex items-center">
+              <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
                 {user.role === "broker" ? (
                   <Briefcase className="w-5 h-5 mr-2" />
                 ) : (
@@ -634,26 +638,28 @@ const ProfilePage = () => {
                   : "User Preferences"}
               </h2>
               {expandedSections.roleSpecific ? (
-                <ChevronUp className="w-5 h-5 text-maroon" />
+                <ChevronUp className="w-5 h-5 text-white" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-maroon" />
+                <ChevronDown className="w-5 h-5 text-white" />
               )}
             </div>
             {expandedSections.roleSpecific && (
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 {user.role === "broker" && user.brokerInfo ? (
                   <div className="space-y-4">
                     <div className="bg-cream rounded-xl p-4 border border-warm-gray">
-                      <h3 className="font-semibold text-maroon mb-3 flex items-center">
+                      <h3 className="font-semibold text-maroon mb-3 flex items-center text-sm sm:text-base">
                         <Briefcase className="w-4 h-4 mr-2" />
                         Broker Details
                       </h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <Briefcase className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-28 flex-shrink-0 font-medium">
-                            Clients Handled:
-                          </span>
+                      <div className="space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                          <div className="flex items-center mb-2 sm:mb-0">
+                            <Briefcase className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                            <span className="text-black font-medium w-28">
+                              Clients Handled:
+                            </span>
+                          </div>
                           {isEditing ? (
                             <input
                               type="number"
@@ -665,20 +671,22 @@ const ProfilePage = () => {
                                   e.target.value
                                 )
                               }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
                               placeholder="Enter clients handled"
                             />
                           ) : (
-                            <span className="text-black ml-2">
+                            <span className="text-black">
                               {user.brokerInfo.clientsHandled || "Not specified"}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <Briefcase className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-28 flex-shrink-0 font-medium">
-                            Properties Sold:
-                          </span>
+                        <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                          <div className="flex items-center mb-2 sm:mb-0">
+                            <Briefcase className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                            <span className="text-black font-medium w-28">
+                              Properties Sold:
+                            </span>
+                          </div>
                           {isEditing ? (
                             <input
                               type="number"
@@ -690,20 +698,22 @@ const ProfilePage = () => {
                                   e.target.value
                                 )
                               }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
                               placeholder="Enter properties sold"
                             />
                           ) : (
-                            <span className="text-black ml-2">
+                            <span className="text-black">
                               {user.brokerInfo.propertiesSold || "Not specified"}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <Briefcase className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-28 flex-shrink-0 font-medium">
-                            Experience:
-                          </span>
+                        <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                          <div className="flex items-center mb-2 sm:mb-0">
+                            <Briefcase className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                            <span className="text-black font-medium w-28">
+                              Experience:
+                            </span>
+                          </div>
                           {isEditing ? (
                             <input
                               type="number"
@@ -715,11 +725,11 @@ const ProfilePage = () => {
                                   e.target.value
                                 )
                               }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
                               placeholder="Enter years of experience"
                             />
                           ) : (
-                            <span className="text-black ml-2">
+                            <span className="text-black">
                               {user.brokerInfo.experience || "Not specified"} years
                             </span>
                           )}
@@ -730,16 +740,18 @@ const ProfilePage = () => {
                 ) : user.role === "user" && user.preferences ? (
                   <div className="space-y-4">
                     <div className="bg-cream rounded-xl p-4 border border-warm-gray">
-                      <h3 className="font-semibold text-maroon mb-3 flex items-center">
+                      <h3 className="font-semibold text-maroon mb-3 flex items-center text-sm sm:text-base">
                         <GraduationCap className="w-4 h-4 mr-2" />
                         User Preferences
                       </h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <MapPin className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-28 flex-shrink-0 font-medium">
-                            Property Type:
-                          </span>
+                      <div className="space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                          <div className="flex items-center mb-2 sm:mb-0">
+                            <MapPin className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                            <span className="text-black font-medium w-28">
+                              Property Type:
+                            </span>
+                          </div>
                           {isEditing ? (
                             <input
                               type="text"
@@ -751,20 +763,22 @@ const ProfilePage = () => {
                                   e.target.value
                                 )
                               }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
                               placeholder="Enter preferred property type"
                             />
                           ) : (
-                            <span className="text-black ml-2">
+                            <span className="text-black">
                               {user.preferences.propertyType || "Not specified"}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <MapPin className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-28 flex-shrink-0 font-medium">
-                            Location:
-                          </span>
+                        <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                          <div className="flex items-center mb-2 sm:mb-0">
+                            <MapPin className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                            <span className="text-black font-medium w-28">
+                              Location:
+                            </span>
+                          </div>
                           {isEditing ? (
                             <input
                               type="text"
@@ -776,20 +790,22 @@ const ProfilePage = () => {
                                   e.target.value
                                 )
                               }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
                               placeholder="Enter preferred location"
                             />
                           ) : (
-                            <span className="text-black ml-2">
+                            <span className="text-black">
                               {user.preferences.location || "Not specified"}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center p-3 hover:bg-white rounded-lg transition-colors">
-                          <MapPin className="w-5 h-5 mr-3 text-maroon flex-shrink-0" />
-                          <span className="text-black w-28 flex-shrink-0 font-medium">
-                            Budget:
-                          </span>
+                        <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                          <div className="flex items-center mb-2 sm:mb-0">
+                            <MapPin className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                            <span className="text-black font-medium w-28">
+                              Budget:
+                            </span>
+                          </div>
                           {isEditing ? (
                             <input
                               type="text"
@@ -801,11 +817,11 @@ const ProfilePage = () => {
                                   e.target.value
                                 )
                               }
-                              className="flex-1 ml-2 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none"
+                              className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
                               placeholder="Enter budget"
                             />
                           ) : (
-                            <span className="text-black ml-2">
+                            <span className="text-black">
                               {user.preferences.budget || "Not specified"}
                             </span>
                           )}
@@ -814,11 +830,11 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-12">
-                    <div className="bg-cream w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Frown className="w-12 h-12 text-maroon" />
+                  <div className="text-center py-8">
+                    <div className="bg-cream w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Frown className="w-8 h-8 text-maroon" />
                     </div>
-                    <p className="text-black font-medium">
+                    <p className="text-black font-medium text-sm sm:text-base">
                       No {user.role === "broker" ? "broker" : "user"} information
                       available.
                     </p>
@@ -830,11 +846,11 @@ const ProfilePage = () => {
         </div>
 
         {/* Actions Panel */}
-        <div className="mt-8 flex flex-wrap gap-4 justify-end">
+        <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-3 justify-center sm:justify-end">
           {user.email && (
             <a
               href={`mailto:${user.email}`}
-              className="bg-cream text-maroon border border-maroon py-2 px-6 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium inline-flex items-center gap-2"
+              className="flex-1 sm:flex-none bg-cream text-maroon border border-maroon py-2 px-4 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
               onClick={() =>
                 trackInteraction("click", "contact_user_email", {
                   userId: user._id,
@@ -842,13 +858,13 @@ const ProfilePage = () => {
               }
             >
               <Mail className="w-4 h-4" />
-              Contact by Email
+              Email
             </a>
           )}
           {user.number && (
             <a
               href={`tel:${user.number}`}
-              className="bg-cream text-maroon border border-maroon py-2 px-6 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium inline-flex items-center gap-2"
+              className="flex-1 sm:flex-none bg-cream text-maroon border border-maroon py-2 px-4 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
               onClick={() =>
                 trackInteraction("click", "contact_user_phone", {
                   userId: user._id,
@@ -856,7 +872,7 @@ const ProfilePage = () => {
               }
             >
               <Phone className="w-4 h-4" />
-              Call Now
+              Call
             </a>
           )}
           {!id && (
@@ -865,33 +881,46 @@ const ProfilePage = () => {
                 trackInteraction("click", "view_dashboard");
                 navigate("/dashboard");
               }}
-              className="bg-maroon text-white py-2 px-6 rounded-lg hover:bg-deep-maroon transition-colors font-medium inline-flex items-center gap-2"
+              className="flex-1 sm:flex-none bg-maroon text-white py-2 px-4 rounded-lg hover:bg-deep-maroon transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               <User className="w-4 h-4" />
-              View Dashboard
+              Dashboard
             </button>
           )}
         </div>
 
         {/* Inline CSS */}
         <style>{`
-          .bg-maroon { background-color: #004dc3; }
+          .bg-maroon { background-color: #7f1d1d; }
           .bg-cream { background-color: #f8fafc; }
-          .bg-light-maroon { background-color: #A83232; }
-          .bg-deep-maroon { background-color: #660000; }
-          .bg-warm-gray { background-color: #CCCCCC; }
-          .text-maroon { color: #004dc3; }
-          .text-cream { color: #FFF5E1; }
-          .text-light-maroon { color: #A83232; }
-          .text-deep-maroon { color: #660000; }
-          .text-warm-gray { color: #999999; }
-          .border-maroon { border-color: #004dc3; }
-          .border-warm-gray { border-color: #CCCCCC; }
-          .hover\\:bg-maroon:hover { background-color: #004dc3; }
-          .hover\\:bg-deep-maroon:hover { background-color: #660000; }
-          .hover\\:bg-gray-400:hover { background-color: #A0AEC0; }
-          .focus\\:border-maroon:focus { border-color: #004dc3; }
-          .focus\\:ring-light-maroon\\/20:focus { --tw-ring-color: rgba(168, 50, 50, 0.2); }
+          .bg-light-maroon { background-color: #b91c1c; }
+          .bg-deep-maroon { background-color: #450a0a; }
+          .bg-warm-gray { background-color: #e5e7eb; }
+          .text-maroon { color: #7f1d1d; }
+          .text-cream { color: #f8fafc; }
+          .text-light-maroon { color: #b91c1c; }
+          .text-deep-maroon { color: #450a0a; }
+          .text-warm-gray { color: #6b7280; }
+          .border-maroon { border-color: #7f1d1d; }
+          .border-warm-gray { border-color: #e5e7eb; }
+          .hover\\:bg-maroon:hover { background-color: #7f1d1d; }
+          .hover\\:bg-deep-maroon:hover { background-color: #450a0a; }
+          .hover\\:bg-gray-400:hover { background-color: #9ca3af; }
+          .focus\\:border-maroon:focus { border-color: #7f1d1d; }
+          .focus\\:ring-light-maroon\\/20:focus { --tw-ring-color: rgba(185, 28, 28, 0.2); }
+          
+          @media (max-width: 640px) {
+            .min-h-screen { padding-bottom: 4rem; }
+            .max-w-4xl { max-width: 100%; }
+            .text-3xl { font-size: 1.5rem; }
+            .text-2xl { font-size: 1.25rem; }
+            .text-xl { font-size: 1.125rem; }
+            .text-lg { font-size: 1rem; }
+            .text-base { font-size: 0.875rem; }
+            .text-sm { font-size: 0.75rem; }
+            .w-28 { width: 6rem; }
+            .w-24 { width: 5rem; }
+          }
         `}</style>
       </div>
     </div>
