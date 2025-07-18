@@ -81,10 +81,10 @@ const propertySchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    image: {
-      type: [String],
-      default: [],
-    },
+    imageUrls: [{
+       type: String,
+       default: []
+    }],
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -61,20 +61,16 @@ const createproperty = async (req, res) => {
     // Upload images to Cloudinary
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
-      try {
-        const uploadPromises = req.files.map((file) => uploadImage(file.path));
-        const uploadedResults = await Promise.all(uploadPromises);
-        imageUrls = uploadedResults.map((result) => result.secure_url);
-        await Promise.all(req.files.map((file) => fs.unlink(file.path)));
-      } catch (error) {
-        console.error("createproperty: Cloudinary upload error:", error);
-        if (req.files && req.files.length > 0) {
-          await Promise.all(req.files.map((file) => fs.unlink(file.path)));
-        }
-        return res.status(500).json({ message: `Image upload failed: ${error.message}` });
-      }
+      const uploadPromises = req.files.map(file =>
+        new Promise((resolve, reject) => {
+          cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+            if (error) reject(new Error('Cloudinary upload failed'));
+            resolve(result.secure_url);
+          }).end(file.buffer);
+        })
+      );
+      imageUrls = await Promise.all(uploadPromises);
     }
-
     // Create new property
     const newProperty = new Property({
       title,
@@ -92,7 +88,7 @@ const createproperty = async (req, res) => {
       deposit: deposit ? Number(deposit) : 0,
       amenities: Array.isArray(amenities) ? amenities : [],
       allowBroker: allowBroker === "true" || allowBroker === "yes",
-      image: imageUrls,
+      imageUrls,
       owner: ownerId,
     });
 
@@ -123,16 +119,17 @@ const updateProperty = async (req, res) => {
     const updates = req.body;
     const authenticatedUserId = req.user._id;
 
-    let newImageUrl = '';
-    if (req.file) {
-      try {
-        const uploadedResult = await uploadImage(req.file.path);
-        newImageUrl = uploadedResult.secure_url;
-        await fs.unlink(req.file.path);
-      } catch (error) {
-        return res.status(500).json({ message: `Image upload failed: ${error.message}` });
-      }
-      updates.image = [newImageUrl];
+    let imageUrls = propertyId.imageUrls;
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map(file =>
+        new Promise((resolve, reject) => {
+          cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+            if (error) reject(new Error('Cloudinary upload failed'));
+            resolve(result.secure_url);
+          }).end(file.buffer);
+        })
+      );
+      imageUrls = await Promise.all(uploadPromises);
     }
 
     const propertyToUpdate = await Property.findById(propertyId);

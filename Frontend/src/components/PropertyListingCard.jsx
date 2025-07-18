@@ -11,12 +11,22 @@ const PropertyListingCard = ({ property }) => {
       className="bg-white rounded-xl shadow-lg overflow-hidden transform scale-100 transition-transform duration-300 cursor-pointer flex flex-col group hover:scale-105"
       onClick={() => trackInteraction('click', `property_card_${property.id}`)}
     >
-      <img
-        src={property.imageUrl}
-        alt={property.name}
-        className="w-full h-48 object-cover transition-all duration-300 group-hover:brightness-90"
-        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x250/E0E7FF/4338CA?text=No+Image'; }}
-      />
+     {property.imageUrls.length > 1 && (
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 hidden sm:flex space-x-1">
+              {property.imageUrls.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleImageChange(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    currentImageIndex === index 
+                      ? 'bg-white shadow-sm' 
+                      : 'bg-white/60 hover:bg-white/80'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+
       <div className="p-5 flex flex-col flex-grow">
         <h3 className="text-xl font-semibold text-gray-900 mb-2 leading-tight">{property.name}</h3>
         <p className="text-gray-600 flex items-center mb-3 text-sm">
