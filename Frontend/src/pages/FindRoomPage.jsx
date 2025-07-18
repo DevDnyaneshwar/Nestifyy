@@ -47,10 +47,10 @@ const FindRoomPage = () => {
       const fetchedProperties = data.properties.map((property) => ({
         ...property,
         id: property._id,
-        imageUrl:
-          property.image && property.image.length > 0 && property.image[0]
-            ? property.image[0]
-            : DEFAULT_IMAGE,
+        imageUrls:
+          property.imageUrls && property.imageUrls.length > 0
+            ? property.imageUrls
+            : [DEFAULT_IMAGE],
         price: `₹ ${property.rent.toLocaleString()}/month`,
         beds: property.noOfBedroom,
         type: property.propertyType,
