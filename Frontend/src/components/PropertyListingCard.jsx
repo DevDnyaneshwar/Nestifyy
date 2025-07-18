@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { MapPin, Home, Bed, Bath } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
 
+const DEFAULT_IMAGE = "https://placehold.co/400x250/E0F7FA/00838F?text=Property";
+
 const PropertyListingCard = ({ property }) => {
   const { trackInteraction } = useContext(AppContext);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -9,12 +11,17 @@ const PropertyListingCard = ({ property }) => {
   const [isImageLoading, setIsImageLoading] = useState(true);
   const intervalRef = useRef(null);
 
+  // Ensure imageUrls is always an array
+  const imageUrls = Array.isArray(property.imageUrls) && property.imageUrls.length > 0 
+    ? property.imageUrls 
+    : [DEFAULT_IMAGE];
+
   // Auto-scroll for image carousel
   useEffect(() => {
-    if (property.imageUrls.length > 1 && !isHovered) {
+    if (imageUrls.length > 1 && !isHovered) {
       intervalRef.current = setInterval(() => {
         setCurrentImageIndex((prevIndex) =>
-          prevIndex === property.imageUrls.length - 1 ? 0 : prevIndex + 1
+          prevIndex === imageUrls.length - 1 ? 0 : prevIndex + 1
         );
       }, 5000);
     }
@@ -24,7 +31,7 @@ const PropertyListingCard = ({ property }) => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [property.imageUrls.length, isHovered]);
+  }, [imageUrls.length, isHovered]);
 
   const handleImageChange = (index) => {
     setCurrentImageIndex(index);
@@ -33,10 +40,10 @@ const PropertyListingCard = ({ property }) => {
       clearInterval(intervalRef.current);
     }
     setTimeout(() => {
-      if (property.imageUrls.length > 1 && !isHovered) {
+      if (imageUrls.length > 1 && !isHovered) {
         intervalRef.current = setInterval(() => {
           setCurrentImageIndex((prevIndex) =>
-            prevIndex === property.imageUrls.length - 1 ? 0 : prevIndex + 1
+            prevIndex === imageUrls.length - 1 ? 0 : prevIndex + 1
           );
         }, 5000);
       }
@@ -65,7 +72,7 @@ const PropertyListingCard = ({ property }) => {
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
         {/* Image Stack */}
         <div className="relative w-full h-full">
-          {property.imageUrls.map((imageUrl, index) => (
+          {imageUrls.map((imageUrl, index) => (
             <div
               key={index}
               className={`absolute inset-0 transition-opacity duration-500 ${
@@ -73,8 +80,8 @@ const PropertyListingCard = ({ property }) => {
               }`}
             >
               <img
-                src={imageUrl || 'https://placehold.co/400x250/E0F7FA/00838F?text=Property'}
-                alt={`${property.name} - Image ${index + 1}`}
+                src={imageUrl}
+                alt={`${property.name || 'Property'} - Image ${index + 1}`}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 onLoad={() => setIsImageLoading(false)}
                 onError={(e) => {
@@ -94,9 +101,9 @@ const PropertyListingCard = ({ property }) => {
         )}
 
         {/* Image Indicators - Only show on larger screens */}
-        {property.imageUrls.length > 1 && (
+        {imageUrls.length > 1 && (
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 hidden sm:flex space-x-1">
-            {property.imageUrls.map((_, index) => (
+            {imageUrls.map((_, index) => (
               <button
                 key={index}
                 onClick={(e) => {
@@ -116,20 +123,20 @@ const PropertyListingCard = ({ property }) => {
 
       {/* Content Section */}
       <div className="flex-1 p-5 flex flex-col">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2 leading-tight">{property.name}</h3>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2 leading-tight">{property.name || 'Property'}</h3>
         <p className="text-gray-600 flex items-center mb-3 text-sm">
-          <MapPin size={16} className="mr-1 text-blue-500" /> {property.location}
+          <MapPin size={16} className="mr-1 text-blue-500" /> {property.location || 'Unknown Location'}
         </p>
-        <p className="text-2xl font-bold text-blue-600 mb-4">{property.price}</p>
+        <p className="text-2xl font-bold text-blue-600 mb-4">{property.price || 'N/A'}</p>
         <div className="flex justify-between text-gray-700 text-sm border-t border-gray-200 pt-4 mt-auto">
           <div className="flex items-center">
-            <Bed size={16} className="mr-1 text-gray-500" /> {property.beds} Beds
+            <Bed size={16} className="mr-1 text-gray-500" /> {property.beds ?? 'N/A'} Beds
           </div>
           <div className="flex items-center">
-            <Bath size={16} className="mr-1 text-gray-500" /> {property.baths} Baths
+            <Bath size={16} className="mr-1 text-gray-500" /> {property.baths ?? 'N/A'} Baths
           </div>
           <div className="flex items-center">
-            <Home size={16} className="mr-1 text-gray-500" /> {property.area}
+            <Home size={16} className="mr-1 text-gray-500" /> {property.area || 'N/A'}
           </div>
         </div>
         <button
