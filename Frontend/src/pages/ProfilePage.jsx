@@ -311,7 +311,7 @@ const ProfilePage = () => {
 
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6 border border-warm-gray">
-          <div className="h-32 sm:h-40 bg-gradient-to-r from-maroon to-light-maroon relative">
+          <div className="h-32 sm:h-40 bg-blue-500 -to-r from-maroon to-light-maroon relative">
             <div className="absolute -bottom-12 sm:-bottom-16 left-4 sm:left-6">
               <div className="relative">
                 <img
@@ -323,7 +323,7 @@ const ProfilePage = () => {
                     `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=96&background=004dc3&color=FFFFFF`
                   }
                   alt="Profile"
-                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-md object-cover"
+                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white object-cover"
                 />
                 {isEditing && !id && (
                   <label className="absolute bottom-0 right-0 bg-maroon rounded-full p-1.5 sm:p-2 cursor-pointer shadow-md hover:bg-deep-maroon transition-colors">
@@ -852,7 +852,7 @@ const ProfilePage = () => {
           {user.email && (
             <a
               href={`mailto:${user.email}`}
-              className="flex-1 sm:flex-none bg-cream text-maroon border border-maroon py-2 px-4 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="flex-1 sm:flex-none bg-cream text-maroon border border-blue py-2 px-4 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
               onClick={() =>
                 trackInteraction("click", "contact_user_email", {
                   userId: user._id,
@@ -866,7 +866,7 @@ const ProfilePage = () => {
           {user.number && (
             <a
               href={`tel:${user.number}`}
-              className="flex-1 sm:flex-none bg-cream text-maroon border border-maroon py-2 px-4 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="flex-1 sm:flex-none bg-cream text-maroon border border-blue py-2 px-4 rounded-lg hover:bg-maroon hover:text-white transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
               onClick={() =>
                 trackInteraction("click", "contact_user_phone", {
                   userId: user._id,
@@ -893,22 +893,22 @@ const ProfilePage = () => {
 
         {/* Inline CSS */}
         <style>{`
-          .bg-maroon { background-color: #7f1d1d; }
+          .bg-maroon { background-color: #004dc3; }
           .bg-cream { background-color: #f8fafc; }
           .bg-light-maroon { background-color: #b91c1c; }
           .bg-deep-maroon { background-color: #450a0a; }
           .bg-warm-gray { background-color: #e5e7eb; }
-          .text-maroon { color: #7f1d1d; }
+          .text-maroon { color: #004dc3; }
           .text-cream { color: #f8fafc; }
           .text-light-maroon { color: #b91c1c; }
           .text-deep-maroon { color: #450a0a; }
           .text-warm-gray { color: #6b7280; }
-          .border-maroon { border-color: #7f1d1d; }
+          .border-maroon { border-color: #004dc3; }
           .border-warm-gray { border-color: #e5e7eb; }
-          .hover\\:bg-maroon:hover { background-color: #7f1d1d; }
+          .hover\\:bg-maroon:hover { background-color: #004dc3; }
           .hover\\:bg-deep-maroon:hover { background-color: #450a0a; }
           .hover\\:bg-gray-400:hover { background-color: #9ca3af; }
-          .focus\\:border-maroon:focus { border-color: #7f1d1d; }
+          .focus\\:border-maroon:focus { border-color: #004dc3; }
           .focus\\:ring-light-maroon\\/20:focus { --tw-ring-color: rgba(185, 28, 28, 0.2); }
           
           .truncate {
