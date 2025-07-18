@@ -66,7 +66,8 @@ const ProfilePage = () => {
         setUser(userData);
         setEditForm(userData);
         if (userData.photo) {
-          setPreviewUrl(`https://nestifyy-my3u.onrender.com/${userData.photo}`);
+          console.log('Setting previewUrl to:', userData.photo);
+        setPreviewUrl(userData.photo);
         }
         setSuccess("Profile loaded successfully!");
         trackInteraction("data_fetch", "profile_success", {
@@ -319,13 +320,12 @@ const ProfilePage = () => {
               <div className="relative">
                 <img
                   src={
-                    previewUrl ||
-                    (user.photo
-                      ? `https://nestifyy-my3u.onrender.com/${user.photo}`
-                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user.name
-                        )}&size=128&background=004dc3&color=FFFFFF`)
-                  }
+                  previewUrl ||
+                  (user.photo && user.photo.startsWith('http')
+                    ? user.photo
+                    : `https://nestifyy-my3u.onrender.com/${user.photo}`) ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=128&background=004dc3&color=FFFFFF`
+                } 
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                 />

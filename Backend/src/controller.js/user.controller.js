@@ -56,6 +56,7 @@ const registerUser = async (req, res) => {
       photo:photoUrl,
     });
     await user.save();
+    console.log('Saved user:', user);
 
     res.status(201).json({ user: { id: user._id, name, email, photo: photoUrl, number, age, profession, location, gender } });
 
@@ -168,6 +169,7 @@ const getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId).select('-password');
+    console.log('Fetched user by ID:', user);
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
