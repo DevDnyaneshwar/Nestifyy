@@ -277,7 +277,7 @@ const FindRoomPage = () => {
         <div className="mt-8 flex justify-center">
           <button 
             onClick={applyFilters} 
-            className="bg-primary-blue text-white py-3 px-8 rounded-xl border-none cursor-pointer transition-all duration-300 font-semibold shadow-card-shadow inline-flex items-center gap-2 text-lg hover:bg-primary-blue-dark hover:scale-105 active:scale-95 ai-style-change-1"
+            className="bg-blue-500 text-white py-3 px-8 rounded-xl border-none cursor-pointer transition-all duration-300 font-semibold shadow-card-shadow inline-flex items-center gap-2 text-lg hover:bg-primary-blue-dark hover:scale-105 active:scale-95 ai-style-change-1"
           >
             <Search size={20} className="w-5 h-5" /> Apply Filters
           </button>
