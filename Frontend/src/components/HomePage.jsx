@@ -25,8 +25,8 @@ const HomePage = () => {
     try {
       setLoading(true);
       const url = query
-        ? `http://localhost:8000/api/property/all?search=${encodeURIComponent(query)}`
-        : 'http://localhost:8000/api/property/all';
+        ? `https://nestifyy-my3u.onrender.com/api/property/all?search=${encodeURIComponent(query)}`
+        : 'https://nestifyy-my3u.onrender.com/api/property/all';
       const response = await fetch(url, {
         method: 'GET',
         headers: {

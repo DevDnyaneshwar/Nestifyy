@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createproperty, updateProperty, deleteProperty, getPropertyById, getAllProperties } from "../controller.js/property.controller.js";
+import { createproperty, updateProperty, deleteProperty, getPropertyById, getAllProperties, searchProperties } from "../controller.js/property.controller.js";
 import authMiddleware from "../middlewares/auth.js"; 
 import upload from "../middlewares/multer.middleware.js";
 
