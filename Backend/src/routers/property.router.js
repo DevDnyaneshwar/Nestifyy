@@ -11,5 +11,6 @@ router.put('/:id', authMiddleware, upload.array('image', 10), updateProperty);
 router.delete('/:id', authMiddleware, deleteProperty);
 router.get('/all', getAllProperties);
 router.get('/:id', getPropertyById);
+router.get('/search', searchProperties);
 
 export default router;

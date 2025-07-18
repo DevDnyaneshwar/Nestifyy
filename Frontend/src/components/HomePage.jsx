@@ -1,24 +1,63 @@
 // src/components/HomePage.jsx
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Search, MessageSquare, Home } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
-import HeroSection from './HeroSection'; // Assuming this is now pure CSS (or Tailwind)
-import PropertyListingCard from './PropertyListingCard'; // Assuming this is now pure CSS (or Tailwind)
-import RoommateListingCard from './RoommateListingCard'; // Assuming this is now pure CSS (or Tailwind)
+import HeroSection from './HeroSection';
+import PropertyListingCard from './PropertyListingCard';
+import RoommateListingCard from './RoommateListingCard';
 
 const HomePage = () => {
   const { trackInteraction } = useContext(AppContext);
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // State to store search query results
+  const [searchResults, setSearchResults] = useState(null);
+
+  // Fetch properties from backend
   useEffect(() => {
     trackInteraction('page_view', 'home_page');
+    fetchProperties();
   }, [trackInteraction]);
 
-  const featuredProperties = [
-    { id: 1, name: 'Cozy 2BHK Apartment', location: 'Koregaon Park, Pune', price: '₹ 35,000/month', imageUrl: 'https://placehold.co/400x250/E0E7FF/4338CA?text=Apartment', beds: 2, baths: 2, area: '1000 sqft' },
-    { id: 2, name: 'Spacious 3BHK Villa', location: 'Whitefield, Bengaluru', price: '₹ 60,000/month', imageUrl: 'https://placehold.co/400x250/D1FAE5/065F46?text=Villa', beds: 3, baths: 3, area: '2000 sqft' },
-    { id: 3, name: 'Shared Room near Uni', location: 'North Campus, Delhi', price: '₹ 8,000/month', imageUrl: 'https://placehold.co/400x250/FFFBEB/92400E?text=Shared+Room', beds: 1, baths: 1, area: '250 sqft' },
-    { id: 4, name: 'Studio Flat', location: 'Bandra, Mumbai', price: '₹ 28,000/month', imageUrl: 'https://placehold.co/400x250/FEE2E2/991B1B?text=Studio+Flat', beds: 1, baths: 1, area: '450 sqft' },
-  ];
+  const fetchProperties = async (query = '') => {
+    try {
+      setLoading(true);
+      const url = query
+        ? `http://localhost:8000/api/property/all?search=${encodeURIComponent(query)}`
+        : 'http://localhost:8000/api/property/all';
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setProperties(data.properties.slice(0, 4)); 
+        setSearchResults(null); 
+      } else {
+        setError(data.message || 'Failed to fetch properties');
+      }
+    } catch (err) {
+      setError('Error fetching properties');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Handle search results from HeroSection
+  const handleSearch = (query) => {
+    if (query) {
+      fetchProperties(query);
+    } else {
+      fetchProperties(); // Reset to default properties
+    }
+  };
+
+  // Hardcoded roommates (since no backend for roommates yet)
   const featuredRoommates = [
     { id: 1, name: 'Anjali S.', location: 'Mumbai', lookingFor: 'Bandra, Andheri', budget: '₹ 15,000', imageUrl: 'https://placehold.co/400x250/F0F9FF/0284C7?text=Anjali' },
     { id: 2, name: 'Rahul K.', location: 'Bengaluru', lookingFor: 'Koramangala, Indiranagar', budget: '₹ 12,000', imageUrl: 'https://placehold.co/400x250/ECFDF5/059669?text=Rahul' },
@@ -26,15 +65,19 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter antialiased flex flex-col">
-      <HeroSection />
+      <HeroSection onSearch={handleSearch} />
 
       <section className="py-12 px-6 bg-white md:px-12">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Featured Rooms & Properties</h2>
-        <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
-          {featuredProperties.map((property) => (
-            <PropertyListingCard key={property.id} property={property} />
-          ))}
-        </div>
+        {loading && <p className="text-center">Loading properties...</p>}
+        {error && <p className="text-center text-red-500">{error}</p>}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
+            {(searchResults || properties).map((property) => (
+              <PropertyListingCard key={property._id} property={property} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="py-12 px-6 bg-gray-100 md:px-12">
@@ -46,7 +89,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* How it works section */}
       <section className="py-12 px-6 bg-white md:px-12">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">How Nestify Works</h2>
         <p className="text-gray-700 max-w-2xl mx-auto mb-8 text-base leading-relaxed text-center">
@@ -70,7 +112,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      {/* Remove the style tag */}
     </div>
   );
 };

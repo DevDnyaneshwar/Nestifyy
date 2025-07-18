@@ -226,5 +226,34 @@ const getPropertyById = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch property' });
   }
 };
+const searchProperties = async (req, res) => {
+  try {
+    const { search } = req.query;
+    let query = {};
 
-export { createproperty, updateProperty, deleteProperty, getAllProperties, getPropertyById };
+    if (search) {
+      query = {
+        $or: [
+          { city: { $regex: search, $options: 'i' } },
+          { district: { $regex: search, $options: 'i' } },
+          { area: { $regex: search, $options: 'i' } },
+          { propertyType: { $regex: search, $options: 'i' } },
+        ],
+      };
+    }
+
+    const properties = await Property.find(query)
+      .populate('owner', 'name email')
+      .limit(4); // Limit to 4 properties
+    const sanitizedProperties = properties.map(property => ({
+      ...property.toObject(),
+      imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
+    }));
+    res.status(200).json({ properties: sanitizedProperties });
+  } catch (error) {
+    console.error('Error searching properties:', error);
+    res.status(500).json({ message: 'Failed to search properties' });
+  }
+};
+
+export { createproperty, updateProperty, deleteProperty, getAllProperties, getPropertyById, searchProperties };
