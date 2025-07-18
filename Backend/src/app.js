@@ -18,13 +18,14 @@ app.use(cookieParser())
 import userRouter from "./routers/user.router.js"
 import propertyRouter from "./routers/property.router.js"
 import subscriptionRouter from "./routers/subscription.routes.js"
+import roomRequestRouter from "./routers/roomRequest.router.js";
 
 
 //decleration routes
 app.use("/api/user", userRouter)
 app.use('/api/property', propertyRouter);
 app.use("/api/subscription", subscriptionRouter)
-
+app.use("/api/room-request", roomRequestRouter);
 
 
 

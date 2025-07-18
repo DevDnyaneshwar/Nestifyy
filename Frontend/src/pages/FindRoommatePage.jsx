@@ -1,4 +1,3 @@
-// src/pages/FindRoommatePage.jsx
 import React, { useEffect, useContext, useState } from "react";
 import {
   Search,
@@ -10,8 +9,9 @@ import {
   MessageSquare,
   AlertCircle,
 } from "lucide-react";
-import { AppContxtext } from "../context/AppContext";
+import { AppContext } from "../context/AppContext";
 import RoommateListingCard from "../components/RoommateListingCard";
+import axios from "axios";
 
 const FindRoommatePage = () => {
   const { trackInteraction } = useContext(AppContext);
@@ -20,14 +20,13 @@ const FindRoommatePage = () => {
     gender: "",
     budget: "",
   });
-  const [sortOrder, setSortOrder] = useState("relevance"); // This state is not currently used in UI, but kept for function integrity
+  const [sortOrder, setSortOrder] = useState("relevance");
   const [roommates, setRoommates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     trackInteraction("page_view", "find_roommate_page");
-    // Simulate fetching roommates on initial load
     fetchRoommates();
   }, [trackInteraction]);
 
@@ -42,74 +41,28 @@ const FindRoommatePage = () => {
       sort: currentSortOrder,
     });
     try {
-      // Simulate API call to fetch roommates
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+      const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
+        params: {
+          location: currentFilters.location,
+          gender: currentFilters.gender,
+          budget: currentFilters.budget,
+        },
+      });
 
-      const dummyRoommates = [
-        {
-          id: 3,
-          name: "Priya D.",
-          location: "Mumbai",
-          lookingFor: "Andheri, Bandra",
-          budget: "₹ 18,000",
-          imageUrl: "https://placehold.co/400x260/F0F9FF/0284C7?text=Priya",
-          gender: "Female",
-          interests: "Reading, Yoga",
-        },
-        {
-          id: 4,
-          name: "Amit V.",
-          location: "Delhi",
-          lookingFor: "Saket, Hauz Khas",
-          budget: "₹ 10,000",
-          imageUrl: "https://placehold.co/400x260/ECFDF5/059669?text=Amit",
-          gender: "Male",
-          interests: "Gaming, Movies",
-        },
-        {
-          id: 5,
-          name: "Sneha R.",
-          location: "Pune",
-          lookingFor: "Kothrud, Viman Nagar",
-          budget: "₹ 12,000",
-          imageUrl: "https://placehold.co/400x260/FFFBEB/92400E?text=Sneha",
-          gender: "Female",
-          interests: "Cooking, Travel",
-        },
-        {
-          id: 6,
-          name: "Vikram S.",
-          location: "Bengaluru",
-          lookingFor: "Electronic City",
-          budget: "₹ 9,000",
-          imageUrl: "https://placehold.co/400x260/FEE2E2/991B1B?text=Vikram",
-          gender: "Male",
-          interests: "Sports, Music",
-        },
-        {
-          id: 7,
-          name: "Deepa K.",
-          location: "Chennai",
-          lookingFor: "Velachery",
-          budget: "₹ 11,000",
-          imageUrl: "https://placehold.co/400x260/E0F7FA/00838F?text=Deepa",
-          gender: "Female",
-          interests: "Art, Photography",
-        },
-        {
-          id: 8,
-          name: "Rohan M.",
-          location: "Hyderabad",
-          lookingFor: "Gachibowli",
-          budget: "₹ 14,000",
-          imageUrl: "https://placehold.co/400x260/E8F5E9/2E7D32?text=Rohan",
-          gender: "Male",
-          interests: "Fitness, Tech",
-        },
-      ];
-      setRoommates(dummyRoommates);
+      const formattedRoommates = response.data.map((request) => ({
+        id: request._id,
+        name: request.name,
+        location: request.location,
+        lookingFor: request.location, // Assuming lookingFor is the same as location
+        budget: request.budget,
+        imageUrl: request.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&size=400&background=F0F9FF&color=0284C7`,
+        gender: request.gender,
+        interests: "Not specified", // Placeholder as interests are not in the model
+      }));
+
+      setRoommates(formattedRoommates);
       trackInteraction("search", "find_roommate_search_success", {
-        resultsCount: dummyRoommates.length,
+        resultsCount: formattedRoommates.length,
       });
     } catch (err) {
       setError("Failed to load roommates. Please try again.");
@@ -136,7 +89,6 @@ const FindRoommatePage = () => {
       <h1 className="text-4xl md:text-5xl font-extrabold text-text-gray-800 text-center mb-10 relative">
         <span className="relative inline-block pb-2">
           Find Your Perfect Roommate
-          {/* Tailwind equivalent for ::after pseudo-element for the underline */}
           <span className="content-[''] absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-primary-green rounded-full"></span>
         </span>
       </h1>
@@ -176,9 +128,9 @@ const FindRoommatePage = () => {
               }
             >
               <option value="">Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="any">Any</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           <div className="relative">

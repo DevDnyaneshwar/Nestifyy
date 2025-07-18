@@ -37,7 +37,13 @@ const ProfilePage = () => {
   const [expandedSections, setExpandedSections] = useState({
     personal: true,
     roleSpecific: true,
+    roomRequest: false, // New state for room request section
   });
+  const [roomRequestForm, setRoomRequestForm] = useState({
+    budget: "",
+    location: "",
+  });
+  const [requestLoading, setRequestLoading] = useState(false);
   const navigate = useNavigate();
 
   // Fetch user profile on component mount
@@ -135,6 +141,14 @@ const ProfilePage = () => {
     }));
   };
 
+  // Handle room request form changes
+  const handleRoomRequestChange = (field, value) => {
+    setRoomRequestForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   // Toggle section expansion
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({
@@ -166,6 +180,7 @@ const ProfilePage = () => {
       });
       if (selectedFile) {
         formData.append("photo", selectedFile);
+("/")
       }
 
       const response = await axios.put(
@@ -174,7 +189,7 @@ const ProfilePage = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-formdata",
           },
         }
       );
@@ -209,6 +224,59 @@ const ProfilePage = () => {
       }
     } finally {
       setSaveLoading(false);
+    }
+  };
+
+  // Handle room request submission
+  const handleRoomRequestSubmit = async () => {
+    setRequestLoading(true);
+    setError("");
+    setSuccess("");
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const { budget, location } = roomRequestForm;
+      if (!budget || !location) {
+        throw new Error("Budget and location are required");
+      }
+
+      const response = await axios.post(
+        `https://nestifyy-my3u.onrender.com/api/room-request`,
+        {
+          budget,
+          location,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setSuccess("Room request submitted successfully!");
+      setRoomRequestForm({ budget: "", location: "" });
+      toggleSection("roomRequest");
+      trackInteraction("room_request", "submit_success");
+    } catch (err) {
+      console.error("Room request error:", err);
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to submit room request";
+      setError(errorMessage);
+      trackInteraction("room_request", "submit_failure", {
+        error: errorMessage,
+      });
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
+    } finally {
+      setRequestLoading(false);
     }
   };
 
@@ -311,7 +379,7 @@ const ProfilePage = () => {
 
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6 border border-warm-gray">
-          <div className="h-32 sm:h-40 bg-blue-500 -to-r from-maroon to-light-maroon relative">
+          <div className="h-32 sm:h-40 bg-blue-500 relative">
             <div className="absolute -bottom-12 sm:-bottom-16 left-4 sm:left-6">
               <div className="relative">
                 <img
@@ -623,6 +691,102 @@ const ProfilePage = () => {
             )}
           </div>
 
+          {/* Room Request Section */}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-warm-gray">
+            <div
+              className="bg-gradient-to-r from-maroon to-light-maroon px-4 py-3 flex items-center justify-between cursor-pointer"
+              onClick={() => toggleSection("roomRequest")}
+            >
+              <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
+                <User className="w-5 h-5 mr-2" />
+                Request a Room
+              </h2>
+              {expandedSections.roomRequest ? (
+                <ChevronUp className="w-5 h-5 text-white" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-white" />
+              )}
+            </div>
+            {expandedSections.roomRequest && (
+              <div className="p-4 sm:p-6">
+                <div className="space-y-4">
+                  <div className="bg-cream rounded-xl p-4 border border-warm-gray">
+                    <h3 className="font-semibold text-maroon mb-3 flex items-center text-sm sm:text-base">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Room Request Details
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                        <div className="flex items-center mb-2 sm:mb-0">
+                          <DollarSign className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                          <span className="text-black font-medium w-24">
+                            Budget:
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          value={roomRequestForm.budget}
+                          onChange={(e) =>
+                            handleRoomRequestChange("budget", e.target.value)
+                          }
+                          className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                          placeholder="Enter your budget (e.g., ₹10,000)"
+                        />
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
+                        <div className="flex items-center mb-2 sm:mb-0">
+                          <MapPin className="w-5 h-5 mr-2 text-maroon flex-shrink-0" />
+                          <span className="text-black font-medium w-24">
+                            Location:
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          value={roomRequestForm.location}
+                          onChange={(e) =>
+                            handleRoomRequestChange("location", e.target.value)
+                          }
+                          className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                          placeholder="Enter preferred location"
+                        />
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            setRoomRequestForm({ budget: "", location: "" });
+                            toggleSection("roomRequest");
+                            trackInteraction("click", "room_request_cancel");
+                          }}
+                          className="flex items-center justify-center gap-2 bg-warm-gray text-black px-3 py-2 rounded-lg hover:bg-gray-400 transition-colors font-medium shadow-sm text-sm sm:text-base"
+                        >
+                          <X className="w-4 h-4" />
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleRoomRequestSubmit}
+                          disabled={requestLoading}
+                          className="flex items-center justify-center gap-2 bg-maroon text-white px-3 py-2 rounded-lg hover:bg-deep-maroon transition-colors disabled:opacity-50 font-medium text-sm sm:text-base"
+                        >
+                          {requestLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Submitting...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="w-4 h-4" />
+                              Submit Request
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Role-Specific Information */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-warm-gray">
             <div
@@ -819,7 +983,7 @@ const ProfilePage = () => {
                                   e.target.value
                                 )
                               }
-                              className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
+                              className="flex-1 px-3 py-2 border borderjonerow border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
                               placeholder="Enter budget"
                             />
                           ) : (
@@ -880,13 +1044,13 @@ const ProfilePage = () => {
           {!id && (
             <button
               onClick={() => {
-                trackInteraction("click", "view_dashboard");
-                navigate("/dashboard");
+                toggleSection("roomRequest");
+                trackInteraction("click", "view_room_request_form");
               }}
               className="flex-1 sm:flex-none bg-maroon text-white py-2 px-4 rounded-lg hover:bg-deep-maroon transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               <User className="w-4 h-4" />
-              Dashboard
+              Request for Room
             </button>
           )}
         </div>
