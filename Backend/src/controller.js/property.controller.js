@@ -61,16 +61,11 @@ const createproperty = async (req, res) => {
     // Upload images to Cloudinary
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
-      const uploadPromises = req.files.map(file =>
-        new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-            if (error) reject(new Error('Cloudinary upload failed'));
-            resolve(result.secure_url);
-          }).end(file.buffer);
-        })
+      imageUrls = await Promise.all(
+        req.files.map(file => uploadImage(file))
       );
-      imageUrls = await Promise.all(uploadPromises);
     }
+
     // Create new property
     const newProperty = new Property({
       title,
@@ -87,7 +82,7 @@ const createproperty = async (req, res) => {
       area: area ? Number(area) : undefined,
       deposit: deposit ? Number(deposit) : 0,
       amenities: Array.isArray(amenities) ? amenities : [],
-      allowBroker: allowBroker === "true" || allowBroker === "yes",
+      allowBroker: allowBroker === "true" || allowBroker === true,
       imageUrls,
       owner: ownerId,
     });
@@ -119,17 +114,11 @@ const updateProperty = async (req, res) => {
     const updates = req.body;
     const authenticatedUserId = req.user._id;
 
-    let imageUrls = propertyId.imageUrls;
+    let imageUrls = updates.imageUrls || [];
     if (req.files && req.files.length > 0) {
-      const uploadPromises = req.files.map(file =>
-        new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-            if (error) reject(new Error('Cloudinary upload failed'));
-            resolve(result.secure_url);
-          }).end(file.buffer);
-        })
+      imageUrls = await Promise.all(
+        req.files.map(file => uploadImage(file))
       );
-      imageUrls = await Promise.all(uploadPromises);
     }
 
     const propertyToUpdate = await Property.findById(propertyId);
@@ -141,9 +130,19 @@ const updateProperty = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized to update this property" });
     }
 
+    // Remove old images from Cloudinary if new images are provided
+    if (imageUrls.length > 0 && propertyToUpdate.imageUrls.length > 0) {
+      await Promise.all(
+        propertyToUpdate.imageUrls.map(imageUrl => {
+          const publicId = imageUrl.split('/').pop().split('.')[0];
+          return deleteImage(publicId);
+        })
+      );
+    }
+
     const updatedProperty = await Property.findByIdAndUpdate(
       propertyId,
-      { $set: updates },
+      { $set: { ...updates, imageUrls } },
       { new: true }
     );
 
@@ -157,8 +156,8 @@ const updateProperty = async (req, res) => {
     });
   } catch (error) {
     console.error('Error in updateProperty:', error);
-    if (req.file) {
-      await fs.unlink(req.file.path);
+    if (req.files && req.files.length > 0) {
+      await Promise.all(req.files.map((file) => fs.unlink(file.path)));
     }
     res.status(500).json({ message: 'Server error, please try again later' });
   }
@@ -178,16 +177,17 @@ const deleteProperty = async (req, res) => {
       return res.status(403).json({ message: 'Unauthorized to delete this property' });
     }
 
-    const deletedProperty = await Property.findByIdAndDelete(propertyId);
-
-    if (deletedProperty.image && deletedProperty.image.length > 0) {
+    // Delete images from Cloudinary
+    if (property.imageUrls && property.imageUrls.length > 0) {
       await Promise.all(
-        deletedProperty.image.map((imageUrl) => {
+        property.imageUrls.map(imageUrl => {
           const publicId = imageUrl.split('/').pop().split('.')[0];
           return deleteImage(publicId);
         })
       );
     }
+
+    await Property.findByIdAndDelete(propertyId);
 
     res.status(200).json({ message: 'Property deleted successfully' });
   } catch (error) {
@@ -199,7 +199,11 @@ const deleteProperty = async (req, res) => {
 const getAllProperties = async (req, res) => {
   try {
     const properties = await Property.find().populate('owner', 'name email');
-    res.status(200).json({ properties });
+    const sanitizedProperties = properties.map(property => ({
+      ...property.toObject(),
+      imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
+    }));
+    res.status(200).json({ properties: sanitizedProperties });
   } catch (error) {
     console.error('Error fetching properties:', error);
     res.status(500).json({ message: 'Failed to fetch properties' });
@@ -212,7 +216,11 @@ const getPropertyById = async (req, res) => {
     if (!property) {
       return res.status(404).json({ message: 'Property not found' });
     }
-    res.status(200).json({ property });
+    const sanitizedProperty = {
+      ...property.toObject(),
+      imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
+    };
+    res.status(200).json({ property: sanitizedProperty });
   } catch (error) {
     console.error('Error fetching property by ID:', error);
     res.status(500).json({ message: 'Failed to fetch property' });
