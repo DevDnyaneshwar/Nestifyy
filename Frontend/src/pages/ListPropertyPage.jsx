@@ -160,7 +160,8 @@ const ListPropertyPage = () => {
       
       // Refresh the page after 2 seconds to show the success message
       setTimeout(() => {
-        window.location.reload();
+        window.scrollTo(0, 0);
+        navigate('/list-property');
       }, 2000);
       
     } catch (error) {
@@ -570,7 +571,7 @@ const ListPropertyPage = () => {
           type="submit"
           disabled={loading}
           className={`w-full bg-gradient-to-r from-primary-blue to-blue-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-all duration-300 shadow-card-shadow-lg text-xl flex items-center justify-center gap-2 border-none cursor-pointer transform scale-100 hover:scale-[1.005] hover:shadow-xl active:scale-99 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
-          onClick={() => { trackInteraction('click', 'list_property_submit_button'); navigate('/list-property'); }}
+          onClick={() => trackInteraction('click', 'list_property_submit_button')}
         >
           {loading ? (
             <>
