@@ -354,26 +354,26 @@ const ProfilePage = () => {
                       placeholder="Enter your name"
                     />
                   ) : (
-                    <h1 className="text-2xl sm:text-3xl font-bold text-black">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-black truncate">
                       {user.name}
                     </h1>
                   )}
                 </div>
                 <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 mt-2 text-sm sm:text-base">
                   <div className="flex items-center text-black">
-                    <Mail className="w-4 h-4 mr-2 text-maroon" />
-                    <span className="break-all">{user.email}</span>
+                    <Mail className="w-4 h-4 mr-2 text-maroon flex-shrink-0" />
+                    <span className="truncate max-w-[200px] sm:max-w-[300px]">{user.email}</span>
                   </div>
                   {user.number && (
                     <div className="flex items-center text-black">
-                      <Phone className="w-4 h-4 mr-2 text-maroon" />
-                      <span>{user.number}</span>
+                      <Phone className="w-4 h-4 mr-2 text-maroon flex-shrink-0" />
+                      <span className="truncate max-w-[200px] sm:max-w-[300px]">{user.number}</span>
                     </div>
                   )}
                   {user.location && (
                     <div className="flex items-center text-black">
-                      <MapPin className="w-4 h-4 mr-2 text-maroon" />
-                      <span>{user.location}</span>
+                      <MapPin className="w-4 h-4 mr-2 text-maroon flex-shrink-0" />
+                      <span className="truncate max-w-[200px] sm:max-w-[300px]">{user.location}</span>
                     </div>
                   )}
                 </div>
@@ -486,7 +486,7 @@ const ProfilePage = () => {
                             <option value="Other">Other</option>
                           </select>
                         ) : (
-                          <span className="text-black">
+                          <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                             {user.gender || "Not specified"}
                           </span>
                         )}
@@ -511,7 +511,7 @@ const ProfilePage = () => {
                             max="120"
                           />
                         ) : (
-                          <span className="text-black">
+                          <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                             {user.age || "Not specified"}
                           </span>
                         )}
@@ -534,7 +534,7 @@ const ProfilePage = () => {
                             placeholder="Enter profession"
                           />
                         ) : (
-                          <span className="text-black">
+                          <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                             {user.profession || "Not specified"}
                           </span>
                         )}
@@ -565,7 +565,9 @@ const ProfilePage = () => {
                             placeholder="Enter email"
                           />
                         ) : (
-                          <span className="text-black">{user.email}</span>
+                          <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
+                            {user.email}
+                          </span>
                         )}
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center p-2 hover:bg-white rounded-lg transition-colors">
@@ -586,7 +588,7 @@ const ProfilePage = () => {
                             placeholder="Enter phone number"
                           />
                         ) : (
-                          <span className="text-black">
+                          <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                             {user.number || "Not specified"}
                           </span>
                         )}
@@ -609,7 +611,7 @@ const ProfilePage = () => {
                             placeholder="Enter location"
                           />
                         ) : (
-                          <span className="text-black">
+                          <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                             {user.location || "Not specified"}
                           </span>
                         )}
@@ -675,7 +677,7 @@ const ProfilePage = () => {
                               placeholder="Enter clients handled"
                             />
                           ) : (
-                            <span className="text-black">
+                            <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                               {user.brokerInfo.clientsHandled || "Not specified"}
                             </span>
                           )}
@@ -702,7 +704,7 @@ const ProfilePage = () => {
                               placeholder="Enter properties sold"
                             />
                           ) : (
-                            <span className="text-black">
+                            <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                               {user.brokerInfo.propertiesSold || "Not specified"}
                             </span>
                           )}
@@ -729,7 +731,7 @@ const ProfilePage = () => {
                               placeholder="Enter years of experience"
                             />
                           ) : (
-                            <span className="text-black">
+                            <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                               {user.brokerInfo.experience || "Not specified"} years
                             </span>
                           )}
@@ -767,7 +769,7 @@ const ProfilePage = () => {
                               placeholder="Enter preferred property type"
                             />
                           ) : (
-                            <span className="text-black">
+                            <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                               {user.preferences.propertyType || "Not specified"}
                             </span>
                           )}
@@ -794,7 +796,7 @@ const ProfilePage = () => {
                               placeholder="Enter preferred location"
                             />
                           ) : (
-                            <span className="text-black">
+                            <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                               {user.preferences.location || "Not specified"}
                             </span>
                           )}
@@ -821,7 +823,7 @@ const ProfilePage = () => {
                               placeholder="Enter budget"
                             />
                           ) : (
-                            <span className="text-black">
+                            <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
                               {user.preferences.budget || "Not specified"}
                             </span>
                           )}
@@ -909,6 +911,12 @@ const ProfilePage = () => {
           .focus\\:border-maroon:focus { border-color: #7f1d1d; }
           .focus\\:ring-light-maroon\\/20:focus { --tw-ring-color: rgba(185, 28, 28, 0.2); }
           
+          .truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
           @media (max-width: 640px) {
             .min-h-screen { padding-bottom: 4rem; }
             .max-w-4xl { max-width: 100%; }
@@ -920,6 +928,8 @@ const ProfilePage = () => {
             .text-sm { font-size: 0.75rem; }
             .w-28 { width: 6rem; }
             .w-24 { width: 5rem; }
+            .max-w-[200px] { max-width: 70%; }
+            .max-w-[300px] { max-width: 80%; }
           }
         `}</style>
       </div>
