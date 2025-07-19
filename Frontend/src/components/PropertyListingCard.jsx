@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { MapPin, Home, Bed, Bath } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
 
@@ -139,15 +140,16 @@ const PropertyListingCard = ({ property }) => {
             <Home size={16} className="mr-1 text-gray-500" /> {property.area || 'N/A'}
           </div>
         </div>
-        <button
-          className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg border-none cursor-pointer transition-colors duration-200 text-base font-medium hover:bg-blue-700"
+        <Link
+          to={`/property/${property.id}`}
+          className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg border-none cursor-pointer transition-colors duration-200 text-base font-medium hover:bg-blue-700 text-center"
           onClick={(e) => {
             e.stopPropagation();
             trackInteraction('click', `view_details_button_${property.id}`);
           }}
         >
           View Details
-        </button>
+        </Link>
       </div>
     </div>
   );
