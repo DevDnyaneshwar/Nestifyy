@@ -26,7 +26,7 @@ const HomePage = () => {
     } else {
       fetchRoommates(searchQuery);
     }
-  }, [trackInteraction, searchParams, activeTab]);
+  }, [searchParams, activeTab]);
 
   const fetchProperties = async (query = '') => {
     try {
@@ -45,7 +45,7 @@ const HomePage = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        const formattedProperties = data.properties.slice(0, 4).map((property) => ({
+        const formattedProperties = data.properties.map((property) => ({
           ...property,
           id: property._id,
           imageUrls:
@@ -81,20 +81,23 @@ const HomePage = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
-        params: { search: query },
+      const apiUrl = import.meta.env.VITE_API_URL || "https://nestifyy-my3u.onrender.com";
+      const url = query
+        ? `${apiUrl}/api/room-request/search?search=${encodeURIComponent(query)}`
+        : `${apiUrl}/api/room-request`;
+      const response = await axios.get(url, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
-      const formattedRoommates = response.data.slice(0, 4).map((request) => ({
+      const formattedRoommates = response.data.map((request) => ({
         id: request._id,
-        name: request.name,
+        name: request.user?.name || 'Unknown',
         location: request.location,
         lookingFor: request.location,
         budget: request.budget,
-        imageUrl: request.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&size=400&background=F0F9FF&color=0284C7`,
-        gender: request.gender,
+        imageUrl: request.user?.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.user?.name || 'Unknown')}&size=400&background=F0F9FF&color=0284C7`,
+        gender: request.user?.gender || 'Not specified',
         interests: "Not specified",
       }));
       setRoommates(formattedRoommates);
@@ -114,13 +117,15 @@ const HomePage = () => {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setSearchParams(searchParams.get('search') ? { search: searchParams.get('search') } : {});
+    const searchQuery = searchParams.get('search') || '';
+    setSearchParams(searchQuery ? { search: searchQuery } : {});
     trackInteraction('click', `tab_${tab}`);
   };
 
-  const handleSearch = (query) => {
+  const handleSearch = (query, tab) => {
+    setActiveTab(tab);
     setSearchParams(query ? { search: query } : {});
-    if (activeTab === 'find_room') {
+    if (tab === 'find_room') {
       fetchProperties(query);
     } else {
       fetchRoommates(query);

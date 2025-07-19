@@ -265,10 +265,16 @@ const searchProperties = async (req, res) => {
     }
 
     // Execute query
-    let properties = await Property.find(query)
+    let findQuery = Property.find(query)
       .populate({ path: 'owner', select: 'name email', strictPopulate: false })
-      .limit(4)
       .lean();
+    
+    // Apply limit only if no search query
+    if (!search || !search.trim()) {
+      findQuery = findQuery.limit(4);
+    }
+
+    let properties = await findQuery;
 
     // Apply sorting
     switch (sortBy) {

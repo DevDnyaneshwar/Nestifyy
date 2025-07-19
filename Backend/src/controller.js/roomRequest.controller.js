@@ -84,10 +84,16 @@ const searchRoomRequests = async (req, res) => {
     }
 
     // Execute query
-    let roomRequests = await RoomRequest.find(query)
+    let findQuery = RoomRequest.find(query)
       .populate('user', 'name number gender photo')
-      .limit(4)
       .lean();
+
+    // Apply limit only if no search query
+    if (!search || !search.trim()) {
+      findQuery = findQuery.limit(4);
+    }
+
+    let roomRequests = await findQuery;
 
     // Apply sorting
     switch (sortBy) {
@@ -115,5 +121,6 @@ const searchRoomRequests = async (req, res) => {
     res.status(500).json({ message: 'Failed to search room requests', error: error.message });
   }
 };
+
 
 export { createRoomRequest, getAllRoomRequests, searchRoomRequests };

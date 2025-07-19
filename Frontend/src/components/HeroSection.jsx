@@ -2,9 +2,8 @@ import React, { useState, useContext } from 'react';
 import { Search } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
 
-const HeroSection = ({ onSearch }) => {
-  const [activeTab, setActiveTab] = useState('find_room');
-  const [searchQuery, setSearchQuery] = useState('');
+const HeroSection = ({ initialSearch, activeTab, onTabChange, onSearch }) => {
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [searchError, setSearchError] = useState(null);
   const { trackInteraction } = useContext(AppContext);
 
@@ -38,11 +37,11 @@ const HeroSection = ({ onSearch }) => {
               className={`px-8 py-4 font-semibold text-lg rounded-t-xl transition-all duration-300 ease-in-out bg-transparent border-b-4 border-transparent cursor-pointer
                 ${activeTab === 'find_room' ? 'text-blue-700 border-blue-700 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`}
               onClick={() => {
-                setActiveTab('find_room');
+                onTabChange('find_room');
                 trackInteraction('click', 'search_tab_find_room');
                 setSearchQuery('');
                 setSearchError(null);
-                onSearch('', 'find_room'); // Reset search for rooms
+                onSearch('', 'find_room');
               }}
             >
               Find Room
@@ -51,11 +50,11 @@ const HeroSection = ({ onSearch }) => {
               className={`px-8 py-4 font-semibold text-lg rounded-t-xl transition-all duration-300 ease-in-out bg-transparent border-b-4 border-transparent cursor-pointer
                 ${activeTab === 'find_roommate' ? 'text-blue-700 border-blue-700 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`}
               onClick={() => {
-                setActiveTab('find_roommate');
+                onTabChange('find_roommate');
                 trackInteraction('click', 'search_tab_find_roommate');
                 setSearchQuery('');
                 setSearchError(null);
-                onSearch('', 'find_roommate'); // Reset search for roommates
+                onSearch('', 'find_roommate');
               }}
             >
               Find Roommate
