@@ -130,11 +130,7 @@ const FindRoommatePage = () => {
   };
 
   const handleSearch = () => {
-    if (areFiltersEmpty) {
-      setError("Please apply at least one filter to find roommates.");
-      setRoommates([]);
-      return;
-    }
+
     if (!isValidSearch) {
       setError("No roommate found. Please check location, gender, or budget.");
       setRoommates([]);

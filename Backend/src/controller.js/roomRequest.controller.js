@@ -55,55 +55,55 @@ const searchRoomRequests = async (req, res) => {
       return res.status(200).json([]);
     }
 
-    // Location-based search
+    // Location and name-based search
     if (search && search.trim()) {
-      query.location = { $regex: search.trim(), $options: "i" };
+      const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.$or = [
+        { location: { $regex: escapedSearch, $options: 'i' } },
+        { 'user.name': { $regex: escapedSearch, $options: 'i' } }, // Search user.name
+      ];
     }
 
-    // Gender filter (from User model)
-    if (gender && ["Male", "Female", "Other"].includes(gender)) {
-      query["user.gender"] = gender; // Filter on populated user.gender field
+    // Gender filter
+    if (gender && ['Male', 'Female', 'Other'].includes(gender)) {
+      query['user.gender'] = gender;
     } else if (gender) {
-      // Invalid gender, return empty results
       return res.status(200).json([]);
     }
 
     // Budget filter
     if (budget && budget.trim()) {
-      if (budget.includes("-")) {
-        const [minBudget, maxBudget] = budget.split("-").map((val) => parseFloat(val));
+      if (budget.includes('-')) {
+        const [minBudget, maxBudget] = budget.split('-').map((val) => parseFloat(val));
         if (!isNaN(minBudget) && !isNaN(maxBudget)) {
           query.budget = {
             $gte: minBudget.toString(),
             $lte: maxBudget.toString(),
           };
         } else {
-          // Invalid budget range, return empty results
           return res.status(200).json([]);
         }
-      } else if (budget.endsWith("+")) {
-        const minBudget = parseFloat(budget.replace("+", ""));
+      } else if (budget.endsWith('+')) {
+        const minBudget = parseFloat(budget.replace('+', ''));
         if (!isNaN(minBudget)) {
           query.budget = { $gte: minBudget.toString() };
         } else {
-          // Invalid budget, return empty results
           return res.status(200).json([]);
         }
       } else {
-        // Invalid budget format, return empty results
         return res.status(200).json([]);
       }
     }
 
     const roomRequests = await RoomRequest.find(query)
-      .populate("user", "name number gender photo")
+      .populate('user', 'name number gender photo')
       .limit(4)
       .lean();
 
     res.status(200).json(roomRequests);
   } catch (error) {
-    console.error("Error searching room requests:", error);
-    res.status(500).json({ message: "Failed to search room requests", error: error.message });
+    console.error('Error searching room requests:', error);
+    res.status(500).json({ message: 'Failed to search room requests', error: error.message });
   }
 };
 

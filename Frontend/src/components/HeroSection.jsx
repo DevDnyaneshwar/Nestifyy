@@ -3,9 +3,9 @@ import React, { useState, useContext } from 'react';
 import { Search } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
 
-const HeroSection = ({ onSearch }) => {
-  const [activeTab, setActiveTab] = useState('find_room');
-  const [searchQuery, setSearchQuery] = useState('');
+const HeroSection = ({ initialSearch = '', activeTab: initialTab = 'find_room', onTabChange, onSearch }) => {
+  const [activeTab, setActiveTab] = useState(initialTab);
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [searchError, setSearchError] = useState(null);
   const { trackInteraction } = useContext(AppContext);
 
@@ -17,7 +17,7 @@ const HeroSection = ({ onSearch }) => {
     }
     setSearchError(null);
     trackInteraction('click', `search_button_${activeTab}`, { query: trimmedQuery });
-    onSearch(trimmedQuery, activeTab);
+    onSearch(trimmedQuery);
   };
 
   return (
@@ -40,10 +40,11 @@ const HeroSection = ({ onSearch }) => {
                 ${activeTab === 'find_room' ? 'text-blue-700 border-blue-700 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`}
               onClick={() => {
                 setActiveTab('find_room');
+                onTabChange('find_room');
                 trackInteraction('click', 'search_tab_find_room');
                 setSearchQuery('');
                 setSearchError(null);
-                onSearch('', 'find_room'); // Reset search for rooms
+                onSearch('');
               }}
             >
               Find Room
@@ -53,10 +54,11 @@ const HeroSection = ({ onSearch }) => {
                 ${activeTab === 'find_roommate' ? 'text-blue-700 border-blue-700 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`}
               onClick={() => {
                 setActiveTab('find_roommate');
+                onTabChange('find_roommate');
                 trackInteraction('click', 'search_tab_find_roommate');
                 setSearchQuery('');
                 setSearchError(null);
-                onSearch('', 'find_roommate'); // Reset search for roommates
+                onSearch('');
               }}
             >
               Find Roommate
@@ -67,7 +69,11 @@ const HeroSection = ({ onSearch }) => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={22} />
               <input
                 type="text"
-                placeholder={activeTab === 'find_room' ? "Search by area, location, or property type" : "Search by area, city, or location"}
+                placeholder={
+                  activeTab === 'find_room'
+                    ? 'Search by location, city, or property type'
+                    : 'Search by location or name'
+                }
                 className="w-full pl-12 pr-6 py-4 border border-gray-300 rounded-xl outline-none transition-all duration-200 text-gray-800 text-lg shadow-sm focus:border-blue-600 focus:ring-3 focus:ring-blue-300"
                 value={searchQuery}
                 onChange={(e) => {
@@ -83,7 +89,7 @@ const HeroSection = ({ onSearch }) => {
                       return;
                     }
                     trackInteraction('keypress', `search_input_enter_${activeTab}`, { query: trimmedQuery });
-                    onSearch(trimmedQuery, activeTab);
+                    onSearch(trimmedQuery);
                   }
                 }}
               />

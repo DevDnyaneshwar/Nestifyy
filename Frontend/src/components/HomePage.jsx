@@ -1,3 +1,4 @@
+// src/components/HomePage.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
@@ -7,7 +8,7 @@ import { AppContext } from '../context/AppContext';
 import { Loader2, Frown, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 
-const DEFAULT_IMAGE = "https://placehold.co/400x250/E0F7FA/00838F?text=Property";
+const DEFAULT_IMAGE = 'https://placehold.co/400x250/E0F7FA/00838F?text=Property';
 
 const HomePage = () => {
   const { trackInteraction } = useContext(AppContext);
@@ -32,7 +33,7 @@ const HomePage = () => {
     try {
       setLoading(true);
       setError(null);
-      const apiUrl = import.meta.env.VITE_API_URL || "https://nestifyy-my3u.onrender.com";
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://nestifyy-my3u.onrender.com';
       const url = query
         ? `${apiUrl}/api/property/search?search=${encodeURIComponent(query)}`
         : `${apiUrl}/api/property/all`;
@@ -40,7 +41,7 @@ const HomePage = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
       const data = await response.json();
@@ -48,10 +49,7 @@ const HomePage = () => {
         const formattedProperties = data.properties.slice(0, 4).map((property) => ({
           ...property,
           id: property._id,
-          imageUrls:
-            property.imageUrls && Array.isArray(property.imageUrls)
-              ? property.imageUrls
-              : [DEFAULT_IMAGE],
+          imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [DEFAULT_IMAGE],
           price: `₹ ${property.rent.toLocaleString()}/month`,
           beds: property.noOfBedroom,
           type: property.propertyType,
@@ -81,21 +79,23 @@ const HomePage = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
+      const response = await axios.get('https://nestifyy-my3u.onrender.com/api/room-request', {
         params: { search: query },
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
       const formattedRoommates = response.data.slice(0, 4).map((request) => ({
         id: request._id,
-        name: request.name,
+        name: request.user.name, // Use populated user.name
         location: request.location,
         lookingFor: request.location,
         budget: request.budget,
-        imageUrl: request.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&size=400&background=F0F9FF&color=0284C7`,
-        gender: request.gender,
-        interests: "Not specified",
+        imageUrl:
+          request.user.photo ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(request.user.name)}&size=400&background=F0F9FF&color=0284C7`,
+        gender: request.user.gender,
+        interests: 'Not specified',
       }));
       setRoommates(formattedRoommates);
       setProperties([]);

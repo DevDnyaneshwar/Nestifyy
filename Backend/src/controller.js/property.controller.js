@@ -238,6 +238,7 @@ const searchProperties = async (req, res) => {
           { district: { $regex: escapedSearch, $options: 'i' } },
           { area: { $regex: escapedSearch, $options: 'i' } },
           { propertyType: { $regex: escapedSearch, $options: 'i' } },
+          { location: { $regex: escapedSearch, $options: 'i' } }, // Add location field
         ],
       };
     }
@@ -254,4 +255,5 @@ const searchProperties = async (req, res) => {
     res.status(500).json({ message: 'Failed to search properties', error: error.message });
   }
 };
+
 export { createproperty, updateProperty, deleteProperty, getAllProperties, getPropertyById, searchProperties };
