@@ -47,62 +47,71 @@ const getAllRoomRequests = async (req, res) => {
 
 const searchRoomRequests = async (req, res) => {
   try {
-    const { search, gender, budget } = req.query;
+    const { search, gender, priceRange, sortBy } = req.query;
     let query = {};
 
-    // If no filters are provided, return empty results
-    if (!search && !gender && !budget) {
+    if (!search && !gender && !priceRange) {
       return res.status(200).json([]);
     }
 
-    // Location and name-based search
+    // Search query
     if (search && search.trim()) {
       const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
         { location: { $regex: escapedSearch, $options: 'i' } },
-        { 'user.name': { $regex: escapedSearch, $options: 'i' } }, // Search user.name
+        { 'user.name': { $regex: escapedSearch, $options: 'i' } },
       ];
     }
 
     // Gender filter
     if (gender && ['Male', 'Female', 'Other'].includes(gender)) {
       query['user.gender'] = gender;
-    } else if (gender) {
-      return res.status(200).json([]);
     }
 
-    // Budget filter
-    if (budget && budget.trim()) {
-      if (budget.includes('-')) {
-        const [minBudget, maxBudget] = budget.split('-').map((val) => parseFloat(val));
+    // Budget range filter
+    if (priceRange && priceRange.trim()) {
+      if (priceRange.includes('-')) {
+        const [minBudget, maxBudget] = priceRange.split('-').map((val) => parseFloat(val));
         if (!isNaN(minBudget) && !isNaN(maxBudget)) {
-          query.budget = {
-            $gte: minBudget.toString(),
-            $lte: maxBudget.toString(),
-          };
-        } else {
-          return res.status(200).json([]);
+          query.budget = { $gte: minBudget.toString(), $lte: maxBudget.toString() };
         }
-      } else if (budget.endsWith('+')) {
-        const minBudget = parseFloat(budget.replace('+', ''));
+      } else if (priceRange.endsWith('+')) {
+        const minBudget = parseFloat(priceRange.replace('+', ''));
         if (!isNaN(minBudget)) {
           query.budget = { $gte: minBudget.toString() };
-        } else {
-          return res.status(200).json([]);
         }
-      } else {
-        return res.status(200).json([]);
       }
     }
 
-    const roomRequests = await RoomRequest.find(query)
+    // Execute query
+    let roomRequests = await RoomRequest.find(query)
       .populate('user', 'name number gender photo')
       .limit(4)
       .lean();
 
+    // Apply sorting
+    switch (sortBy) {
+      case 'rent-low':
+        roomRequests = roomRequests.sort((a, b) => a.budget - b.budget);
+        break;
+      case 'rent-high':
+        roomRequests = roomRequests.sort((a, b) => b.budget - a.budget);
+        break;
+      case 'popularity':
+        roomRequests = roomRequests.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      default:
+        break;
+    }
+
     res.status(200).json(roomRequests);
   } catch (error) {
-    console.error('Error searching room requests:', error);
+    console.error('Error searching room requests:', {
+      message: error.message,
+      stack: error.stack,
+      query: req.query,
+      timestamp: new Date().toISOString(),
+    });
     res.status(500).json({ message: 'Failed to search room requests', error: error.message });
   }
 };
