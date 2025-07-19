@@ -232,11 +232,6 @@ const getPropertyById = async (req, res) => {
   }
 };
 
-import { Property } from "../models/property.model.js";
-import { uploadImage, deleteImage } from "../utils/cloudinary.js";
-import fs from "fs/promises";
-import jwt from "jsonwebtoken";
-
 const searchProperties = async (req, res) => {
   try {
     const { search, propertyType, priceRange, sortBy } = req.query;
