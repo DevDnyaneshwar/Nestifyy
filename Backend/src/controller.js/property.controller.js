@@ -230,20 +230,19 @@ const searchProperties = async (req, res) => {
   try {
     const { search } = req.query;
     let query = {};
-
-    if (search) {
+    if (search && typeof search === 'string' && search.trim()) {
+      const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query = {
         $or: [
-          { city: { $regex: search, $options: 'i' } },
-          { district: { $regex: search, $options: 'i' } },
-          { area: { $regex: search, $options: 'i' } },
-          { propertyType: { $regex: search, $options: 'i' } },
+          { city: { $regex: escapedSearch, $options: 'i' } },
+          { district: { $regex: escapedSearch, $options: 'i' } },
+          { area: { $regex: escapedSearch, $options: 'i' } },
+          { propertyType: { $regex: escapedSearch, $options: 'i' } },
         ],
       };
     }
-
     const properties = await Property.find(query)
-      .populate('owner', 'name email')
+      .populate({ path: 'owner', select: 'name email', strictPopulate: false })
       .limit(4);
     const sanitizedProperties = properties.map(property => ({
       ...property.toObject(),
@@ -251,9 +250,8 @@ const searchProperties = async (req, res) => {
     }));
     res.status(200).json({ properties: sanitizedProperties });
   } catch (error) {
-    console.error('Error searching properties:', error);
-    res.status(500).json({ message: 'Failed to search properties' });
+    console.error('Error searching properties:', { message: error.message, stack: error.stack });
+    res.status(500).json({ message: 'Failed to search properties', error: error.message });
   }
 };
-
 export { createproperty, updateProperty, deleteProperty, getAllProperties, getPropertyById, searchProperties };

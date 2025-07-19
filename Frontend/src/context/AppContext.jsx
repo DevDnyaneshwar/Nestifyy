@@ -50,7 +50,7 @@ export const AppContextProvider = ({ children }) => {
   const trackInteraction = (eventType, elementId, additionalData = {}) => {
     console.log('TRACKING EVENT:', {
       timestamp: new Date().toISOString(),
-      userId: userId || 'undefined',
+      userId: userId || 'anonymous',
       eventType,
       elementId,
       currentPath: window.location.pathname,

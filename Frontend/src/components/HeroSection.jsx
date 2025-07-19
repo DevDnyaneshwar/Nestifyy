@@ -1,104 +1,98 @@
-// src/components/HeroSection.jsx
 import React, { useState, useContext } from 'react';
-import { Search } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import { Search, Home, Users } from 'lucide-react';
 
-const HeroSection = ({ onSearch }) => {
-  const [activeTab, setActiveTab] = useState('find_room');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchError, setSearchError] = useState(null);
+const HeroSection = ({ initialSearch = '', activeTab, onTabChange, onSearch }) => {
   const { trackInteraction } = useContext(AppContext);
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [, setSearchParams] = useSearchParams();
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    trackInteraction('input', `search_input_${activeTab}`, { value: e.target.value });
+  };
 
   const handleSearch = () => {
     const trimmedQuery = searchQuery.trim();
-    if (!trimmedQuery) {
-      setSearchError('Please enter a search query');
-      return;
+    if (trimmedQuery) {
+      trackInteraction('click', `search_button_${activeTab}`, { query: trimmedQuery });
+      setSearchParams({ search: trimmedQuery });
+      onSearch(trimmedQuery);
+    } else {
+      setSearchParams({});
+      onSearch('');
     }
-    setSearchError(null);
-    trackInteraction('click', `search_button_${activeTab}`, { query: trimmedQuery });
-    onSearch(trimmedQuery, activeTab);
   };
 
   return (
-    <main
-      className="relative bg-cover bg-center h-[550px] flex items-center justify-center p-4 md:p-8 overflow-hidden rounded-xl shadow-2xl"
-      style={{ backgroundImage: "url('https://placehold.co/1920x650/3B82F6/E0F2FE?text=Find+Your+Perfect+Nest')" }}
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-700 to-blue-900 opacity-80 rounded-xl shadow-2xl"></div>
-      <div className="relative z-10 text-center text-white max-w-5xl w-full px-4">
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight drop-shadow-lg animate-fade-in-up">
-          Your Dream Home, Just a Click Away
+    <section className="relative bg-gradient-to-br from-blue-50 via-white to-blue-100 py-16 md:py-24 flex items-center justify-center min-h-[60vh]">
+      <div className="absolute inset-0 bg-hero-pattern opacity-10"></div>
+      <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
+        <h1 className="text-4xl md:text-6xl font-extrabold text-text-gray-800 mb-6 leading-tight">
+          Find Your Perfect <span className="text-primary-blue">Home</span> or{' '}
+          <span className="text-primary-green">Roommate</span>
         </h1>
-        <p className="text-lg md:text-xl mb-10 opacity-90 animate-fade-in-up delay-100">
-          Find rooms, houses, or perfect roommates tailored to your needs.
+        <p className="text-lg md:text-xl text-text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+          Discover verified listings and connect with compatible roommates to make your move seamless.
         </p>
-        <div className="bg-white rounded-2xl shadow-2xl p-4 md:p-6 w-full animate-fade-in-up delay-200">
-          <div className="flex justify-center mb-5 border-b-2 border-gray-100">
-            <button
-              className={`px-8 py-4 font-semibold text-lg rounded-t-xl transition-all duration-300 ease-in-out bg-transparent border-b-4 border-transparent cursor-pointer
-                ${activeTab === 'find_room' ? 'text-blue-700 border-blue-700 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`}
-              onClick={() => {
-                setActiveTab('find_room');
-                trackInteraction('click', 'search_tab_find_room');
-                setSearchQuery('');
-                setSearchError(null);
-                onSearch('', 'find_room'); // Reset search for rooms
-              }}
-            >
-              Find Room
-            </button>
-            <button
-              className={`px-8 py-4 font-semibold text-lg rounded-t-xl transition-all duration-300 ease-in-out bg-transparent border-b-4 border-transparent cursor-pointer
-                ${activeTab === 'find_roommate' ? 'text-blue-700 border-blue-700 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'}`}
-              onClick={() => {
-                setActiveTab('find_roommate');
-                trackInteraction('click', 'search_tab_find_roommate');
-                setSearchQuery('');
-                setSearchError(null);
-                onSearch('', 'find_roommate'); // Reset search for roommates
-              }}
-            >
-              Find Roommate
-            </button>
+
+        <div className="bg-card-bg rounded-2xl shadow-card-shadow p-6 md:p-8 max-w-3xl mx-auto border border-border-gray-300">
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex rounded-lg border border-border-gray-300 p-1 bg-bg-gray-50 shadow-sm">
+              <button
+                className={`px-6 py-3 text-base font-semibold rounded-md transition-all duration-200 flex items-center gap-2 ${
+                  activeTab === 'find_room'
+                    ? 'bg-primary-blue text-white shadow-md'
+                    : 'text-text-gray-600 hover:bg-gray-100'
+                }`}
+                onClick={() => onTabChange('find_room')}
+              >
+                <Home size={20} /> Find Room
+              </button>
+              <button
+                className={`px-6 py-3 text-base font-semibold rounded-md transition-all duration-200 flex items-center gap-2 ${
+                  activeTab === 'find_roommate'
+                    ? 'bg-primary-green text-white shadow-md'
+                    : 'text-text-gray-600 hover:bg-gray-100'
+                }`}
+                onClick={() => onTabChange('find_roommate')}
+              >
+                <Users size={20} /> Find Roommate
+              </button>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-4 md:flex-row md:space-x-4 md:space-y-0">
-            <div className="relative flex-grow w-full md:w-auto">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={22} />
+
+          <div className="flex items-center gap-4 max-w-2xl mx-auto">
+            <div className="relative flex-grow">
+              <Search
+                size={20}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-text-gray-400"
+              />
               <input
                 type="text"
-                placeholder={activeTab === 'find_room' ? "Search by area, location, or property type" : "Search by area, city, or location"}
-                className="w-full pl-12 pr-6 py-4 border border-gray-300 rounded-xl outline-none transition-all duration-200 text-gray-800 text-lg shadow-sm focus:border-blue-600 focus:ring-3 focus:ring-blue-300"
+                placeholder={activeTab === 'find_room' ? 'Search for rooms by city...' : 'Search for roommates by city...'}
+                className="w-full px-4 py-3 pl-12 border border-border-gray-300 rounded-lg outline-none transition-all duration-200 text-base text-text-gray-800 bg-card-bg shadow-sm focus:border-primary-blue focus:ring-2 focus:ring-blue-300"
                 value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setSearchError(null);
-                }}
+                onChange={handleSearchChange}
                 onFocus={() => trackInteraction('focus', `search_input_${activeTab}`)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    const trimmedQuery = searchQuery.trim();
-                    if (!trimmedQuery) {
-                      setSearchError('Please enter a search query');
-                      return;
-                    }
-                    trackInteraction('keypress', `search_input_enter_${activeTab}`, { query: trimmedQuery });
-                    onSearch(trimmedQuery, activeTab);
+                    handleSearch();
                   }
                 }}
               />
             </div>
             <button
-              className="bg-blue-600 text-white px-8 py-4 rounded-xl shadow-lg transition-all duration-300 w-full text-lg font-semibold border-none cursor-pointer hover:bg-blue-700 hover:scale-105 active:scale-95 md:w-auto"
               onClick={handleSearch}
+              className="bg-primary-blue text-white py-3 px-8 rounded-lg border-none cursor-pointer transition-all duration-300 font-semibold shadow-card-shadow inline-flex items-center gap-2 hover:bg-primary-blue-dark hover:scale-105 active:scale-95"
             >
-              Search
+              <Search size={20} /> Search
             </button>
           </div>
-          {searchError && <p className="text-red-500 text-sm mt-2">{searchError}</p>}
         </div>
       </div>
-    </main>
+    </section>
   );
 };
 

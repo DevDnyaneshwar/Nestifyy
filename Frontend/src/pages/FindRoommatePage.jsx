@@ -9,16 +9,18 @@ import {
   MessageSquare,
   AlertCircle,
 } from "lucide-react";
+import { useSearchParams } from 'react-router-dom';
 import { AppContext } from "../context/AppContext";
 import RoommateListingCard from "../components/RoommateListingCard";
 import axios from "axios";
 
 const FindRoommatePage = () => {
   const { trackInteraction } = useContext(AppContext);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
-    location: "",
-    gender: "",
-    budget: "",
+    location: searchParams.get('search') || '',
+    gender: '',
+    budget: '',
   });
   const [sortOrder, setSortOrder] = useState("relevance");
   const [roommates, setRoommates] = useState([]);
@@ -27,13 +29,11 @@ const FindRoommatePage = () => {
 
   useEffect(() => {
     trackInteraction("page_view", "find_roommate_page");
-    fetchRoommates();
-  }, [trackInteraction]);
+    const searchQuery = searchParams.get('search') || '';
+    fetchRoommates({ ...filters, location: searchQuery });
+  }, [trackInteraction, searchParams]);
 
-  const fetchRoommates = async (
-    currentFilters = filters,
-    currentSortOrder = sortOrder
-  ) => {
+  const fetchRoommates = async (currentFilters = filters, currentSortOrder = sortOrder) => {
     setLoading(true);
     setError("");
     trackInteraction("search", "find_roommate_search_initiated", {
@@ -43,9 +43,12 @@ const FindRoommatePage = () => {
     try {
       const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
         params: {
-          location: currentFilters.location,
+          search: currentFilters.location,
           gender: currentFilters.gender,
           budget: currentFilters.budget,
+        },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
 
@@ -63,13 +66,13 @@ const FindRoommatePage = () => {
       setRoommates(formattedRoommates);
       trackInteraction("search", "find_roommate_search_success", {
         resultsCount: formattedRoommates.length,
-        currentPath: "/find-roommate", // Explicitly set currentPath
+        currentPath: "/find-roommate",
       });
     } catch (err) {
       setError("Failed to load roommates. Please try again.");
       trackInteraction("search", "find_roommate_search_failure", {
         error: err.message,
-        currentPath: "/find-roommate", // Explicitly set currentPath
+        currentPath: "/find-roommate",
       });
     } finally {
       setLoading(false);
@@ -80,6 +83,9 @@ const FindRoommatePage = () => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
     trackInteraction("input", `find_roommate_filter_${name}`, { value });
+    if (name === 'location') {
+      setSearchParams(value ? { search: value } : {});
+    }
   };
 
   const handleSearch = () => {
@@ -95,7 +101,6 @@ const FindRoommatePage = () => {
         </span>
       </h1>
 
-      {/* Search and Filter Bar */}
       <div className="bg-card-bg rounded-2xl shadow-card-shadow-xl p-6 md:p-8 w-full max-w-4xl mb-10 border border-border-gray-200 animate-fade-in-up">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="relative">
@@ -113,6 +118,11 @@ const FindRoommatePage = () => {
               onFocus={() =>
                 trackInteraction("focus", "find_roommate_location_input")
               }
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
             />
           </div>
           <div className="relative">
