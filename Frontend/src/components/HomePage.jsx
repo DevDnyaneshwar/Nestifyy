@@ -1,5 +1,5 @@
 // src/components/HomePage.jsx
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
 import PropertyListingCard from '../components/PropertyListingCard';
@@ -16,28 +16,16 @@ const HomePage = () => {
   const [activeTab, setActiveTab] = useState('find_room');
   const [properties, setProperties] = useState([]);
   const [roommates, setRoommates] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    trackInteraction('page_view', 'home_page');
-    const searchQuery = searchParams.get('search') || '';
-    if (activeTab === 'find_room') {
-      fetchProperties(searchQuery);
-    } else {
-      fetchRoommates(searchQuery);
-    }
-  }, [trackInteraction, searchParams, activeTab]);
-
-  const fetchProperties = async (query = '') => {
+  const fetchProperties = useCallback(async (params) => {
     try {
       setLoading(true);
       setError(null);
       const apiUrl = import.meta.env.VITE_API_URL || 'https://nestifyy-my3u.onrender.com';
-      const url = query
-        ? `${apiUrl}/api/property/search?search=${encodeURIComponent(query)}`
-        : `${apiUrl}/api/property/all`;
-      const response = await fetch(url, {
+      const url = `${apiUrl}/api/property/search`;
+      const response = await fetch(`${url}?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -59,35 +47,40 @@ const HomePage = () => {
         setRoommates([]);
         trackInteraction('data_fetch', 'home_properties_fetch_success', {
           count: formattedProperties.length,
+          query: params.toString(),
         });
       } else {
         setError(data.message || 'Failed to fetch properties. Please try again.');
         trackInteraction('data_fetch', 'home_properties_fetch_failure', {
           error: data.message || 'Unknown error',
+          query: params.toString(),
         });
       }
     } catch (err) {
       setError('Network error or server issue. Please try again later.');
       console.error('Fetch properties error:', err);
-      trackInteraction('data_fetch', 'home_properties_fetch_failure', { error: err.message });
+      trackInteraction('data_fetch', 'home_properties_fetch_failure', {
+        error: err.message,
+        query: params.toString(),
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [trackInteraction]);
 
-  const fetchRoommates = async (query = '') => {
+  const fetchRoommates = useCallback(async (params) => {
     try {
       setLoading(true);
       setError(null);
       const response = await axios.get('https://nestifyy-my3u.onrender.com/api/room-request', {
-        params: { search: query },
+        params: Object.fromEntries(params),
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
       const formattedRoommates = response.data.slice(0, 4).map((request) => ({
         id: request._id,
-        name: request.user.name, // Use populated user.name
+        name: request.user.name,
         location: request.location,
         lookingFor: request.location,
         budget: request.budget,
@@ -101,30 +94,37 @@ const HomePage = () => {
       setProperties([]);
       trackInteraction('data_fetch', 'home_roommates_fetch_success', {
         count: formattedRoommates.length,
+        query: params.toString(),
       });
     } catch (err) {
       setError('Failed to load roommates. Please try again.');
       trackInteraction('data_fetch', 'home_roommates_fetch_failure', {
         error: err.message,
+        query: params.toString(),
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [trackInteraction]);
+
+  useEffect(() => {
+    trackInteraction('page_view', 'home_page');
+    const params = new URLSearchParams(searchParams);
+    if (activeTab === 'find_room') {
+      fetchProperties(params);
+    } else {
+      fetchRoommates(params);
+    }
+  }, [searchParams, activeTab, fetchProperties, fetchRoommates]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setSearchParams(searchParams.get('search') ? { search: searchParams.get('search') } : {});
+    setSearchParams({});
     trackInteraction('click', `tab_${tab}`);
   };
 
-  const handleSearch = (query) => {
-    setSearchParams(query ? { search: query } : {});
-    if (activeTab === 'find_room') {
-      fetchProperties(query);
-    } else {
-      fetchRoommates(query);
-    }
+  const handleSearch = (queryString) => {
+    setSearchParams(queryString);
   };
 
   return (

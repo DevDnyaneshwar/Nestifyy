@@ -226,33 +226,83 @@ const getPropertyById = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch property' });
   }
 };
+
 const searchProperties = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, propertyType, priceRange, sortBy } = req.query;
     let query = {};
+
+    // Search query
     if (search && typeof search === 'string' && search.trim()) {
       const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      query = {
-        $or: [
-          { city: { $regex: escapedSearch, $options: 'i' } },
-          { district: { $regex: escapedSearch, $options: 'i' } },
-          { area: { $regex: escapedSearch, $options: 'i' } },
-          { propertyType: { $regex: escapedSearch, $options: 'i' } },
-          { location: { $regex: escapedSearch, $options: 'i' } }, // Add location field
-        ],
-      };
+      query.$or = [
+        { city: { $regex: escapedSearch, $options: 'i' } },
+        { district: { $regex: escapedSearch, $options: 'i' } },
+        { area: { $regex: escapedSearch, $options: 'i' } },
+        { propertyType: { $regex: escapedSearch, $options: 'i' } },
+        { location: { $regex: escapedSearch, $options: 'i' } },
+      ];
     }
-    const properties = await Property.find(query)
+
+    // Property type filter
+    if (propertyType && propertyType.trim()) {
+      query.propertyType = { $regex: propertyType.trim(), $options: 'i' };
+    }
+
+    // Price range filter
+    if (priceRange && priceRange.trim()) {
+      if (priceRange.includes('-')) {
+        const [minPrice, maxPrice] = priceRange.split('-').map((val) => parseFloat(val));
+        if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+          query.rent = { $gte: minPrice, $lte: maxPrice };
+        }
+      } else if (priceRange.endsWith('+')) {
+        const minPrice = parseFloat(priceRange.replace('+', ''));
+        if (!isNaN(minPrice)) {
+          query.rent = { $gte: minPrice };
+        }
+      }
+    }
+
+    // Execute query
+    let properties = await Property.find(query)
       .populate({ path: 'owner', select: 'name email', strictPopulate: false })
-      .limit(4);
-    const sanitizedProperties = properties.map(property => ({
-      ...property.toObject(),
+      .limit(4)
+      .lean();
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'rent-low':
+        properties = properties.sort((a, b) => a.rent - b.rent);
+        break;
+      case 'rent-high':
+        properties = properties.sort((a, b) => b.rent - a.rent);
+        break;
+      case 'popularity':
+        properties = properties.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      default:
+        break;
+    }
+
+    const sanitizedProperties = properties.map((property) => ({
+      ...property,
       imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
+      owner: property.owner || { name: 'Unknown', email: 'Unknown' },
     }));
+
     res.status(200).json({ properties: sanitizedProperties });
   } catch (error) {
-    console.error('Error searching properties:', { message: error.message, stack: error.stack });
-    res.status(500).json({ message: 'Failed to search properties', error: error.message });
+    console.error('Error searching properties:', {
+      message: error.message,
+      stack: error.stack,
+      query: req.query,
+      timestamp: new Date().toISOString(),
+    });
+    res.status(500).json({
+      message: 'Failed to search properties',
+      error: error.message,
+    });
   }
 };
 
