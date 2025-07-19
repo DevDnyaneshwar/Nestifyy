@@ -34,50 +34,52 @@ const FindRoommatePage = () => {
   }, [trackInteraction, searchParams]);
 
   const fetchRoommates = async (currentFilters = filters, currentSortOrder = sortOrder) => {
-    setLoading(true);
-    setError("");
-    trackInteraction("search", "find_roommate_search_initiated", {
-      filters: currentFilters,
-      sort: currentSortOrder,
+  setLoading(true);
+  setError("");
+  trackInteraction("search", "find_roommate_search_initiated", {
+    filters: currentFilters,
+    sort: currentSortOrder,
+  });
+  try {
+    const params = {};
+    if (currentFilters.location) params.search = currentFilters.location;
+    if (currentFilters.gender) params.gender = currentFilters.gender;
+    if (currentFilters.budget) params.budget = currentFilters.budget;
+
+    const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
+      params,
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+      },
     });
-    try {
-      const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
-        params: {
-          search: currentFilters.location,
-          gender: currentFilters.gender,
-          budget: currentFilters.budget,
-        },
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-      });
 
-      const formattedRoommates = response.data.map((request) => ({
-        id: request._id,
-        name: request.name,
-        location: request.location,
-        lookingFor: request.location,
-        budget: request.budget,
-        imageUrl: request.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&size=400&background=F0F9FF&color=0284C7`,
-        gender: request.gender,
-        interests: "Not specified",
-      }));
+    const formattedRoommates = response.data.map((request) => ({
+      id: request._id,
+      name: request.name,
+      location: request.location,
+      lookingFor: request.location,
+      budget: request.budget,
+      imageUrl: request.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&size=400&background=F0F9FF&color=0284C7`,
+      gender: request.gender,
+      interests: "Not specified",
+    }));
 
-      setRoommates(formattedRoommates);
-      trackInteraction("search", "find_roommate_search_success", {
-        resultsCount: formattedRoommates.length,
-        currentPath: "/find-roommate",
-      });
-    } catch (err) {
-      setError("Failed to load roommates. Please try again.");
-      trackInteraction("search", "find_roommate_search_failure", {
-        error: err.message,
-        currentPath: "/find-roommate",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    setRoommates(formattedRoommates);
+    trackInteraction("search", "find_roommate_search_success", {
+      resultsCount: formattedRoommates.length,
+      currentPath: "/find-roommate",
+    });
+  } catch (err) {
+    const errorMessage = err.response?.data?.message || "Failed to load roommates. Please try again.";
+    setError(errorMessage);
+    trackInteraction("search", "find_roommate_search_failure", {
+      error: errorMessage,
+      currentPath: "/find-roommate",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

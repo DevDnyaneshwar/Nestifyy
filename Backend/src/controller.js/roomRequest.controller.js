@@ -50,23 +50,44 @@ const getAllRoomRequests = async (req, res) => {
 };
 const searchRoomRequests = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, gender, budget } = req.query;
     let query = {};
 
+    // Location-based search
     if (search && search.trim()) {
-      query = {
-        $or: [
-          { location: { $regex: search, $options: 'i' } },
-          { city: { $regex: search, $options: 'i' } },
-          { area: { $regex: search, $options: 'i' } },
-        ],
-      };
+      query.$or = [
+        { location: { $regex: search, $options: 'i' } },
+        { city: { $regex: search, $options: 'i' } },
+        { area: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    // Gender filter
+    if (gender && ['Male', 'Female', 'Other'].includes(gender)) {
+      query.gender = gender;
+    }
+
+    // Budget filter
+    if (budget && budget.trim()) {
+      const [minBudget, maxBudget] = budget.split('-').map(val => parseFloat(val));
+      if (!isNaN(minBudget) && !isNaN(maxBudget)) {
+        query.budget = {
+          $gte: minBudget.toString(),
+          $lte: maxBudget.toString(),
+        };
+      } else if (budget.endsWith('+')) {
+        const minBudget = parseFloat(budget.replace('+', ''));
+        if (!isNaN(minBudget)) {
+          query.budget = { $gte: minBudget.toString() };
+        }
+      }
     }
 
     const roomRequests = await RoomRequest.find(query)
       .populate("user", "name number gender photo")
       .limit(4)
       .lean();
+
     res.status(200).json(roomRequests);
   } catch (error) {
     console.error("Error searching room requests:", error);

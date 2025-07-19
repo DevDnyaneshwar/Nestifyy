@@ -6,6 +6,6 @@ const router = Router();
 
 router.post("/", authMiddleware, createRoomRequest);
 router.get("/", getAllRoomRequests);
-router.get("/search", searchRoomRequests);
+router.get("/search", authMiddleware, searchRoomRequests);
 
 export default router;
