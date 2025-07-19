@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     profession:{
         type:String
     },
-    number: { 
+    phone: { 
         type: String,
         required:true 
     },

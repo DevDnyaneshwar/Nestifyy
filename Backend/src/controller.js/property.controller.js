@@ -200,7 +200,7 @@ const deleteProperty = async (req, res) => {
 
 const getAllProperties = async (req, res) => {
   try {
-    const properties = await Property.find().populate("owner", "name email");
+    const properties = await Property.find().populate("owner", "name email phone");
     const sanitizedProperties = properties.map((property) => ({
       ...property.toObject(),
       imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
@@ -216,7 +216,7 @@ const getPropertyById = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id).populate(
       "owner",
-      "name email"
+      "name email phone"
     );
     if (!property) {
       return res.status(404).json({ message: "Property not found" });

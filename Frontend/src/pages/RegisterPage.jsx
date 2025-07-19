@@ -16,7 +16,7 @@ const RegisterPage = () => {
     profession: "",
     location: "",
     gender: "",
-    number: "",
+    phone: "",
     photo: "",
   });
 
@@ -195,19 +195,19 @@ const RegisterPage = () => {
           </div>
 
           <div className="col-span-1">
-            <label htmlFor="number" className="block text-gray-700 text-sm font-semibold mb-2">Phone Number</label>
+            <label htmlFor="phone" className="block text-gray-700 text-sm font-semibold mb-2">Phone Number</label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="tel"
-                id="number"
-                name="number"
+                id="phone"
+                name="phone"
                 className={`w-full px-4 py-3 border border-gray-300 rounded-lg pr-10 outline-none transition-all duration-200 pl-10
-                  ${focusedField === 'number' ? 'border-blue-500 ring-1 ring-blue-500' : ''}`}
+                  ${focusedField === 'phone' ? 'border-blue-500 ring-1 ring-blue-500' : ''}`}
                 placeholder="e.g., +1234567890"
-                value={formData.number}
+                value={formData.phone}
                 onChange={handleChange}
-                onFocus={() => setFocusedField('number')}
+                onFocus={() => setFocusedField('phone')}
                 onBlur={() => setFocusedField('')}
               />
             </div>

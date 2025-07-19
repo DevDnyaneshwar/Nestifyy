@@ -433,10 +433,10 @@ const ProfilePage = () => {
                     <Mail className="w-4 h-4 mr-2 text-maroon flex-shrink-0" />
                     <span className="truncate max-w-[200px] sm:max-w-[300px]">{user.email}</span>
                   </div>
-                  {user.number && (
+                  {user.phone && (
                     <div className="flex items-center text-black">
                       <Phone className="w-4 h-4 mr-2 text-maroon flex-shrink-0" />
-                      <span className="truncate max-w-[200px] sm:max-w-[300px]">{user.number}</span>
+                      <span className="truncate max-w-[200px] sm:max-w-[300px]">{user.phone}</span>
                     </div>
                   )}
                   {user.location && (
@@ -649,16 +649,16 @@ const ProfilePage = () => {
                         {isEditing ? (
                           <input
                             type="tel"
-                            value={editForm.number || ""}
+                            value={editForm.phone || ""}
                             onChange={(e) =>
-                              handleInputChange("number", e.target.value)
+                              handleInputChange("phone", e.target.value)
                             }
                             className="flex-1 px-3 py-2 border border-warm-gray rounded-lg focus:border-maroon focus:ring-2 focus:ring-light-maroon/20 outline-none text-sm sm:text-base"
                             placeholder="Enter phone number"
                           />
                         ) : (
                           <span className="text-black truncate max-w-[200px] sm:max-w-[300px]">
-                            {user.number || "Not specified"}
+                            {user.phone || "Not specified"}
                           </span>
                         )}
                       </div>
