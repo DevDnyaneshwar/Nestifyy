@@ -1,187 +1,173 @@
 // src/components/HomePage.jsx
-import React, { useState, useEffect, useContext } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import HeroSection from '../components/HeroSection';
-import PropertyListingCard from '../components/PropertyListingCard';
-import RoommateListingCard from '../components/RoommateListingCard';
+import React, { useEffect, useState, useContext } from 'react';
+import { Search, MessageSquare, Home } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
-import { Loader2, Frown, AlertCircle } from 'lucide-react';
-import axios from 'axios';
-
-const DEFAULT_IMAGE = 'https://placehold.co/400x250/E0F7FA/00838F?text=Property';
+import HeroSection from './HeroSection';
+import PropertyListingCard from './PropertyListingCard';
+import RoommateListingCard from './RoommateListingCard';
 
 const HomePage = () => {
   const { trackInteraction } = useContext(AppContext);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState('find_room');
   const [properties, setProperties] = useState([]);
   const [roommates, setRoommates] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [propertyLoading, setPropertyLoading] = useState(false);
+  const [roommateLoading, setRoommateLoading] = useState(false);
+  const [propertyError, setPropertyError] = useState(null);
+  const [roommateError, setRoommateError] = useState(null);
+  const [activeTab, setActiveTab] = useState('find_room');
 
+  // Fetch initial data
   useEffect(() => {
     trackInteraction('page_view', 'home_page');
-    const searchQuery = searchParams.get('search') || '';
-    if (activeTab === 'find_room') {
-      fetchProperties(searchQuery);
-    } else {
-      fetchRoommates(searchQuery);
-    }
-  }, [trackInteraction, searchParams, activeTab]);
+    fetchProperties();
+    fetchRoommates();
+  }, [trackInteraction]);
 
+  // Fetch properties
   const fetchProperties = async (query = '') => {
     try {
-      setLoading(true);
-      setError(null);
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://nestifyy-my3u.onrender.com';
+      setPropertyLoading(true);
+      setPropertyError(null);
       const url = query
-        ? `${apiUrl}/api/property/search?search=${encodeURIComponent(query)}`
-        : `${apiUrl}/api/property/all`;
+        ? `https://nestifyy-my3u.onrender.com/api/property/search?search=${encodeURIComponent(query)}`
+        : 'https://nestifyy-my3u.onrender.com/api/property/all';
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
       const data = await response.json();
       if (response.ok) {
-        const formattedProperties = data.properties.slice(0, 4).map((property) => ({
-          ...property,
-          id: property._id,
-          imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [DEFAULT_IMAGE],
-          price: `₹ ${property.rent.toLocaleString()}/month`,
-          beds: property.noOfBedroom,
-          type: property.propertyType,
-          location: property.city,
-        }));
-        setProperties(formattedProperties);
-        setRoommates([]);
-        trackInteraction('data_fetch', 'home_properties_fetch_success', {
-          count: formattedProperties.length,
-        });
+        setProperties(data.properties.slice(0, 4)); // Limit to 4 properties
       } else {
-        setError(data.message || 'Failed to fetch properties. Please try again.');
-        trackInteraction('data_fetch', 'home_properties_fetch_failure', {
-          error: data.message || 'Unknown error',
-        });
+        setPropertyError(data.message || 'Failed to fetch properties');
       }
     } catch (err) {
-      setError('Network error or server issue. Please try again later.');
-      console.error('Fetch properties error:', err);
-      trackInteraction('data_fetch', 'home_properties_fetch_failure', { error: err.message });
+      setPropertyError('Error fetching properties');
+      console.error(err);
     } finally {
-      setLoading(false);
+      setPropertyLoading(false);
     }
   };
 
+  // Fetch roommates
   const fetchRoommates = async (query = '') => {
     try {
-      setLoading(true);
-      setError(null);
-      const response = await axios.get('https://nestifyy-my3u.onrender.com/api/room-request', {
-        params: { search: query },
+      setRoommateLoading(true);
+      setRoommateError(null);
+      const url = query
+        ? `https://nestifyy-my3u.onrender.com/api/room-request?search=${encodeURIComponent(query)}`
+        : 'https://nestifyy-my3u.onrender.com/api/room-request';
+      const response = await fetch(url, {
+        method: 'GET',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+          'Content-Type': 'application/json',
         },
       });
-      const formattedRoommates = response.data.slice(0, 4).map((request) => ({
-        id: request._id,
-        name: request.user.name, // Use populated user.name
-        location: request.location,
-        lookingFor: request.location,
-        budget: request.budget,
-        imageUrl:
-          request.user.photo ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(request.user.name)}&size=400&background=F0F9FF&color=0284C7`,
-        gender: request.user.gender,
-        interests: 'Not specified',
-      }));
-      setRoommates(formattedRoommates);
-      setProperties([]);
-      trackInteraction('data_fetch', 'home_roommates_fetch_success', {
-        count: formattedRoommates.length,
-      });
+      const data = await response.json();
+      if (response.ok) {
+        setRoommates(data.slice(0, 4)); // Limit to 4 roommates
+      } else {
+        setRoommateError(data.message || 'Failed to fetch roommates');
+      }
     } catch (err) {
-      setError('Failed to load roommates. Please try again.');
-      trackInteraction('data_fetch', 'home_roommates_fetch_failure', {
-        error: err.message,
-      });
+      setRoommateError('Error fetching roommates');
+      console.error(err);
     } finally {
-      setLoading(false);
+      setRoommateLoading(false);
     }
   };
 
-  const handleTabChange = (tab) => {
+  // Handle search from HeroSection
+  const handleSearch = (query, tab) => {
     setActiveTab(tab);
-    setSearchParams(searchParams.get('search') ? { search: searchParams.get('search') } : {});
-    trackInteraction('click', `tab_${tab}`);
-  };
-
-  const handleSearch = (query) => {
-    setSearchParams(query ? { search: query } : {});
-    if (activeTab === 'find_room') {
+    if (tab === 'find_room') {
       fetchProperties(query);
-    } else {
+    } else if (tab === 'find_roommate') {
       fetchRoommates(query);
     }
   };
 
   return (
-    <div className="min-h-screen bg-bg-gray-50">
-      <HeroSection
-        initialSearch={searchParams.get('search') || ''}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        onSearch={handleSearch}
-      />
-      <section className="py-12 md:py-16 px-6 md:px-12">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-text-gray-800 text-center mb-10 relative">
-          <span className="relative inline-block pb-2">
-            {activeTab === 'find_room' ? 'Featured Properties' : 'Featured Roommates'}
-            <span className="content-[''] absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-primary-blue rounded-full"></span>
-          </span>
+    <div className="min-h-screen bg-gray-50 font-inter antialiased flex flex-col">
+      <HeroSection onSearch={handleSearch} />
+
+      <section className="py-12 px-6 bg-white md:px-12">
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
+          {activeTab === 'find_room' ? 'Featured Rooms & Properties' : 'Featured Roommates'}
         </h2>
-
-        {loading && (
-          <div className="text-center text-text-gray-600 text-lg py-10 flex flex-col items-center justify-center">
-            <Loader2 className="w-12 h-12 text-primary-blue mb-4 animate-spin" />
-            <p>Loading {activeTab === 'find_room' ? 'properties' : 'roommates'}...</p>
+        {activeTab === 'find_room' && propertyLoading && <p className="text-center">Loading properties...</p>}
+        {activeTab === 'find_roommate' && roommateLoading && <p className="text-center">Loading roommates...</p>}
+        {activeTab === 'find_room' && propertyError && <p className="text-center text-red-500">{propertyError}</p>}
+        {activeTab === 'find_roommate' && roommateError && <p className="text-center text-red-500">{roommateError}</p>}
+        {!propertyLoading && !roommateLoading && !propertyError && !roommateError && (
+          <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
+            {activeTab === 'find_room' ? (
+              properties.length > 0 ? (
+                properties.map((property) => (
+                  <PropertyListingCard key={property._id} property={property} />
+                ))
+              ) : (
+                <p className="text-center col-span-full text-gray-600">No properties found</p>
+              )
+            ) : (
+              roommates.length > 0 ? (
+                roommates.map((roommate) => (
+                  <RoommateListingCard key={roommate._id} roommate={roommate} />
+                ))
+              ) : (
+                <p className="text-center col-span-full text-gray-600">No roommates found</p>
+              )
+            )}
           </div>
         )}
+      </section>
 
-        {error && (
-          <div className="bg-red-error-bg border border-red-error-border text-red-error-text px-4 py-3 rounded-lg mb-6 flex items-center gap-2 text-base max-w-4xl mx-auto">
-            <AlertCircle size={20} className="w-5 h-5 flex-shrink-0" />
-            <p>{error}</p>
-          </div>
-        )}
+      {activeTab === 'find_roommate' && (
+        <section className="py-12 px-6 bg-gray-100 md:px-12">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">All Roommates</h2>
+          {roommateLoading && <p className="text-center">Loading roommates...</p>}
+          {roommateError && <p className="text-center text-red-500">{roommateError}</p>}
+          {!roommateLoading && !roommateError && (
+            <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
+              {roommates.length > 0 ? (
+                roommates.map((roommate) => (
+                  <RoommateListingCard key={roommate._id} roommate={roommate} />
+                ))
+              ) : (
+                <p className="text-center col-span-full text-gray-600">No roommates found</p>
+              )}
+            </div>
+          )}
+        </section>
+      )}
 
-        {!loading && !error && properties.length === 0 && roommates.length === 0 && (
-          <div className="text-center text-text-gray-600 text-lg py-10 flex flex-col items-center justify-center">
-            <Frown size={60} className="text-primary-blue mb-4" />
-            <p>No {activeTab === 'find_room' ? 'properties' : 'roommates'} found. Try adjusting your search!</p>
+      <section className="py-12 px-6 bg-white md:px-12">
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">How Nestify Works</h2>
+        <p className="text-gray-700 max-w-2xl mx-auto mb-8 text-base leading-relaxed text-center">
+          Seamlessly find your next home or ideal roommate with our easy-to-use platform.
+        </p>
+        <div className="grid grid-cols-1 gap-8 max-w-[1000px] mx-auto md:grid-cols-3">
+          <div className="p-6 rounded-lg shadow-md text-center flex flex-col items-center justify-center bg-blue-50">
+            <Search size={48} className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Search & Discover</h3>
+            <p className="text-gray-700 text-base leading-relaxed">Browse thousands of listings for rooms, houses, and compatible roommates.</p>
           </div>
-        )}
-
-        {!loading && !error && properties.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto animate-fade-in-up">
-            {properties.map((property) => (
-              <PropertyListingCard key={property.id} property={property} />
-            ))}
+          <div className="p-6 rounded-lg shadow-md text-center flex flex-col items-center justify-center bg-green-50">
+            <MessageSquare size={48} className="w-12 h-12 mx-auto mb-4 text-green-600" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Connect & Meet</h3>
+            <p className="text-gray-700 text-base leading-relaxed">Connect directly with owners, brokers, or potential roommates. Share OTP for secure meetings.</p>
           </div>
-        )}
-
-        {!loading && !error && roommates.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto animate-fade-in-up">
-            {roommates.map((roommate) => (
-              <RoommateListingCard key={roommate.id} roommate={roommate} />
-            ))}
+          <div className="p-6 rounded-lg shadow-md text-center flex flex-col items-center justify-center bg-purple-50">
+            <Home size={48} className="w-12 h-12 mx-auto mb-4 text-purple-600" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Settle In</h3>
+            <p className="text-gray-700 text-base leading-relaxed">Find your perfect match and settle into your new living situation with ease.</p>
           </div>
-        )}
+        </div>
       </section>
     </div>
   );
 };
 
-export default HomePage;
+export default HomePage;cd
