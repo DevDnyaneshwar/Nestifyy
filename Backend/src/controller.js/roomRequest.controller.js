@@ -53,33 +53,52 @@ const searchRoomRequests = async (req, res) => {
     const { search, gender, budget } = req.query;
     let query = {};
 
+    // If no filters are provided, return empty results
+    if (!search && !gender && !budget) {
+      return res.status(200).json([]);
+    }
+
     // Location-based search
     if (search && search.trim()) {
       query.$or = [
-        { location: { $regex: search, $options: 'i' } },
-        { city: { $regex: search, $options: 'i' } },
-        { area: { $regex: search, $options: 'i' } },
+        { location: { $regex: search.trim(), $options: 'i' } },
+        { city: { $regex: search.trim(), $options: 'i' } },
+        { area: { $regex: search.trim(), $options: 'i' } },
       ];
     }
 
     // Gender filter
     if (gender && ['Male', 'Female', 'Other'].includes(gender)) {
       query.gender = gender;
+    } else if (gender) {
+      // Invalid gender, return empty results
+      return res.status(200).json([]);
     }
 
     // Budget filter
     if (budget && budget.trim()) {
-      const [minBudget, maxBudget] = budget.split('-').map(val => parseFloat(val));
-      if (!isNaN(minBudget) && !isNaN(maxBudget)) {
-        query.budget = {
-          $gte: minBudget.toString(),
-          $lte: maxBudget.toString(),
-        };
+      if (budget.includes('-')) {
+        const [minBudget, maxBudget] = budget.split('-').map(val => parseFloat(val));
+        if (!isNaN(minBudget) && !isNaN(maxBudget)) {
+          query.budget = {
+            $gte: minBudget.toString(),
+            $lte: maxBudget.toString(),
+          };
+        } else {
+          // Invalid budget range, return empty results
+          return res.status(200).json([]);
+        }
       } else if (budget.endsWith('+')) {
         const minBudget = parseFloat(budget.replace('+', ''));
         if (!isNaN(minBudget)) {
           query.budget = { $gte: minBudget.toString() };
+        } else {
+          // Invalid budget, return empty results
+          return res.status(200).json([]);
         }
+      } else {
+        // Invalid budget format, return empty results
+        return res.status(200).json([]);
       }
     }
 
@@ -94,4 +113,5 @@ const searchRoomRequests = async (req, res) => {
     res.status(500).json({ message: "Failed to search room requests", error: error.message });
   }
 };
+
 export { createRoomRequest, getAllRoomRequests, searchRoomRequests };

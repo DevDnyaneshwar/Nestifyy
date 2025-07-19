@@ -38,18 +38,21 @@ const FindRoommatePage = () => {
       gender: searchParams.get('gender') || '',
       budget: searchParams.get('budget') || '',
     });
+    // Clear roommates on page load to prevent stale data
+    setRoommates([]);
   }, [trackInteraction, searchParams]);
 
   const fetchRoommates = async (currentFilters = filters, currentSortOrder = sortOrder) => {
     setLoading(true);
     setError("");
+    setRoommates([]); // Clear previous results
     trackInteraction("search", "find_roommate_search_initiated", {
       filters: currentFilters,
       sort: currentSortOrder,
     });
     try {
       const params = {};
-      if (currentFilters.location) params.search = currentFilters.location;
+      if (currentFilters.location) params.search = currentFilters.location.trim();
       if (currentFilters.gender) params.gender = currentFilters.gender;
       if (currentFilters.budget) params.budget = currentFilters.budget;
 
@@ -102,7 +105,7 @@ const FindRoommatePage = () => {
     }
     // Update URL with current filters
     const newParams = {};
-    if (filters.location) newParams.search = filters.location;
+    if (filters.location) newParams.search = filters.location.trim();
     if (filters.gender) newParams.gender = filters.gender;
     if (filters.budget) newParams.budget = filters.budget;
     setSearchParams(newParams);
@@ -204,7 +207,7 @@ const FindRoommatePage = () => {
         </div>
       )}
 
-      {loading && roommates.length === 0 && (
+      {loading && (
         <div className="text-center text-text-gray-600 text-lg py-10 flex flex-col items-center justify-center">
           <Loader2 className="w-12 h-12 text-primary-green mb-4 animate-spin" />
           <p>Loading compatible roommates for you...</p>
