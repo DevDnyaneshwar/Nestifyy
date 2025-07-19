@@ -117,11 +117,15 @@ const HomePage = () => {
   };
 
   const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    const searchQuery = searchParams.get('search') || '';
-    setSearchParams(searchQuery ? { search: searchQuery } : {});
-    trackInteraction('click', `tab_${tab}`);
-  };
+  setActiveTab(tab);
+  setSearchParams({}); // Clear search params
+  trackInteraction('click', `tab_${tab}`);
+  if (tab === 'find_room') {
+    fetchProperties(''); // Fetch default properties
+  } else {
+    fetchRoommates(''); // Fetch default roommates
+  }
+};
 
   const handleSearch = (query, tab) => {
     setActiveTab(tab);

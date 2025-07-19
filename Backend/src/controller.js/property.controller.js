@@ -1,7 +1,7 @@
 import { Property } from "../models/property.model.js";
 import { uploadImage, deleteImage } from "../utils/cloudinary.js";
 import fs from "fs/promises";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 const createproperty = async (req, res) => {
   try {
@@ -34,7 +34,9 @@ const createproperty = async (req, res) => {
       if (req.files && req.files.length > 0) {
         await Promise.all(req.files.map((file) => fs.unlink(file.path)));
       }
-      return res.status(401).json({ message: "Unauthorized: No user ID found" });
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No user ID found" });
     }
 
     // Validate required fields
@@ -61,9 +63,7 @@ const createproperty = async (req, res) => {
     // Upload images to Cloudinary
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
-      imageUrls = await Promise.all(
-        req.files.map(file => uploadImage(file))
-      );
+      imageUrls = await Promise.all(req.files.map((file) => uploadImage(file)));
     }
 
     // Create new property
@@ -116,9 +116,7 @@ const updateProperty = async (req, res) => {
 
     let imageUrls = updates.imageUrls || [];
     if (req.files && req.files.length > 0) {
-      imageUrls = await Promise.all(
-        req.files.map(file => uploadImage(file))
-      );
+      imageUrls = await Promise.all(req.files.map((file) => uploadImage(file)));
     }
 
     const propertyToUpdate = await Property.findById(propertyId);
@@ -127,14 +125,16 @@ const updateProperty = async (req, res) => {
     }
 
     if (propertyToUpdate.owner.toString() !== authenticatedUserId.toString()) {
-      return res.status(403).json({ message: "Unauthorized to update this property" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to update this property" });
     }
 
     // Remove old images from Cloudinary if new images are provided
     if (imageUrls.length > 0 && propertyToUpdate.imageUrls.length > 0) {
       await Promise.all(
-        propertyToUpdate.imageUrls.map(imageUrl => {
-          const publicId = imageUrl.split('/').pop().split('.')[0];
+        propertyToUpdate.imageUrls.map((imageUrl) => {
+          const publicId = imageUrl.split("/").pop().split(".")[0];
           return deleteImage(publicId);
         })
       );
@@ -155,11 +155,11 @@ const updateProperty = async (req, res) => {
       message: "Property updated successfully",
     });
   } catch (error) {
-    console.error('Error in updateProperty:', error);
+    console.error("Error in updateProperty:", error);
     if (req.files && req.files.length > 0) {
       await Promise.all(req.files.map((file) => fs.unlink(file.path)));
     }
-    res.status(500).json({ message: 'Server error, please try again later' });
+    res.status(500).json({ message: "Server error, please try again later" });
   }
 };
 
@@ -170,18 +170,20 @@ const deleteProperty = async (req, res) => {
 
     const property = await Property.findById(propertyId);
     if (!property) {
-      return res.status(404).json({ message: 'Property not found' });
+      return res.status(404).json({ message: "Property not found" });
     }
 
     if (property.owner.toString() !== authenticatedUserId.toString()) {
-      return res.status(403).json({ message: 'Unauthorized to delete this property' });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to delete this property" });
     }
 
     // Delete images from Cloudinary
     if (property.imageUrls && property.imageUrls.length > 0) {
       await Promise.all(
-        property.imageUrls.map(imageUrl => {
-          const publicId = imageUrl.split('/').pop().split('.')[0];
+        property.imageUrls.map((imageUrl) => {
+          const publicId = imageUrl.split("/").pop().split(".")[0];
           return deleteImage(publicId);
         })
       );
@@ -189,32 +191,35 @@ const deleteProperty = async (req, res) => {
 
     await Property.findByIdAndDelete(propertyId);
 
-    res.status(200).json({ message: 'Property deleted successfully' });
+    res.status(200).json({ message: "Property deleted successfully" });
   } catch (error) {
-    console.error('Error in deleteProperty:', error);
-    res.status(500).json({ message: 'Server error, please try again later' });
+    console.error("Error in deleteProperty:", error);
+    res.status(500).json({ message: "Server error, please try again later" });
   }
 };
 
 const getAllProperties = async (req, res) => {
   try {
-    const properties = await Property.find().populate('owner', 'name email');
-    const sanitizedProperties = properties.map(property => ({
+    const properties = await Property.find().populate("owner", "name email");
+    const sanitizedProperties = properties.map((property) => ({
       ...property.toObject(),
       imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
     }));
     res.status(200).json({ properties: sanitizedProperties });
   } catch (error) {
-    console.error('Error fetching properties:', error);
-    res.status(500).json({ message: 'Failed to fetch properties' });
+    console.error("Error fetching properties:", error);
+    res.status(500).json({ message: "Failed to fetch properties" });
   }
 };
 
 const getPropertyById = async (req, res) => {
   try {
-    const property = await Property.findById(req.params.id).populate('owner', 'name email');
+    const property = await Property.findById(req.params.id).populate(
+      "owner",
+      "name email"
+    );
     if (!property) {
-      return res.status(404).json({ message: 'Property not found' });
+      return res.status(404).json({ message: "Property not found" });
     }
     const sanitizedProperty = {
       ...property.toObject(),
@@ -222,15 +227,15 @@ const getPropertyById = async (req, res) => {
     };
     res.status(200).json({ property: sanitizedProperty });
   } catch (error) {
-    console.error('Error fetching property by ID:', error);
-    res.status(500).json({ message: 'Failed to fetch property' });
+    console.error("Error fetching property by ID:", error);
+    res.status(500).json({ message: "Failed to fetch property" });
   }
 };
 
 import { Property } from "../models/property.model.js";
 import { uploadImage, deleteImage } from "../utils/cloudinary.js";
 import fs from "fs/promises";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 const searchProperties = async (req, res) => {
   try {
@@ -238,55 +243,79 @@ const searchProperties = async (req, res) => {
     let query = {};
 
     // Validate query parameters
-    if (search && typeof search !== 'string') {
-      return res.status(400).json({ message: 'Search parameter must be a string' });
+    if (search && typeof search !== "string") {
+      return res
+        .status(400)
+        .json({ message: "Search parameter must be a string" });
     }
-    if (propertyType && typeof propertyType !== 'string') {
-      return res.status(400).json({ message: 'PropertyType parameter must be a string' });
+    if (propertyType && typeof propertyType !== "string") {
+      return res
+        .status(400)
+        .json({ message: "PropertyType parameter must be a string" });
     }
-    if (priceRange && typeof priceRange !== 'string') {
-      return res.status(400).json({ message: 'PriceRange parameter must be a string' });
+    if (priceRange && typeof priceRange !== "string") {
+      return res
+        .status(400)
+        .json({ message: "PriceRange parameter must be a string" });
     }
 
     // Search query
     if (search && search.trim()) {
-      const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escapedSearch = search
+        .trim()
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       query.$or = [
-        { city: { $regex: escapedSearch, $options: 'i' } },
-        { district: { $regex: escapedSearch, $options: 'i' } },
-        { area: { $regex: escapedSearch, $options: 'i' } },
-        { propertyType: { $regex: escapedSearch, $options: 'i' } },
-        { location: { $regex: escapedSearch, $options: 'i' } },
+        { city: { $regex: escapedSearch, $options: "i" } },
+        { district: { $regex: escapedSearch, $options: "i" } },
+        { propertyType: { $regex: escapedSearch, $options: "i" } },
+        { location: { $regex: escapedSearch, $options: "i" } },
       ];
     }
-
+    if (search && search.trim()) {
+      const escapedSearch = search
+        .trim()
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      query.$or = [
+        { city: { $regex: escapedSearch, $options: "i" } },
+        { district: { $regex: escapedSearch, $options: "i" } },
+        { area: { $regex: escapedSearch, $options: "i" } },
+        { propertyType: { $regex: escapedSearch, $options: "i" } },
+        { location: { $regex: escapedSearch, $options: "i" } },
+      ];
+    }
     // Property type filter
     if (propertyType && propertyType.trim()) {
-      query.propertyType = { $regex: propertyType.trim(), $options: 'i' };
+      query.propertyType = { $regex: propertyType.trim(), $options: "i" };
     }
 
     // Price range filter
     if (priceRange && priceRange.trim()) {
-      if (priceRange.includes('-')) {
-        const [minPrice, maxPrice] = priceRange.split('-').map((val) => parseFloat(val));
+      if (priceRange.includes("-")) {
+        const [minPrice, maxPrice] = priceRange
+          .split("-")
+          .map((val) => parseFloat(val));
         if (isNaN(minPrice) || isNaN(maxPrice)) {
-          return res.status(400).json({ message: 'Invalid price range format' });
+          return res
+            .status(400)
+            .json({ message: "Invalid price range format" });
         }
         query.rent = { $gte: minPrice, $lte: maxPrice };
-      } else if (priceRange.endsWith('+')) {
-        const minPrice = parseFloat(priceRange.replace('+', ''));
+      } else if (priceRange.endsWith("+")) {
+        const minPrice = parseFloat(priceRange.replace("+", ""));
         if (isNaN(minPrice)) {
-          return res.status(400).json({ message: 'Invalid minimum price format' });
+          return res
+            .status(400)
+            .json({ message: "Invalid minimum price format" });
         }
         query.rent = { $gte: minPrice };
       } else {
-        return res.status(400).json({ message: 'Invalid price range format' });
+        return res.status(400).json({ message: "Invalid price range format" });
       }
     }
 
     // Execute query
     let findQuery = Property.find(query)
-      .populate({ path: 'owner', select: 'name email', strictPopulate: false })
+      .populate({ path: "owner", select: "name email", strictPopulate: false })
       .lean();
 
     // Apply limit only if no search query
@@ -298,14 +327,16 @@ const searchProperties = async (req, res) => {
 
     // Apply sorting
     switch (sortBy) {
-      case 'rent-low':
+      case "rent-low":
         properties = properties.sort((a, b) => a.rent - b.rent);
         break;
-      case 'rent-high':
+      case "rent-high":
         properties = properties.sort((a, b) => b.rent - a.rent);
         break;
-      case 'popularity':
-        properties = properties.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      case "popularity":
+        properties = properties.sort(
+          (a, b) => (b.rating || 0) - (a.rating || 0)
+        );
         break;
       default:
         break;
@@ -314,19 +345,19 @@ const searchProperties = async (req, res) => {
     const sanitizedProperties = properties.map((property) => ({
       ...property,
       imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
-      owner: property.owner || { name: 'Unknown', email: 'Unknown' },
+      owner: property.owner || { name: "Unknown", email: "Unknown" },
     }));
 
     res.status(200).json({ properties: sanitizedProperties });
   } catch (error) {
-    console.error('Error searching properties:', {
+    console.error("Error searching properties:", {
       message: error.message,
       stack: error.stack,
       query: req.query,
       timestamp: new Date().toISOString(),
     });
     res.status(500).json({
-      message: 'Failed to search properties',
+      message: "Failed to search properties",
       error: error.message,
       details: {
         query: req.query,
@@ -337,5 +368,11 @@ const searchProperties = async (req, res) => {
   }
 };
 
-
-export { createproperty, updateProperty, deleteProperty, getAllProperties, getPropertyById, searchProperties };
+export {
+  createproperty,
+  updateProperty,
+  deleteProperty,
+  getAllProperties,
+  getPropertyById,
+  searchProperties,
+};

@@ -9,7 +9,7 @@ import {
   MessageSquare,
   AlertCircle,
 } from "lucide-react";
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import RoommateListingCard from "../components/RoommateListingCard";
 import axios from "axios";
@@ -18,9 +18,9 @@ const FindRoommatePage = () => {
   const { trackInteraction } = useContext(AppContext);
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
-    location: searchParams.get('search') || '',
-    gender: '',
-    budget: '',
+    location: searchParams.get("search") || "",
+    gender: "",
+    budget: "",
   });
   const [sortOrder, setSortOrder] = useState("relevance");
   const [roommates, setRoommates] = useState([]);
@@ -28,13 +28,17 @@ const FindRoommatePage = () => {
   const [error, setError] = useState("");
 
   // Check if no filters are applied
-  const areFiltersEmpty = !filters.location && !filters.gender && !filters.budget;
+  const areFiltersEmpty =
+    !filters.location && !filters.gender && !filters.budget;
 
   // Validate filter inputs
   const isValidLocation = filters.location.trim().length >= 2; // Minimum 2 chars
-  const isValidGender = !filters.gender || ['Male', 'Female', 'Other'].includes(filters.gender);
-  const isValidBudget = !filters.budget || filters.budget.match(/^\d+-\d+$|^\d+\+$/);
-  const isValidSearch = areFiltersEmpty || (isValidLocation && isValidGender && isValidBudget);
+  const isValidGender =
+    !filters.gender || ["Male", "Female", "Other"].includes(filters.gender);
+  const isValidBudget =
+    !filters.budget || filters.budget.match(/^\d+-\d+$|^\d+\+$/);
+  const isValidSearch =
+    areFiltersEmpty || (isValidLocation && isValidGender && isValidBudget);
 
   // Format applied filters for display
   const getAppliedFiltersText = () => {
@@ -42,86 +46,90 @@ const FindRoommatePage = () => {
     if (filters.location) filterParts.push(`Location: ${filters.location}`);
     if (filters.gender) filterParts.push(`Gender: ${filters.gender}`);
     if (filters.budget) {
-      const budgetDisplay = {
-        '0-5000': '₹0 - ₹5,000',
-        '5001-10000': '₹5,001 - ₹10,000',
-        '10001-15000': '₹10,001 - ₹15,000',
-        '15001+': '₹15,001+',
-      }[filters.budget] || filters.budget;
+      const budgetDisplay =
+        {
+          "0-5000": "₹0 - ₹5,000",
+          "5001-10000": "₹5,001 - ₹10,000",
+          "10001-15000": "₹10,001 - ₹15,000",
+          "15001+": "₹15,001+",
+        }[filters.budget] || filters.budget;
       filterParts.push(`Budget: ${budgetDisplay}`);
     }
-    return filterParts.length > 0 ? `Applied Filters: ${filterParts.join(', ')}` : '';
+    return filterParts.length > 0
+      ? `Applied Filters: ${filterParts.join(", ")}`
+      : "";
   };
 
   // Initialize filters from URL search params on page load
   useEffect(() => {
     trackInteraction("page_view", "find_roommate_page");
     setFilters({
-      location: searchParams.get('search') || '',
-      gender: searchParams.get('gender') || '',
-      budget: searchParams.get('budget') || '',
+      location: searchParams.get("search") || "",
+      gender: searchParams.get("gender") || "",
+      budget: searchParams.get("budget") || "",
     });
-    setRoommates([]); // Clear roommates on page load
+    fetchRoommates(); // Fetch roommates on initial load
   }, [trackInteraction, searchParams]);
 
-  const fetchRoommates = async (currentFilters = filters, currentSortOrder = sortOrder) => {
-  setLoading(true);
-  setError("");
-  setRoommates([]); // Clear previous results
-  trackInteraction("search", "find_roommate_search_initiated", {
-    filters: currentFilters,
-    sort: currentSortOrder,
-  });
-  try {
-    const params = {};
-    if (currentFilters.location) params.search = currentFilters.location.trim();
-    if (currentFilters.gender) params.gender = currentFilters.gender;
-    if (currentFilters.budget) params.budget = currentFilters.budget;
-
-    const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
-      params,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-      },
+  const fetchRoommates = async (
+    currentFilters = filters,
+    currentSortOrder = sortOrder
+  ) => {
+    setLoading(true);
+    setError("");
+    setRoommates([]); // Clear previous results
+    trackInteraction("search", "find_roommate_search_initiated", {
+      filters: currentFilters,
+      sort: currentSortOrder,
     });
+    try {
+      const params = {};
+      if (currentFilters.location)
+        params.search = currentFilters.location.trim();
+      if (currentFilters.gender) params.gender = currentFilters.gender;
+      if (currentFilters.budget) params.budget = currentFilters.budget;
 
-    // Validate response data
-    if (!Array.isArray(response.data)) {
-      throw new Error("Invalid response format from server");
+      const response = await axios.get(
+        "https://nestifyy-my3u.onrender.com/api/room-request/search",
+        {
+          params,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+          },
+        }
+      );
+
+      // Validate response data
+      if (!Array.isArray(response.data)) {
+        throw new Error("Invalid response format from server");
+      }
+
+      const formattedRoommates = response.data.map((request) => ({
+        id: request._id,
+        name: request.user?.name || "Unknown",
+        location: request.location,
+        lookingFor: request.location,
+        budget: request.budget,
+        imageUrl:
+          request.user?.photo ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            request.user?.name || "Unknown"
+          )}&size=400&background=F0F9FF&color=0284C7`,
+        gender: request.user?.gender || "Not specified",
+        interests: "Not specified",
+      }));
+
+      setRoommates(formattedRoommates);
+      trackInteraction("search", "find_roommate_search_success", {
+        resultsCount: formattedRoommates.length,
+        currentPath: "/find-roommate",
+      });
+    } catch (err) {
+      // ... error handling
+    } finally {
+      setLoading(false);
     }
-
-    const formattedRoommates = response.data.map((request) => ({
-      id: request._id,
-      name: request.user.name, // Access from populated user
-      location: request.location,
-      lookingFor: request.location,
-      budget: request.budget,
-      imageUrl:
-        request.user.photo ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(request.user.name)}&size=400&background=F0F9FF&color=0284C7`,
-      gender: request.user.gender, // Access from populated user
-      interests: "Not specified",
-    }));
-
-    setRoommates(formattedRoommates);
-    trackInteraction("search", "find_roommate_search_success", {
-      resultsCount: formattedRoommates.length,
-      currentPath: "/find-roommate",
-    });
-  } catch (err) {
-    let errorMessage = err.response?.data?.message || "Failed to load roommates. Please try again.";
-    if (err.response?.status === 401) {
-      errorMessage = "Please log in to search for roommates.";
-    }
-    setError(errorMessage);
-    trackInteraction("search", "find_roommate_search_failure", {
-      error: errorMessage,
-      currentPath: "/find-roommate",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+  };
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -130,12 +138,6 @@ const FindRoommatePage = () => {
   };
 
   const handleSearch = () => {
-
-    if (!isValidSearch) {
-      setError("No roommate found. Please check location, gender, or budget.");
-      setRoommates([]);
-      return;
-    }
     // Update URL with current filters
     const newParams = {};
     if (filters.location) newParams.search = filters.location.trim();
@@ -172,7 +174,7 @@ const FindRoommatePage = () => {
                 trackInteraction("focus", "find_roommate_location_input")
               }
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   handleSearch();
                 }
               }}
@@ -223,7 +225,11 @@ const FindRoommatePage = () => {
         <button
           onClick={handleSearch}
           disabled={!isValidSearch}
-          className={`w-full mb-3 py-4 rounded-full bg-gradient-to-r from-green-500 via-green-400 to-green-600 text-white text-2xl font-bold shadow-lg transition-all duration-300 flex items-center justify-center gap-3 transform focus:outline-none focus:ring-4 focus:ring-green-300 ${!isValidSearch ? 'opacity-50 cursor-not-allowed' : 'hover:from-green-600 hover:to-green-700 hover:scale-105 active:scale-98'}`}
+          className={`w-full mb-3 py-4 rounded-full bg-gradient-to-r from-green-500 via-green-400 to-green-600 text-white text-2xl font-bold shadow-lg transition-all duration-300 flex items-center justify-center gap-3 transform focus:outline-none focus:ring-4 focus:ring-green-300 ${
+            !isValidSearch
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:from-green-600 hover:to-green-700 hover:scale-105 active:scale-98"
+          }`}
           style={{ letterSpacing: "0.03em" }}
         >
           <Users size={28} className="text-white drop-shadow" />
