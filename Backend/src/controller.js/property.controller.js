@@ -227,13 +227,29 @@ const getPropertyById = async (req, res) => {
   }
 };
 
+import { Property } from "../models/property.model.js";
+import { uploadImage, deleteImage } from "../utils/cloudinary.js";
+import fs from "fs/promises";
+import jwt from 'jsonwebtoken';
+
 const searchProperties = async (req, res) => {
   try {
     const { search, propertyType, priceRange, sortBy } = req.query;
     let query = {};
 
+    // Validate query parameters
+    if (search && typeof search !== 'string') {
+      return res.status(400).json({ message: 'Search parameter must be a string' });
+    }
+    if (propertyType && typeof propertyType !== 'string') {
+      return res.status(400).json({ message: 'PropertyType parameter must be a string' });
+    }
+    if (priceRange && typeof priceRange !== 'string') {
+      return res.status(400).json({ message: 'PriceRange parameter must be a string' });
+    }
+
     // Search query
-    if (search && typeof search === 'string' && search.trim()) {
+    if (search && search.trim()) {
       const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
         { city: { $regex: escapedSearch, $options: 'i' } },
@@ -253,14 +269,18 @@ const searchProperties = async (req, res) => {
     if (priceRange && priceRange.trim()) {
       if (priceRange.includes('-')) {
         const [minPrice, maxPrice] = priceRange.split('-').map((val) => parseFloat(val));
-        if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-          query.rent = { $gte: minPrice, $lte: maxPrice };
+        if (isNaN(minPrice) || isNaN(maxPrice)) {
+          return res.status(400).json({ message: 'Invalid price range format' });
         }
+        query.rent = { $gte: minPrice, $lte: maxPrice };
       } else if (priceRange.endsWith('+')) {
         const minPrice = parseFloat(priceRange.replace('+', ''));
-        if (!isNaN(minPrice)) {
-          query.rent = { $gte: minPrice };
+        if (isNaN(minPrice)) {
+          return res.status(400).json({ message: 'Invalid minimum price format' });
         }
+        query.rent = { $gte: minPrice };
+      } else {
+        return res.status(400).json({ message: 'Invalid price range format' });
       }
     }
 
@@ -268,7 +288,7 @@ const searchProperties = async (req, res) => {
     let findQuery = Property.find(query)
       .populate({ path: 'owner', select: 'name email', strictPopulate: false })
       .lean();
-    
+
     // Apply limit only if no search query
     if (!search || !search.trim()) {
       findQuery = findQuery.limit(4);
@@ -308,8 +328,14 @@ const searchProperties = async (req, res) => {
     res.status(500).json({
       message: 'Failed to search properties',
       error: error.message,
+      details: {
+        query: req.query,
+        errorName: error.name,
+        errorCode: error.code,
+      },
     });
   }
 };
+
 
 export { createproperty, updateProperty, deleteProperty, getAllProperties, getPropertyById, searchProperties };

@@ -66,10 +66,11 @@ const HomePage = () => {
         setError(data.message || 'Failed to fetch properties. Please try again.');
         trackInteraction('data_fetch', 'home_properties_fetch_failure', {
           error: data.message || 'Unknown error',
+          details: data.details || {},
         });
       }
     } catch (err) {
-      setError('Network error or server issue. Please try again later.');
+      setError(err.message || 'Network error or server issue. Please try again later.');
       console.error('Fetch properties error:', err);
       trackInteraction('data_fetch', 'home_properties_fetch_failure', { error: err.message });
     } finally {
@@ -106,7 +107,7 @@ const HomePage = () => {
         count: formattedRoommates.length,
       });
     } catch (err) {
-      setError('Failed to load roommates. Please try again.');
+      setError(err.message || 'Failed to load roommates. Please try again.');
       trackInteraction('data_fetch', 'home_roommates_fetch_failure', {
         error: err.message,
       });
