@@ -27,70 +27,85 @@ const FindRoommatePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Check if no filters are applied
+  const areFiltersEmpty = !filters.location && !filters.gender && !filters.budget;
+
+  // Initialize filters from URL search params on page load
   useEffect(() => {
     trackInteraction("page_view", "find_roommate_page");
-    const searchQuery = searchParams.get('search') || '';
-    fetchRoommates({ ...filters, location: searchQuery });
+    setFilters({
+      location: searchParams.get('search') || '',
+      gender: searchParams.get('gender') || '',
+      budget: searchParams.get('budget') || '',
+    });
   }, [trackInteraction, searchParams]);
 
   const fetchRoommates = async (currentFilters = filters, currentSortOrder = sortOrder) => {
-  setLoading(true);
-  setError("");
-  trackInteraction("search", "find_roommate_search_initiated", {
-    filters: currentFilters,
-    sort: currentSortOrder,
-  });
-  try {
-    const params = {};
-    if (currentFilters.location) params.search = currentFilters.location;
-    if (currentFilters.gender) params.gender = currentFilters.gender;
-    if (currentFilters.budget) params.budget = currentFilters.budget;
-
-    const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
-      params,
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
-      },
+    setLoading(true);
+    setError("");
+    trackInteraction("search", "find_roommate_search_initiated", {
+      filters: currentFilters,
+      sort: currentSortOrder,
     });
+    try {
+      const params = {};
+      if (currentFilters.location) params.search = currentFilters.location;
+      if (currentFilters.gender) params.gender = currentFilters.gender;
+      if (currentFilters.budget) params.budget = currentFilters.budget;
 
-    const formattedRoommates = response.data.map((request) => ({
-      id: request._id,
-      name: request.name,
-      location: request.location,
-      lookingFor: request.location,
-      budget: request.budget,
-      imageUrl: request.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&size=400&background=F0F9FF&color=0284C7`,
-      gender: request.gender,
-      interests: "Not specified",
-    }));
+      const response = await axios.get("https://nestifyy-my3u.onrender.com/api/room-request", {
+        params,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+      });
 
-    setRoommates(formattedRoommates);
-    trackInteraction("search", "find_roommate_search_success", {
-      resultsCount: formattedRoommates.length,
-      currentPath: "/find-roommate",
-    });
-  } catch (err) {
-    const errorMessage = err.response?.data?.message || "Failed to load roommates. Please try again.";
-    setError(errorMessage);
-    trackInteraction("search", "find_roommate_search_failure", {
-      error: errorMessage,
-      currentPath: "/find-roommate",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+      const formattedRoommates = response.data.map((request) => ({
+        id: request._id,
+        name: request.name,
+        location: request.location,
+        lookingFor: request.location,
+        budget: request.budget,
+        imageUrl: request.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&size=400&background=F0F9FF&color=0284C7`,
+        gender: request.gender,
+        interests: "Not specified",
+      }));
+
+      setRoommates(formattedRoommates);
+      trackInteraction("search", "find_roommate_search_success", {
+        resultsCount: formattedRoommates.length,
+        currentPath: "/find-roommate",
+      });
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Failed to load roommates. Please try again.";
+      setError(errorMessage);
+      trackInteraction("search", "find_roommate_search_failure", {
+        error: errorMessage,
+        currentPath: "/find-roommate",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
     trackInteraction("input", `find_roommate_filter_${name}`, { value });
-    if (name === 'location') {
-      setSearchParams(value ? { search: value } : {});
-    }
   };
 
   const handleSearch = () => {
+    if (areFiltersEmpty) {
+      setError("Please apply at least one filter to find roommates.");
+      setRoommates([]);
+      return;
+    }
+    // Update URL with current filters
+    const newParams = {};
+    if (filters.location) newParams.search = filters.location;
+    if (filters.gender) newParams.gender = filters.gender;
+    if (filters.budget) newParams.budget = filters.budget;
+    setSearchParams(newParams);
     fetchRoommates(filters, sortOrder);
   };
 
@@ -196,16 +211,23 @@ const FindRoommatePage = () => {
         </div>
       )}
 
-      {!loading && roommates.length === 0 && !error && (
+      {!loading && roommates.length === 0 && !error && areFiltersEmpty && (
         <div className="text-center text-text-gray-600 text-lg py-10 flex flex-col items-center justify-center">
           <Frown
             size={60}
             className="w-[3.75rem] h-[3.75rem] text-text-gray-400 mx-auto mb-4"
           />
-          <p>
-            No roommates found matching your criteria. Try adjusting your
-            filters!
-          </p>
+          <p>Please apply at least one filter to find roommates.</p>
+        </div>
+      )}
+
+      {!loading && roommates.length === 0 && !error && !areFiltersEmpty && (
+        <div className="text-center text-text-gray-600 text-lg py-10 flex flex-col items-center justify-center">
+          <Frown
+            size={60}
+            className="w-[3.75rem] h-[3.75rem] text-text-gray-400 mx-auto mb-4"
+          />
+          <p>No roommates found matching your criteria. Try adjusting your filters!</p>
         </div>
       )}
 
