@@ -13,7 +13,7 @@ DBConection()
     app.listen(process.env.PORT ||8080, ()=>{
         console.log(` Server is running at port : ${process.env.PORT}`)
     }) 
-})
+})  
 .catch((error) =>{
     console.error("Mongo db connection failed !!",error);
 })

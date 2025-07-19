@@ -12,6 +12,7 @@ import {
   Loader2,
   Frown,
   CheckCircle,
+  DollarSign,
   Camera,
   Edit3,
   Save,
