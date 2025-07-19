@@ -48,5 +48,29 @@ const getAllRoomRequests = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+const searchRoomRequests = async (req, res) => {
+  try {
+    const { search } = req.query;
+    let query = {};
 
-export { createRoomRequest, getAllRoomRequests };
+    if (search) {
+      query = {
+        $or: [
+          { location: { $regex: search, $options: 'i' } },
+          { gender: { $regex: search, $options: 'i' } },
+          { name: { $regex: search, $options: 'i' } },
+        ],
+      };
+    }
+
+    const roomRequests = await RoomRequest.find(query)
+      .populate("user", "name number gender photo")
+      .limit(4) // Limit to 4 room requests
+      .lean();
+    res.status(200).json(roomRequests);
+  } catch (error) {
+    console.error("Error searching room requests:", error);
+    res.status(500).json({ message: "Failed to search room requests" });
+  }
+};
+export { createRoomRequest, getAllRoomRequests, searchRoomRequests };

@@ -10,9 +10,7 @@ const HeroSection = ({ onSearch }) => {
 
   const handleSearch = () => {
     trackInteraction('click', `search_button_${activeTab}`, { query: searchQuery });
-    if (activeTab === 'find_room') {
-      onSearch(searchQuery); // Pass search query to parent
-    }
+    onSearch(searchQuery, activeTab); // Pass both query and activeTab
   };
 
   return (
@@ -37,7 +35,7 @@ const HeroSection = ({ onSearch }) => {
                 setActiveTab('find_room');
                 trackInteraction('click', 'search_tab_find_room');
                 setSearchQuery('');
-                onSearch(''); // Reset search
+                onSearch('', 'find_room'); // Reset search for rooms
               }}
             >
               Find Room
@@ -49,7 +47,7 @@ const HeroSection = ({ onSearch }) => {
                 setActiveTab('find_roommate');
                 trackInteraction('click', 'search_tab_find_roommate');
                 setSearchQuery('');
-                onSearch(''); // Reset search
+                onSearch('', 'find_roommate'); // Reset search for roommates
               }}
             >
               Find Roommate
@@ -68,9 +66,7 @@ const HeroSection = ({ onSearch }) => {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     trackInteraction('keypress', `search_input_enter_${activeTab}`, { query: searchQuery });
-                    if (activeTab === 'find_room') {
-                      onSearch(searchQuery);
-                    }
+                    onSearch(searchQuery, activeTab); // Trigger search on Enter
                   }
                 }}
               />

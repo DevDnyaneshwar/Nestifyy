@@ -9,23 +9,24 @@ import RoommateListingCard from './RoommateListingCard';
 const HomePage = () => {
   const { trackInteraction } = useContext(AppContext);
   const [properties, setProperties] = useState([]);
+  const [roommates, setRoommates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('find_room');
 
-  // State to store search query results
-  const [searchResults, setSearchResults] = useState(null);
-
-  // Fetch properties from backend
+  // Fetch initial data
   useEffect(() => {
     trackInteraction('page_view', 'home_page');
     fetchProperties();
+    fetchRoommates();
   }, [trackInteraction]);
 
+  // Fetch properties
   const fetchProperties = async (query = '') => {
     try {
       setLoading(true);
       const url = query
-        ? `https://nestifyy-my3u.onrender.com/api/property/all?search=${encodeURIComponent(query)}`
+        ? `https://nestifyy-my3u.onrender.com/api/property/search?search=${encodeURIComponent(query)}`
         : 'https://nestifyy-my3u.onrender.com/api/property/all';
       const response = await fetch(url, {
         method: 'GET',
@@ -35,8 +36,7 @@ const HomePage = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setProperties(data.properties.slice(0, 4)); 
-        setSearchResults(null); 
+        setProperties(data.properties.slice(0, 4)); // Limit to 4 properties
       } else {
         setError(data.message || 'Failed to fetch properties');
       }
@@ -48,45 +48,77 @@ const HomePage = () => {
     }
   };
 
-  // Handle search results from HeroSection
-  const handleSearch = (query) => {
-    if (query) {
-      fetchProperties(query);
-    } else {
-      fetchProperties(); // Reset to default properties
+  // Fetch roommates
+  const fetchRoommates = async (query = '') => {
+    try {
+      setLoading(true);
+      const url = query
+        ? `https://nestifyy-my3u.onrender.com/api/room-request?search=${encodeURIComponent(query)}`
+        : 'https://nestifyy-my3u.onrender.com/api/room-request';
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setRoommates(data.slice(0, 4)); // Limit to 4 roommates
+      } else {
+        setError(data.message || 'Failed to fetch roommates');
+      }
+    } catch (err) {
+      setError('Error fetching roommates');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Hardcoded roommates (since no backend for roommates yet)
-  const featuredRoommates = [
-    { id: 1, name: 'Anjali S.', location: 'Mumbai', lookingFor: 'Bandra, Andheri', budget: '₹ 15,000', imageUrl: 'https://placehold.co/400x250/F0F9FF/0284C7?text=Anjali' },
-    { id: 2, name: 'Rahul K.', location: 'Bengaluru', lookingFor: 'Koramangala, Indiranagar', budget: '₹ 12,000', imageUrl: 'https://placehold.co/400x250/ECFDF5/059669?text=Rahul' },
-  ];
+  // Handle search from HeroSection
+  const handleSearch = (query, tab) => {
+    setActiveTab(tab);
+    if (tab === 'find_room') {
+      fetchProperties(query);
+    } else if (tab === 'find_roommate') {
+      fetchRoommates(query);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter antialiased flex flex-col">
       <HeroSection onSearch={handleSearch} />
 
       <section className="py-12 px-6 bg-white md:px-12">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Featured Rooms & Properties</h2>
-        {loading && <p className="text-center">Loading properties...</p>}
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
+          {activeTab === 'find_room' ? 'Featured Rooms & Properties' : 'Featured Roommates'}
+        </h2>
+        {loading && <p className="text-center">Loading...</p>}
         {error && <p className="text-center text-red-500">{error}</p>}
         {!loading && !error && (
           <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
-            {(searchResults || properties).map((property) => (
-              <PropertyListingCard key={property._id} property={property} />
-            ))}
+            {activeTab === 'find_room'
+              ? properties.map((property) => (
+                  <PropertyListingCard key={property._id} property={property} />
+                ))
+              : roommates.map((roommate) => (
+                  <RoommateListingCard key={roommate._id} roommate={roommate} />
+                ))}
           </div>
         )}
       </section>
 
       <section className="py-12 px-6 bg-gray-100 md:px-12">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Featured Roommates</h2>
-        <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
-          {featuredRoommates.map((roommate) => (
-            <RoommateListingCard key={roommate.id} roommate={roommate} />
-          ))}
-        </div>
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">All Roommates</h2>
+        {loading && <p className="text-center">Loading roommates...</p>}
+        {error && <p className="text-center text-red-500">{error}</p>}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
+            {roommates.map((roommate) => (
+              <RoommateListingCard key={roommate._id} roommate={roommate} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="py-12 px-6 bg-white md:px-12">
