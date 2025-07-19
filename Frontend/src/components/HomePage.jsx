@@ -103,13 +103,23 @@ const HomePage = () => {
         {activeTab === 'find_roommate' && roommateError && <p className="text-center text-red-500">{roommateError}</p>}
         {!propertyLoading && !roommateLoading && !propertyError && !roommateError && (
           <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
-            {activeTab === 'find_room'
-              ? properties.map((property) => (
+            {activeTab === 'find_room' ? (
+              properties.length > 0 ? (
+                properties.map((property) => (
                   <PropertyListingCard key={property._id} property={property} />
                 ))
-              : roommates.map((roommate) => (
+              ) : (
+                <p className="text-center col-span-full text-gray-600">No properties found</p>
+              )
+            ) : (
+              roommates.length > 0 ? (
+                roommates.map((roommate) => (
                   <RoommateListingCard key={roommate._id} roommate={roommate} />
-                ))}
+                ))
+              ) : (
+                <p className="text-center col-span-full text-gray-600">No roommates found</p>
+              )
+            )}
           </div>
         )}
       </section>
@@ -121,16 +131,20 @@ const HomePage = () => {
           {roommateError && <p className="text-center text-red-500">{roommateError}</p>}
           {!roommateLoading && !roommateError && (
             <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
-              {roommates.map((roommate) => (
-                <RoommateListingCard key={roommate._id} roommate={roommate} />
-              ))}
+              {roommates.length > 0 ? (
+                roommates.map((roommate) => (
+                  <RoommateListingCard key={roommate._id} roommate={roommate} />
+                ))
+              ) : (
+                <p className="text-center col-span-full text-gray-600">No roommates found</p>
+              )}
             </div>
           )}
         </section>
       )}
 
       <section className="py-12 px-6 bg-white md:px-12">
-        <h2 the="text-3xl font-bold text-gray-900 text-center mb-10">How Nestify Works</h2>
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">How Nestify Works</h2>
         <p className="text-gray-700 max-w-2xl mx-auto mb-8 text-base leading-relaxed text-center">
           Seamlessly find your next home or ideal roommate with our easy-to-use platform.
         </p>

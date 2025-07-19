@@ -231,7 +231,7 @@ const searchProperties = async (req, res) => {
     const { search } = req.query;
     let query = {};
 
-    if (search && search.trim()) {
+    if (search) {
       query = {
         $or: [
           { city: { $regex: search, $options: 'i' } },

@@ -3,11 +3,11 @@ import { User } from "../models/user.model.js";
 
 const createRoomRequest = async (req, res) => {
   try {
-    const { budget, location } = req.body;
+    const { budget, location, city, area } = req.body;
     const userId = req.user._id;
 
-    if (!budget || !location) {
-      return res.status(400).json({ message: "Budget and location are required" });
+    if (!budget || !location || !city || !area) {
+      return res.status(400).json({ message: "Budget, location, city, and area are required" });
     }
 
     const user = await User.findById(userId);
@@ -57,8 +57,8 @@ const searchRoomRequests = async (req, res) => {
       query = {
         $or: [
           { location: { $regex: search, $options: 'i' } },
-          { gender: { $regex: search, $options: 'i' } },
-          { name: { $regex: search, $options: 'i' } },
+          { city: { $regex: search, $options: 'i' } },
+          { area: { $regex: search, $options: 'i' } },
         ],
       };
     }
@@ -70,7 +70,7 @@ const searchRoomRequests = async (req, res) => {
     res.status(200).json(roomRequests);
   } catch (error) {
     console.error("Error searching room requests:", error);
-    res.status(500).json({ message: "Failed to search room requests" });
+    res.status(500).json({ message: "Failed to search room requests", error: error.message });
   }
 };
 export { createRoomRequest, getAllRoomRequests, searchRoomRequests };

@@ -6,14 +6,18 @@ import { AppContext } from '../context/AppContext';
 const HeroSection = ({ onSearch }) => {
   const [activeTab, setActiveTab] = useState('find_room');
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchError, setSearchError] = useState(null);
   const { trackInteraction } = useContext(AppContext);
 
   const handleSearch = () => {
     const trimmedQuery = searchQuery.trim();
-    if (trimmedQuery || activeTab) {
-      trackInteraction('click', `search_button_${activeTab}`, { query: trimmedQuery });
-      onSearch(trimmedQuery, activeTab);
+    if (!trimmedQuery) {
+      setSearchError('Please enter a search query');
+      return;
     }
+    setSearchError(null);
+    trackInteraction('click', `search_button_${activeTab}`, { query: trimmedQuery });
+    onSearch(trimmedQuery, activeTab);
   };
 
   return (
@@ -38,6 +42,7 @@ const HeroSection = ({ onSearch }) => {
                 setActiveTab('find_room');
                 trackInteraction('click', 'search_tab_find_room');
                 setSearchQuery('');
+                setSearchError(null);
                 onSearch('', 'find_room'); // Reset search for rooms
               }}
             >
@@ -50,6 +55,7 @@ const HeroSection = ({ onSearch }) => {
                 setActiveTab('find_roommate');
                 trackInteraction('click', 'search_tab_find_roommate');
                 setSearchQuery('');
+                setSearchError(null);
                 onSearch('', 'find_roommate'); // Reset search for roommates
               }}
             >
@@ -61,18 +67,23 @@ const HeroSection = ({ onSearch }) => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={22} />
               <input
                 type="text"
-                placeholder={activeTab === 'find_room' ? "Search by locality, area, or property type" : "Search roommate by city, gender, or interests"}
+                placeholder={activeTab === 'find_room' ? "Search by area, location, or property type" : "Search by area, city, or location"}
                 className="w-full pl-12 pr-6 py-4 border border-gray-300 rounded-xl outline-none transition-all duration-200 text-gray-800 text-lg shadow-sm focus:border-blue-600 focus:ring-3 focus:ring-blue-300"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setSearchError(null);
+                }}
                 onFocus={() => trackInteraction('focus', `search_input_${activeTab}`)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     const trimmedQuery = searchQuery.trim();
-                    if (trimmedQuery) {
-                      trackInteraction('keypress', `search_input_enter_${activeTab}`, { query: trimmedQuery });
-                      onSearch(trimmedQuery, activeTab);
+                    if (!trimmedQuery) {
+                      setSearchError('Please enter a search query');
+                      return;
                     }
+                    trackInteraction('keypress', `search_input_enter_${activeTab}`, { query: trimmedQuery });
+                    onSearch(trimmedQuery, activeTab);
                   }
                 }}
               />
@@ -84,6 +95,7 @@ const HeroSection = ({ onSearch }) => {
               Search
             </button>
           </div>
+          {searchError && <p className="text-red-500 text-sm mt-2">{searchError}</p>}
         </div>
       </div>
     </main>

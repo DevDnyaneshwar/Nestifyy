@@ -15,6 +15,12 @@ const roomRequestSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    city: { 
+        type: String 
+    },
+    area: { 
+        type: String 
+    },
     location: {
       type: String,
       required: true,
