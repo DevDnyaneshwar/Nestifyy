@@ -3,11 +3,11 @@ import { User } from "../models/user.model.js";
 
 const createRoomRequest = async (req, res) => {
   try {
-    const { budget, location, city, area } = req.body;
+    const { budget, location } = req.body;
     const userId = req.user._id;
 
-    if (!budget || !location || !city || !area) {
-      return res.status(400).json({ message: "Budget, location, city, and area are required" });
+    if (!budget || !location) {
+      return res.status(400).json({ message: "Budget and location are required" });
     }
 
     const user = await User.findById(userId);
@@ -17,12 +17,8 @@ const createRoomRequest = async (req, res) => {
 
     const roomRequest = new RoomRequest({
       user: userId,
-      name: user.name,
-      number: user.number,
       location,
       budget,
-      gender: user.gender,
-      photo: user.photo,
     });
 
     await roomRequest.save();
@@ -48,6 +44,7 @@ const getAllRoomRequests = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 const searchRoomRequests = async (req, res) => {
   try {
     const { search, gender, budget } = req.query;
@@ -60,16 +57,12 @@ const searchRoomRequests = async (req, res) => {
 
     // Location-based search
     if (search && search.trim()) {
-      query.$or = [
-        { location: { $regex: search.trim(), $options: 'i' } },
-        { city: { $regex: search.trim(), $options: 'i' } },
-        { area: { $regex: search.trim(), $options: 'i' } },
-      ];
+      query.location = { $regex: search.trim(), $options: "i" };
     }
 
-    // Gender filter
-    if (gender && ['Male', 'Female', 'Other'].includes(gender)) {
-      query.gender = gender;
+    // Gender filter (from User model)
+    if (gender && ["Male", "Female", "Other"].includes(gender)) {
+      query["user.gender"] = gender; // Filter on populated user.gender field
     } else if (gender) {
       // Invalid gender, return empty results
       return res.status(200).json([]);
@@ -77,8 +70,8 @@ const searchRoomRequests = async (req, res) => {
 
     // Budget filter
     if (budget && budget.trim()) {
-      if (budget.includes('-')) {
-        const [minBudget, maxBudget] = budget.split('-').map(val => parseFloat(val));
+      if (budget.includes("-")) {
+        const [minBudget, maxBudget] = budget.split("-").map((val) => parseFloat(val));
         if (!isNaN(minBudget) && !isNaN(maxBudget)) {
           query.budget = {
             $gte: minBudget.toString(),
@@ -88,8 +81,8 @@ const searchRoomRequests = async (req, res) => {
           // Invalid budget range, return empty results
           return res.status(200).json([]);
         }
-      } else if (budget.endsWith('+')) {
-        const minBudget = parseFloat(budget.replace('+', ''));
+      } else if (budget.endsWith("+")) {
+        const minBudget = parseFloat(budget.replace("+", ""));
         if (!isNaN(minBudget)) {
           query.budget = { $gte: minBudget.toString() };
         } else {

@@ -1,4 +1,3 @@
-// src/components/RoommateListingCard.jsx
 import React, { useContext } from 'react';
 import { MapPin, DollarSign, User, MessageCircle } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
@@ -9,10 +8,10 @@ const RoommateListingCard = ({ roommate }) => {
   return (
     <div
       className="bg-white rounded-2xl shadow-xl overflow-hidden transform scale-100 transition-transform duration-300 cursor-pointer border border-gray-100 flex flex-col group hover:scale-105 hover:border-green-200"
-      onClick={() => trackInteraction('click', `roommate_card_${roommate._id}`)}
+      onClick={() => trackInteraction('click', `roommate_card_${roommate.id}`)}
     >
       <img
-        src={roommate.photo || 'https://placehold.co/400x260/D1FAE5/065F46?text=Roommate+Image'}
+        src={roommate.imageUrl}
         alt={roommate.name}
         className="w-full h-52 object-cover transition-all duration-300 group-hover:brightness-90"
         onError={(e) => {
@@ -35,7 +34,7 @@ const RoommateListingCard = ({ roommate }) => {
           className="mt-6 w-full bg-green-600 text-white py-3 rounded-xl border-none cursor-pointer transition-all duration-300 text-lg font-semibold shadow-md flex items-center justify-center gap-2 hover:bg-green-700 hover:shadow-xl hover:scale-[1.01] active:scale-98"
           onClick={(e) => {
             e.stopPropagation();
-            trackInteraction('click', `connect_button_${roommate._id}`);
+            trackInteraction('click', `connect_button_${roommate.id}`);
           }}
         >
           <MessageCircle size={20} />

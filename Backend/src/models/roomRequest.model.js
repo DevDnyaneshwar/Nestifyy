@@ -7,20 +7,6 @@ const roomRequestSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    name: {
-      type: String,
-      required: true,
-    },
-    number: {
-      type: String,
-      required: true,
-    },
-    city: { 
-        type: String 
-    },
-    area: { 
-        type: String 
-    },
     location: {
       type: String,
       required: true,
@@ -28,14 +14,6 @@ const roomRequestSchema = new mongoose.Schema(
     budget: {
       type: String,
       required: true,
-    },
-    gender: {
-      type: String,
-      enum: ["Male", "Female", "Other"],
-      default: "Other",
-    },
-    photo: {
-      type: String,
     },
   },
   { timestamps: true }
