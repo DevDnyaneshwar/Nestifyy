@@ -105,17 +105,24 @@ const PropertyDetailPage = () => {
   };
 
   const handleWhatsAppContact = () => {
-    if (property && property.owner.phone) {
+  if (property && property.owner.phone) {
+    // Ensure phone number starts with a country code and contains only digits after +
+    const cleanedPhone = property.owner.phone.replace(/\s/g, '');
+    if (/^\+\d{10,15}$/.test(cleanedPhone)) {
       const message = `Hi ${property.owner.name}, I'm interested in your property "${property.title}" in ${property.location}. Can we discuss further?`;
       const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/${property.owner.phone}?text=${encodedMessage}`;
+      const whatsappUrl = `https://wa.me/${cleanedPhone}?text=${encodedMessage}`;
       window.open(whatsappUrl, '_blank');
       trackInteraction('click', `whatsapp_contact_${id}`, { owner: property.owner.name });
     } else {
-      alert('Owner phone number not available. Please contact via email.');
-      trackInteraction('click', `whatsapp_contact_failed_${id}`, { reason: 'no_phone' });
+      alert('Invalid phone number format. Please contact the owner via email.');
+      trackInteraction('click', `whatsapp_contact_failed_${id}`, { reason: 'invalid_phone_format' });
     }
-  };
+  } else {
+    alert('Owner phone number not available. Please contact via email.');
+    trackInteraction('click', `whatsapp_contact_failed_${id}`, { reason: 'no_phone' });
+  }
+};
 
   if (loading) {
     return (

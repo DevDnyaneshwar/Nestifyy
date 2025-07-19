@@ -224,6 +224,11 @@ const getPropertyById = async (req, res) => {
     const sanitizedProperty = {
       ...property.toObject(),
       imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
+      owner: {
+        name: property.owner?.name || 'Unknown',
+        email: property.owner?.email || 'Unknown',
+        phone: property.owner?.phone || '', // Ensure phone is always included
+      },
     };
     res.status(200).json({ property: sanitizedProperty });
   } catch (error) {
