@@ -53,21 +53,23 @@ const FindRoommatePage = () => {
         id: request._id,
         name: request.name,
         location: request.location,
-        lookingFor: request.location, // Assuming lookingFor is the same as location
+        lookingFor: request.location,
         budget: request.budget,
         imageUrl: request.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&size=400&background=F0F9FF&color=0284C7`,
         gender: request.gender,
-        interests: "Not specified", // Placeholder as interests are not in the model
+        interests: "Not specified",
       }));
 
       setRoommates(formattedRoommates);
       trackInteraction("search", "find_roommate_search_success", {
         resultsCount: formattedRoommates.length,
+        currentPath: "/find-roommate", // Explicitly set currentPath
       });
     } catch (err) {
       setError("Failed to load roommates. Please try again.");
       trackInteraction("search", "find_roommate_search_failure", {
         error: err.message,
+        currentPath: "/find-roommate", // Explicitly set currentPath
       });
     } finally {
       setLoading(false);
