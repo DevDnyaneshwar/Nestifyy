@@ -10,8 +10,10 @@ const HomePage = () => {
   const { trackInteraction } = useContext(AppContext);
   const [properties, setProperties] = useState([]);
   const [roommates, setRoommates] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [propertyLoading, setPropertyLoading] = useState(false);
+  const [roommateLoading, setRoommateLoading] = useState(false);
+  const [propertyError, setPropertyError] = useState(null);
+  const [roommateError, setRoommateError] = useState(null);
   const [activeTab, setActiveTab] = useState('find_room');
 
   // Fetch initial data
@@ -24,7 +26,8 @@ const HomePage = () => {
   // Fetch properties
   const fetchProperties = async (query = '') => {
     try {
-      setLoading(true);
+      setPropertyLoading(true);
+      setPropertyError(null);
       const url = query
         ? `https://nestifyy-my3u.onrender.com/api/property/search?search=${encodeURIComponent(query)}`
         : 'https://nestifyy-my3u.onrender.com/api/property/all';
@@ -38,20 +41,21 @@ const HomePage = () => {
       if (response.ok) {
         setProperties(data.properties.slice(0, 4)); // Limit to 4 properties
       } else {
-        setError(data.message || 'Failed to fetch properties');
+        setPropertyError(data.message || 'Failed to fetch properties');
       }
     } catch (err) {
-      setError('Error fetching properties');
+      setPropertyError('Error fetching properties');
       console.error(err);
     } finally {
-      setLoading(false);
+      setPropertyLoading(false);
     }
   };
 
   // Fetch roommates
   const fetchRoommates = async (query = '') => {
     try {
-      setLoading(true);
+      setRoommateLoading(true);
+      setRoommateError(null);
       const url = query
         ? `https://nestifyy-my3u.onrender.com/api/room-request?search=${encodeURIComponent(query)}`
         : 'https://nestifyy-my3u.onrender.com/api/room-request';
@@ -65,13 +69,13 @@ const HomePage = () => {
       if (response.ok) {
         setRoommates(data.slice(0, 4)); // Limit to 4 roommates
       } else {
-        setError(data.message || 'Failed to fetch roommates');
+        setRoommateError(data.message || 'Failed to fetch roommates');
       }
     } catch (err) {
-      setError('Error fetching roommates');
+      setRoommateError('Error fetching roommates');
       console.error(err);
     } finally {
-      setLoading(false);
+      setRoommateLoading(false);
     }
   };
 
@@ -93,9 +97,11 @@ const HomePage = () => {
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
           {activeTab === 'find_room' ? 'Featured Rooms & Properties' : 'Featured Roommates'}
         </h2>
-        {loading && <p className="text-center">Loading...</p>}
-        {error && <p className="text-center text-red-500">{error}</p>}
-        {!loading && !error && (
+        {activeTab === 'find_room' && propertyLoading && <p className="text-center">Loading properties...</p>}
+        {activeTab === 'find_roommate' && roommateLoading && <p className="text-center">Loading roommates...</p>}
+        {activeTab === 'find_room' && propertyError && <p className="text-center text-red-500">{propertyError}</p>}
+        {activeTab === 'find_roommate' && roommateError && <p className="text-center text-red-500">{roommateError}</p>}
+        {!propertyLoading && !roommateLoading && !propertyError && !roommateError && (
           <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
             {activeTab === 'find_room'
               ? properties.map((property) => (
@@ -108,21 +114,23 @@ const HomePage = () => {
         )}
       </section>
 
-      <section className="py-12 px-6 bg-gray-100 md:px-12">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">All Roommates</h2>
-        {loading && <p className="text-center">Loading roommates...</p>}
-        {error && <p className="text-center text-red-500">{error}</p>}
-        {!loading && !error && (
-          <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
-            {roommates.map((roommate) => (
-              <RoommateListingCard key={roommate._id} roommate={roommate} />
-            ))}
-          </div>
-        )}
-      </section>
+      {activeTab === 'find_roommate' && (
+        <section className="py-12 px-6 bg-gray-100 md:px-12">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">All Roommates</h2>
+          {roommateLoading && <p className="text-center">Loading roommates...</p>}
+          {roommateError && <p className="text-center text-red-500">{roommateError}</p>}
+          {!roommateLoading && !roommateError && (
+            <div className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto sm:grid-cols-2 lg:grid-cols-4">
+              {roommates.map((roommate) => (
+                <RoommateListingCard key={roommate._id} roommate={roommate} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       <section className="py-12 px-6 bg-white md:px-12">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">How Nestify Works</h2>
+        <h2 the="text-3xl font-bold text-gray-900 text-center mb-10">How Nestify Works</h2>
         <p className="text-gray-700 max-w-2xl mx-auto mb-8 text-base leading-relaxed text-center">
           Seamlessly find your next home or ideal roommate with our easy-to-use platform.
         </p>

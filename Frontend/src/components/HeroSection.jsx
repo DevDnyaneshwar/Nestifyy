@@ -9,8 +9,11 @@ const HeroSection = ({ onSearch }) => {
   const { trackInteraction } = useContext(AppContext);
 
   const handleSearch = () => {
-    trackInteraction('click', `search_button_${activeTab}`, { query: searchQuery });
-    onSearch(searchQuery, activeTab); // Pass both query and activeTab
+    const trimmedQuery = searchQuery.trim();
+    if (trimmedQuery || activeTab) {
+      trackInteraction('click', `search_button_${activeTab}`, { query: trimmedQuery });
+      onSearch(trimmedQuery, activeTab);
+    }
   };
 
   return (
@@ -65,8 +68,11 @@ const HeroSection = ({ onSearch }) => {
                 onFocus={() => trackInteraction('focus', `search_input_${activeTab}`)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    trackInteraction('keypress', `search_input_enter_${activeTab}`, { query: searchQuery });
-                    onSearch(searchQuery, activeTab); // Trigger search on Enter
+                    const trimmedQuery = searchQuery.trim();
+                    if (trimmedQuery) {
+                      trackInteraction('keypress', `search_input_enter_${activeTab}`, { query: trimmedQuery });
+                      onSearch(trimmedQuery, activeTab);
+                    }
                   }
                 }}
               />

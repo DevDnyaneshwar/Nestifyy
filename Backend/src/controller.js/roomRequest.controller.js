@@ -53,7 +53,7 @@ const searchRoomRequests = async (req, res) => {
     const { search } = req.query;
     let query = {};
 
-    if (search) {
+    if (search && search.trim()) {
       query = {
         $or: [
           { location: { $regex: search, $options: 'i' } },
@@ -65,7 +65,7 @@ const searchRoomRequests = async (req, res) => {
 
     const roomRequests = await RoomRequest.find(query)
       .populate("user", "name number gender photo")
-      .limit(4) // Limit to 4 room requests
+      .limit(4)
       .lean();
     res.status(200).json(roomRequests);
   } catch (error) {

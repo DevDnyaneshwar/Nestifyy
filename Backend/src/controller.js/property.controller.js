@@ -231,7 +231,7 @@ const searchProperties = async (req, res) => {
     const { search } = req.query;
     let query = {};
 
-    if (search) {
+    if (search && search.trim()) {
       query = {
         $or: [
           { city: { $regex: search, $options: 'i' } },
@@ -244,7 +244,7 @@ const searchProperties = async (req, res) => {
 
     const properties = await Property.find(query)
       .populate('owner', 'name email')
-      .limit(4); // Limit to 4 properties
+      .limit(4);
     const sanitizedProperties = properties.map(property => ({
       ...property.toObject(),
       imageUrls: Array.isArray(property.imageUrls) ? property.imageUrls : [],
